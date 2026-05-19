@@ -1,0 +1,147 @@
+:root {
+    --sidebar-bg: #FF8C00; 
+    --card-brown: #9E5C31; 
+    --text-brown: #7A3E1A; 
+}
+
+body {
+    background-color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.sidebar {
+    width: 250px;
+    min-height: 100vh;
+    background-color: var(--sidebar-bg);
+    color: white;
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+}
+
+.sidebar-logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: 0 auto 30px;
+    display: block;
+    object-fit: cover;
+}
+
+.sidebar .nav-link {
+    color: white;
+    padding: 12px 25px;
+    display: flex;
+    align-items: center;
+    font-weight: 500;
+    transition: background 0.3s;
+}
+
+.sidebar .nav-link:hover, .sidebar .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar .nav-link i {
+    margin-right: 15px;
+    font-size: 1.2rem;
+}
+
+.sidebar .logout-link {
+    margin-top: auto;
+}
+
+.main-content {
+    margin-left: 250px;
+    padding: 40px;
+    width: calc(100% - 250px);
+}
+
+
+.metric-card {
+    background-color: var(--card-brown);
+    color: white;
+    padding: 25px;
+    border-radius: 4px;
+    text-align: center;
+    height: 100%;
+}
+
+.metric-card .number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    display: block;
+}
+
+.metric-card .label {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+h2, h3, .text-dashboard {
+    color: var(--text-brown);
+    font-weight: bold;
+}
+
+
+.btn-crear {
+    background-color: #FF8C00;
+    color: white;
+    border: none;
+    padding: 8px 30px;
+    border-radius: 8px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+
+.order-item {
+    background-color: #FFF9F5;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+
+.nav-cat {
+    text-decoration: none;
+    color: #6c757d;
+    font-weight: bold;
+    padding-bottom: 5px;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.nav-cat.active {
+    color: #ff7a2f;
+    border-bottom-color: #ff7a2f;
+}
+
+#pantalla_bienvenida {
+    background-color: #fff;
+    z-index: 1000;
+}
+
+.animate__animated {
+    animation-duration: 0.5s;
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+.animate__fadeOut {
+    animation-name: fadeOut;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.animate__fadeIn {
+    animation-name: fadeIn;
+}
+
