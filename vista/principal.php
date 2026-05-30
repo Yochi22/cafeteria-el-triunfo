@@ -20,30 +20,30 @@
             </div>
             
             <div class="row g-4">
-                <div class="col-md-3">
-                    <div class="metric-card">
-                        <span class="number"><?= $metricas['total'] ?></span>
-                        <span class="label">Total ordenes</span>
+                    <div class="col-md-3">
+                        <div class="metric-card">
+                            <span class="number"><?= $metricas['total'] ?? 0 ?></span>
+                            <span class="label">Total Ordenes</span>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="metric-card">
-                        <span class="number"><?= $metricas['enviadas'] ?></span>
-                        <span class="label">Enviadas</span>
+                    <div class="col-md-3">
+                        <div class="metric-card">
+                            <span class="number"><?= $metricas['enviadas'] ?? 0 ?></span>
+                            <span class="label">Enviadas</span>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="metric-card">
-                        <span class="number"><?= $metricas['canceladas'] ?></span>
-                        <span class="label">Canceladas</span>
+                    <div class="col-md-3">
+                        <div class="metric-card">
+                            <span class="number"><?= $metricas['canceladas'] ?? 0 ?></span>
+                            <span class="label">Canceladas</span>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="metric-card">
-                        <span class="number">$<?= $metricas['ganancia'] ?></span>
-                        <span class="label">Ganancia</span>
+                    <div class="col-md-3">
+                        <div class="metric-card">
+                            <span class="number">$<?= $metricas['ganancias'] ?? '0.00' ?></span>
+                            <span class="label">Ganancia</span>
+                        </div>
                     </div>
-                </div>
             </div>
         </main>
     </div>

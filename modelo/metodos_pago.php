@@ -1,219 +1,192 @@
 <?php
 require_once('modelo/datos.php');
 
-class metodoPago extends datos{
+class metodopago extends datos{
 	
-	private $cedula; //recuerden que en php, las variables no tienen tipo predefinido
-	private $apellidos;
-	private $nombres;
-	private $fechadenacimiento;
-	private $sexo;
-	private $gradodeinstruccion;
+    private $idMetodo;
+	private $cedulaTitular; 
+	private $nombreBanco;
+	private $telefono;
+	private $cuenta;
 	
-	//Ok ya tenemos los atributos, pero como son privados no podemos acceder a ellos desde fueran
-	//por lo que debemos colcoar metodos (funciones) que me permitan leer (get) y colocar (set)
-	//valores en ello, esto es  muy mal llamado geters y seters por si alguien se los pregunta
-	
-	function set_cedula($valor){
-		$this->cedula = $valor; //fijencen como se accede a los elementos dentro de una clase
-		//this que singnifica esto es decir esta clase luego -> simbolo que indica que apunte
-		//a un elemento de this, es decir esta clase
-		//luego el nombre del elemento sin el $
+	//setters
+	function set_idMetodo($valor){
+		$this->idMetodo = $valor;
 	}
-	//lo mismo que se hizo para cedula se hace para usuario y clave
-	
-	function set_apellidos($valor){
-		$this->apellidos = $valor;
+	function set_cuenta($valor){
+		$this->cuenta = $valor;
+	}
+	function set_nombreBanco($valor){
+		$this->nombreBanco = $valor;
+	}
+	function set_cedulaTitular($valor){
+		$this->cedulaTitular = $valor; 
 	}
 	
-	function set_nombres($valor){
-		$this->nombres = $valor;
+	function set_telefono($valor){
+		$this->telefono = $valor;
 	}
 	
-	function set_fechadenacimiento($valor){
-		$this->fechadenacimiento = $valor;
+	
+	//getters
+	function get_idMetodo(){
+		return $this->idMetodo;
 	}
 	
-	function set_sexo($valor){
-		$this->sexo = $valor;
+	function get_cuenta(){
+		return $this->cuenta;
 	}
 	
-	function set_gradodeinstruccion($valor){
-		$this->gradodeinstruccion = $valor;
+	function get_nombreBanco(){
+		return $this->nombreBanco;
+	}
+	function get_cedulaTitular(){
+		return $this->cedulaTitular;
 	}
 	
-	//ahora la misma cosa pero para leer, es decir get
-	
-	function get_cedula(){
-		return $this->cedula;
+	function get_telefono(){
+		return $this->telefono;
 	}
 	
-	function get_apellidos(){
-		return $this->apellidos;
-	}
 	
-	function get_nombres(){
-		return $this->nombres;
-	}
-	
-	function get_fechadenacimiento(){
-		return $this->fechadenacimiento;
-	}
-	
-	function get_sexo(){
-		return $this->sexo;
-	}
-	
-	function get_gradodeinstruccion(){
-		return $this->gradodeinstruccion;
-	}
-	
-	//Lo siguiente que demos hacer es crear los metodos para incluir, consultar y eliminar
-	
+	//metodos para CRUD
+	//1. Registrar
 	function incluir(){
-		//Ok ya tenemos la base de datos y la funcion conecta dentro de la clase
-		//datos, ahora debemos ejecutar las operaciones para realizar las consultas 
 		
-		//Lo primero que debemos hacer es consultar por el campo clave
-		//en este caso la cedula, para ello se creo la funcion existe
-		//que retorna true en caso de exitir el registro
-		
-		if(!$this->existe($this->cedula)){
-			//si estamos aca es porque la cedula no existe es decir se puede incluir
-			//los pasos a seguir son
-			//1 Se llama a la funcion conecta 
+		if(!$this->existe($this->cuenta)){
+			//verificacion de la existencia del numero de cuenta, en caso que no exista, se registrara el Metodo.
 			$co = $this->conecta();
 			$co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			//2 Se ejecuta el sql
 			try {
-					$co->query("Insert into personas(
-						cedula,
-						apellidos,
-						nombres,
-						fechadenacimiento,
-						sexo,
-						gradodeinstruccion
+					$co->query("Insert into metodopago(
+						cuenta,
+						nombreBanco,
+						cedulaTitular,
+						telefono
 						)
 						Values(
-						'$this->cedula',
-						'$this->apellidos',
-						'$this->nombres',
-						'$this->fechadenacimiento',
-						'$this->sexo',
-						'$this->gradodeinstruccion'
+						'$this->cuenta',
+						'$this->nombreBanco',
+						'$this->cedulaTitular',
+						'$this->telefono'
 						)");
-						return "Registro incluido";
+						return "Método de pago registrado con éxito.";
 			} catch(Exception $e) {
 				return $e->getMessage();
 			}
 		}
 		else{
-			return "Ya existe la cedula que desea ingresar";
+			return "Ya existe la Cuenta que desea ingresar.";
 		}
-		
-		//Listo eso es todo y es igual para el resto de las operaciones
-		//incluir, modificar y eliminar
-		//solo cambia para buscar 
 	}
 	
+	//2. Modificar
 	function modificar(){
 		$co = $this->conecta();
 		$co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		if($this->existe($this->cedula)){
+		if($this->existe($this->cuenta)){
 			try {
-					$co->query("Update personas set 
-					    cedula = '$this->cedula',
-						apellidos = '$this->apellidos',
-						nombres = '$this->nombres',
-						fechadenacimiento = '$this->fechadenacimiento',
-						sexo = '$this->sexo',
-						gradodeinstruccion = '$this->gradodeinstruccion'
+					$co->query("Update metodopago set 
+					    cuenta = '$this->cuenta',
+						cedulaTitular = '$this->cedulaTitular',
+						nombreBanco = '$this->nombreBanco',
+						telefono = '$this->telefono'
 						where
-						cedula = '$this->cedula'
+						cuenta = '$this->cuenta'
 						");
-						return "Registro Modificado";
+						return "Registro Modificado.";
 			} catch(Exception $e) {
 				return $e->getMessage();
 			}
 		}
 		else{
-			return "Cedula no registrada";
+			return "Cuenta no registrada.";
 		}
 		
 	}
 	
+	//3. Eliminar
 	function eliminar(){
 		$co = $this->conecta();
 		$co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		if($this->existe($this->cedula)){
+		if($this->existe($this->cedulaTitular)){
 			try {
-					$co->query("delete from personas 
+					$co->query("delete from metodopago 
 						where
-						cedula = '$this->cedula'
+						cuenta = '$this->cuenta'
 						");
-						return "Registro Eliminado";
+						return "Registro Eliminado.";
 			} catch(Exception $e) {
 				return $e->getMessage();
 			}
 		}
 		else{
-			return "Cedula no registrada";
+			return "Cuenta no registrada.";
 		}
 	}
-	
-	
+
+	//4. Consultar
 	function consultar(){
 		$co = $this->conecta();
 		$co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+		$r = array();
 		try{
 			
-			$resultado = $co->query("Select * from personas");
+			$resultado = $co->query("Select * from metodopago");
 			
 			if($resultado){
 				
 				$respuesta = '';
 				foreach($resultado as $r){
-					$respuesta = $respuesta."<tr style='cursor:pointer' onclick='coloca(this);'>";
-						$respuesta = $respuesta."<td>";
-							$respuesta = $respuesta.$r['cedula'];
+					$respuesta = $respuesta."<tr>";
+					    $respuesta = $respuesta."<td>";
+							$respuesta = $respuesta."<button type='button'
+							class='btn btn-primary w-100 small-width mb-3' 
+							onclick='pone(this,0)'
+						    >Modificar</button><br/>";
+							$respuesta = $respuesta."<button type='button'
+							class='btn btn-primary w-100 small-width mt-2' 
+							onclick='pone(this,1)'
+						    >Eliminar</button><br/>";
 						$respuesta = $respuesta."</td>";
 						$respuesta = $respuesta."<td>";
-							$respuesta = $respuesta.$r['apellidos'];
+							$respuesta = $respuesta.$r['nombreBanco'];
 						$respuesta = $respuesta."</td>";
 						$respuesta = $respuesta."<td>";
-							$respuesta = $respuesta.$r['nombres'];
+							$respuesta = $respuesta.$r['cedulaTitular'];
 						$respuesta = $respuesta."</td>";
 						$respuesta = $respuesta."<td>";
-							$respuesta = $respuesta.$r['fechadenacimiento'];
+							$respuesta = $respuesta.$r['telefono'];
 						$respuesta = $respuesta."</td>";
 						$respuesta = $respuesta."<td>";
-							$respuesta = $respuesta.$r['sexo'];
-						$respuesta = $respuesta."</td>";
-						$respuesta = $respuesta."<td>";
-							$respuesta = $respuesta.$r['gradodeinstruccion'];
+							$respuesta = $respuesta.$r['cuenta'];
 						$respuesta = $respuesta."</td>";
 					$respuesta = $respuesta."</tr>";
 				}
-				return $respuesta;
-			    
+				
+			    $r['resultado'] = 'consultar';
+				$r['mensaje'] =  $respuesta;
 			}
 			else{
-				return '';
+				$r['resultado'] = 'consultar';
+				$r['mensaje'] =  '';
 			}
 			
 		}catch(Exception $e){
-			return $e->getMessage();
+			$r['resultado'] = 'error';
+			$r['mensaje'] =  $e->getMessage();
 		}
-		
+		return $r;
 	}
 	
-	
-	private function existe($cedula){
+	//Funciones internas
+	//Funcion para verificar si un registro existe.
+	private function existe($cuenta){
 		$co = $this->conecta();
 		$co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		try{
 			
-			$resultado = $co->query("Select * from personas where cedula='$cedula'");
+			$resultado = $co->query("Select * from metodopago where cuenta='$cuenta'");
 			
 			
 			$fila = $resultado->fetchAll(PDO::FETCH_BOTH);
@@ -231,47 +204,7 @@ class metodoPago extends datos{
 			return false;
 		}
 	}
-	
-	function consultatr(){
-		$co = $this->conecta();
-		$co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		try{
-			
-			$resultado = $co->query("Select * from personas where cedula='$this->cedula'");
-			$fila = $resultado->fetchAll(PDO::FETCH_BOTH);
-			if($fila){
-			    
-				$envia = array('resultado'=>"encontro");
-				
-				$envia += $fila;
-								
-				return json_encode($envia);
-			    
-			}
-			else{
-				
-				$envia = array('resultado'=>"noencontro");
-				return json_encode($envia);
-				
-				
-			}
-			
-		}catch(Exception $e){
-			$envia = array('resultado'=>$e->getMessage());
-			return json_encode($envia);
-		}
 		
 	}
 	
-	function obtienefecha(){
-		$f = date('Y-m-d');
-		$f1 = strtotime ('-18 year' , strtotime($f)); 
-		$f1 = date ('Y-m-d',$f1);
-		return $f1;
-	}
-
-	
-	
-	
-}
 ?>
