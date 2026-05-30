@@ -1,11 +1,11 @@
 <?php
 
+require_once("modelo/" . $pagina . ".php");
+
 if (!is_file("modelo/" . $pagina . ".php")) {
     echo "Falta Definir la Clase " . $pagina;
     exit;
 }
-
-require_once("modelo/" . $pagina . ".php");
 
 if (is_file("vista/" . $pagina . ".php")) {
     $o = new categorias();
@@ -45,7 +45,7 @@ if (is_file("vista/" . $pagina . ".php")) {
         }
         exit;
     }
-
+    
     require_once("vista/" . $pagina . ".php");
 } else {
     echo "Página en Construcción";

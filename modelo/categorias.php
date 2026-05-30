@@ -7,6 +7,7 @@ class categorias extends datos
     private $nombre;
     private $descripcion;
     private $foto;
+    private $estado;
 
     function set_idCategoria($valor) {
         $this->idCategoria = $valor;
@@ -24,71 +25,91 @@ class categorias extends datos
         $this->foto = $valor;
     }
 
+    function set_estado($valor) {
+        $this->estado = $valor;
+    }
+
+    function get_idCategoria() {
+        return $this->idCategoria;
+    }
+
+    function get_nombre() {
+        return $this->nombre;
+    }
+
+    function get_descripcion() {
+        return $this->descripcion;
+    }
+
+    function get_foto() {
+        return $this->foto;
+    }
+
+    function get_estado() {
+        return $this->estado;
+    }
+
     function incluir()
     {
-        if (!$this->existe($this->nombre)) {
-            try {
-                $co = $this->conecta();
-                $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                
-                $sql = "INSERT INTO categoria (nombre, descripcion, foto) VALUES (?, ?, ?)";
-                $stmt = $co->prepare($sql);
-                $stmt->execute([$this->nombre, $this->descripcion, $this->foto]);
-                
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try {
+            if (!$this->existe_id($this->idCategoria)) {
+                $r = $co->prepare("INSERT INTO categorias(idCategoria, nombre, descripcion, foto) 
+                                   VALUES(:idCategoria, :nombre, :descripcion, :foto)");
+
+                $r->bindParam(':idCategoria', $this->idCategoria);
+                $r->bindParam(':nombre', $this->nombre);
+                $r->bindParam(':descripcion', $this->descripcion);
+                $r->bindParam(':foto', $this->foto);
+                $r->execute();
                 return "Registro Incluido";
-            } catch (Exception $e) {
-                return $e->getMessage();
-            }
         } else {
-            return "Ya Existe una Categoría con ese Nombre";
+                return "Ya Existe una Categoría con ese Nombre";
+            }
+        } catch (Exception $e) {
+            return $e->getMessage();
         }
     }
 
     function modificar()
     {
-        if ($this->existe_id($this->idCategoria)) {
-            try {
-                $co = $this->conecta();
-                $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                
-                $sql = "UPDATE categoria SET nombre = ?, descripcion = ?, foto = ? WHERE idCategoria = ?";
-                $stmt = $co->prepare($sql);
-                $stmt->execute([$this->nombre, $this->descripcion, $this->foto, $this->idCategoria]);
-                
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try {
+            if ($this->existe_id($this->idCategoria)) {
+
+                $m = $co->prepare("UPDATE categorias SET nombre = :nombre, descripcion = :descripcion, foto = :foto WHERE idCategoria = :idCategoria");
+
+                $m->bindParam(':idCategoria', $this->idCategoria);
+                $m->bindParam(':nombre', $this->nombre);
+                $m->bindParam(':descripcion', $this->descripcion);
+                $m->bindParam(':foto', $this->foto);
+                $m->execute();
                 return "Registro Modificado";
-            } catch (Exception $e) {
-                return $e->getMessage();
+            } else {
+                return "No Existe esa Categoría";
             }
-        } else {
-            return "Categoría no Registrada";
+        } catch (Exception $e) {
+            return $e->getMessage();
         }
     }
 
     function eliminar()
     {
-        if ($this->existe_id($this->idCategoria)) {
-            try {
-                $co = $this->conecta();
-                $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-                $sql_check = "SELECT idCategoria FROM producto WHERE idCategoria = ?";
-                $stmt_check = $co->prepare($sql_check);
-                $stmt_check->execute([$this->idCategoria]);
-                
-                if ($stmt_check->rowCount() > 0) {
-                    return "No se puede Eliminar la Categoría porque tiene Productos Asociados";
-                }
-
-                $sql = "DELETE FROM categoria WHERE idCategoria = ?";
-                $stmt = $co->prepare($sql);
-                $stmt->execute([$this->idCategoria]);
-                
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try {
+            if ($this->existe_id($this->idCategoria)) {
+                $e = $co->prepare("UPDATE categorias SET estado = 0 WHERE idCategoria = :idCategoria");
+                $e->bindParam(':idCategoria', $this->idCategoria);
+                $e->execute();
                 return "Registro Eliminado";
-            } catch (Exception $e) {
-                return $e->getMessage();
+            } else {
+                return "No Existe esa Categoría";
             }
-        } else {
-            return "Categoría no Registrada";
+        } catch (Exception $e) {
+            return $e->getMessage();
         }
     }
 
@@ -97,7 +118,7 @@ class categorias extends datos
         try {
             $co = $this->conecta();
             $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $resultado = $co->query("SELECT * FROM categoria");
+            $resultado = $co->query("SELECT * FROM categorias WHERE estado = 1");
             
             if ($resultado) {
                 $respuesta = '';
@@ -135,7 +156,7 @@ class categorias extends datos
         try {
             $co = $this->conecta();
             $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $stmt = $co->prepare("SELECT idCategoria FROM categoria WHERE nombre = ?");
+            $stmt = $co->prepare("SELECT idCategoria FROM categorias WHERE nombre = ?");
             $stmt->execute([$nombre]);
             return $stmt->rowCount() > 0;
         } catch (Exception $e) {
@@ -148,7 +169,7 @@ class categorias extends datos
         try {
             $co = $this->conecta();
             $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $stmt = $co->prepare("SELECT idCategoria FROM categoria WHERE idCategoria = ?");
+            $stmt = $co->prepare("SELECT idCategoria FROM categorias WHERE idCategoria = ?");
             $stmt->execute([$id]);
             return $stmt->rowCount() > 0;
         } catch (Exception $e) {
@@ -161,7 +182,7 @@ class categorias extends datos
         try {
             $co = $this->conecta();
             $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $stmt = $co->prepare("SELECT * FROM categoria WHERE idCategoria = ?");
+            $stmt = $co->prepare("SELECT * FROM categorias WHERE idCategoria = ?");
             $stmt->execute([$this->idCategoria]);
             $fila = $stmt->fetch(PDO::FETCH_ASSOC);
             
