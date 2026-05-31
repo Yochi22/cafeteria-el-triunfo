@@ -49,12 +49,29 @@ class categorias extends datos
         return $this->estado;
     }
 
-    function incluir()
+function incluir()
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         try {
-            if (!$this->existe_id($this->idCategoria)) {
+            $stmt = $co->prepare("SELECT idCategoria, estado FROM categorias WHERE nombre = :nombre");
+            $stmt->bindParam(':nombre', $this->nombre);
+            $stmt->execute();
+            $categoria_existente = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($categoria_existente) {
+                if ($categoria_existente['estado'] == 1) {
+                    return "Ya Existe una Categoría ese Nombre";
+                } else {
+                    $m = $co->prepare("UPDATE categorias SET descripcion = :descripcion, foto = :foto, estado = 1 WHERE idCategoria = :idCategoria");
+                    $m->bindParam(':idCategoria', $categoria_existente['idCategoria']);
+                    $m->bindParam(':descripcion', $this->descripcion);
+                    $m->bindParam(':foto', $this->foto);
+                    $m->execute();
+
+                    return "Registro Incluido";
+                }
+            } else {
                 $r = $co->prepare("INSERT INTO categorias(idCategoria, nombre, descripcion, foto) 
                                    VALUES(:idCategoria, :nombre, :descripcion, :foto)");
 
@@ -63,9 +80,8 @@ class categorias extends datos
                 $r->bindParam(':descripcion', $this->descripcion);
                 $r->bindParam(':foto', $this->foto);
                 $r->execute();
+
                 return "Registro Incluido";
-        } else {
-                return "Ya Existe una Categoría con ese Nombre";
             }
         } catch (Exception $e) {
             return $e->getMessage();
@@ -77,7 +93,7 @@ class categorias extends datos
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         try {
-            if ($this->existe_id($this->idCategoria)) {
+            if ($this->existe_nombre($this->nombre)) {
 
                 $m = $co->prepare("UPDATE categorias SET nombre = :nombre, descripcion = :descripcion, foto = :foto WHERE idCategoria = :idCategoria");
 
@@ -151,7 +167,7 @@ class categorias extends datos
         }
     }
 
-    private function existe($nombre)
+    private function existe_nombre($nombre)
     {
         try {
             $co = $this->conecta();
