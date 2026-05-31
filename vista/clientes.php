@@ -33,14 +33,6 @@
                             <th>Teléfono</th>
                             <th>Dirección</th>
                             <th>Acciones</th>
-                            <td class="action-buttons">
-                            <a href="#" class="btn-edit" title="Editar">
-                               <i class="fa-solid fa-pencil"></i>
-                            </a>
-                            <a href="#" class="btn-delete" title="Eliminar">
-                               <i class="fa-solid fa-trash-can"></i>
-                            </a>
-                            </td>
                         </tr>
                     </thead>
                     <tbody id="listaClientes" class="text-center">
