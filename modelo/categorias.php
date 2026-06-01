@@ -9,82 +9,81 @@ class categorias extends datos
     private $foto;
     private $estado;
 
-    function set_idCategoria($valor) {
+    function set_idCategoria($valor)
+    {
         $this->idCategoria = $valor;
     }
-
-    function set_nombre($valor) {
+    function set_nombre($valor)
+    {
         $this->nombre = $valor;
     }
-
-    function set_descripcion($valor) {
+    function set_descripcion($valor)
+    {
         $this->descripcion = $valor;
     }
-
-    function set_foto($valor) {
+    function set_foto($valor)
+    {
         $this->foto = $valor;
     }
-
-    function set_estado($valor) {
+    function set_estado($valor)
+    {
         $this->estado = $valor;
     }
 
-    function get_idCategoria() {
+    function get_idCategoria()
+    {
         return $this->idCategoria;
     }
-
-    function get_nombre() {
+    function get_nombre()
+    {
         return $this->nombre;
     }
-
-    function get_descripcion() {
+    function get_descripcion()
+    {
         return $this->descripcion;
     }
-
-    function get_foto() {
+    function get_foto()
+    {
         return $this->foto;
     }
-
-    function get_estado() {
+    function get_estado()
+    {
         return $this->estado;
     }
 
-function incluir()
+    function incluir()
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         try {
-            $stmt = $co->prepare("SELECT idCategoria, estado FROM categorias WHERE nombre = :nombre");
-            $stmt->bindParam(':nombre', $this->nombre);
-            $stmt->execute();
-            $categoria_existente = $stmt->fetch(PDO::FETCH_ASSOC);
+            $r = $co->prepare("SELECT idCategoria, estado FROM categorias WHERE nombre = :nombre");
+            $r->bindParam(':nombre', $this->nombre);
+            $r->execute();
+            $categoria_existente = $r->fetch(PDO::FETCH_ASSOC);
 
             if ($categoria_existente) {
                 if ($categoria_existente['estado'] == 1) {
-                    return "Ya Existe una Categoría ese Nombre";
+                    return "Ya Existe una Categoría con ese Nombre.";
                 } else {
                     $m = $co->prepare("UPDATE categorias SET descripcion = :descripcion, foto = :foto, estado = 1 WHERE idCategoria = :idCategoria");
                     $m->bindParam(':idCategoria', $categoria_existente['idCategoria']);
                     $m->bindParam(':descripcion', $this->descripcion);
                     $m->bindParam(':foto', $this->foto);
                     $m->execute();
-
-                    return "Registro Incluido";
+                    return "Registro Incluido.";
                 }
             } else {
-                $r = $co->prepare("INSERT INTO categorias(idCategoria, nombre, descripcion, foto) 
-                                   VALUES(:idCategoria, :nombre, :descripcion, :foto)");
-
-                $r->bindParam(':idCategoria', $this->idCategoria);
+                $r = $co->prepare("INSERT INTO categorias(nombre, descripcion, foto, estado) 
+                                   VALUES(:nombre, :descripcion, :foto, 1)");
                 $r->bindParam(':nombre', $this->nombre);
                 $r->bindParam(':descripcion', $this->descripcion);
                 $r->bindParam(':foto', $this->foto);
                 $r->execute();
-
-                return "Registro Incluido";
+                return "Registro Incluido.";
             }
         } catch (Exception $e) {
-            return $e->getMessage();
+            $e->getMessage();
+            return "Error al Intentar Incluir el Registro.";
         }
     }
 
@@ -93,21 +92,30 @@ function incluir()
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         try {
-            if ($this->existe_nombre($this->nombre)) {
+            if ($this->existe_id($this->idCategoria)) {
+                $m = $co->prepare("SELECT idCategoria FROM categorias WHERE nombre = :nombre AND idCategoria != :idCategoria AND estado = 1");
+                $m->bindParam(':nombre', $this->nombre);
+                $m->bindParam(':idCategoria', $this->idCategoria);
+                $m->execute();
+
+                if ($m->rowCount() > 0) {
+                    return "Ya Existe Otra Categoría con ese Nombre.";
+                }
 
                 $m = $co->prepare("UPDATE categorias SET nombre = :nombre, descripcion = :descripcion, foto = :foto WHERE idCategoria = :idCategoria");
-
                 $m->bindParam(':idCategoria', $this->idCategoria);
                 $m->bindParam(':nombre', $this->nombre);
                 $m->bindParam(':descripcion', $this->descripcion);
                 $m->bindParam(':foto', $this->foto);
                 $m->execute();
-                return "Registro Modificado";
+
+                return "Registro Modificado.";
             } else {
-                return "No Existe esa Categoría";
+                return "No Existe esa Categoría.";
             }
         } catch (Exception $e) {
-            return $e->getMessage();
+            $e->getMessage();
+            return "Error al Intentar Modificar el Registro.";
         }
     }
 
@@ -120,12 +128,13 @@ function incluir()
                 $e = $co->prepare("UPDATE categorias SET estado = 0 WHERE idCategoria = :idCategoria");
                 $e->bindParam(':idCategoria', $this->idCategoria);
                 $e->execute();
-                return "Registro Eliminado";
+                return "Registro Eliminado.";
             } else {
-                return "No Existe esa Categoría";
+                return "No Existe esa Categoría.";
             }
         } catch (Exception $e) {
-            return $e->getMessage();
+            $e->getMessage();
+            return "Error al Intentar Eliminar el Registro.";
         }
     }
 
@@ -135,48 +144,15 @@ function incluir()
             $co = $this->conecta();
             $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $resultado = $co->query("SELECT * FROM categorias WHERE estado = 1");
-            
-            if ($resultado) {
-                $respuesta = '';
-                foreach ($resultado as $r) {
-                    $foto = !empty($r['foto']) ? $r['foto'] : 'img/principal.jpg';
-                    $respuesta .= '
-                    <div class="col-md-4 mb-4">
-                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
-                            <img src="' . $foto . '" class="card-img-top" style="height:180px; object-fit:cover;">
-                            <div class="card-body">
-                                <h5 class="text-dashboard fw-bold mb-1">' . $r['nombre'] . '</h5>
-                                <p class="text-muted small mb-3">' . $r['descripcion'] . '</p>
-                                <div class="d-flex justify-content-end gap-2">
-                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="editar(' . $r['idCategoria'] . ')">
-                                        <i class="bi bi-pencil-square"></i> Editar
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="eliminar(' . $r['idCategoria'] . ')">
-                                        <i class="bi bi-trash"></i> Eliminar
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>';
-                }
-                return $respuesta;
-            }
-            return '';
-        } catch (Exception $e) {
-            return $e->getMessage();
-        }
-    }
 
-    private function existe_nombre($nombre)
-    {
-        try {
-            $co = $this->conecta();
-            $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $stmt = $co->prepare("SELECT idCategoria FROM categorias WHERE nombre = ?");
-            $stmt->execute([$nombre]);
-            return $stmt->rowCount() > 0;
+            if ($resultado) {
+                $respuesta = $resultado->fetchAll(PDO::FETCH_ASSOC);
+                return json_encode($respuesta);
+            }
+            return json_encode([]);
         } catch (Exception $e) {
-            return false;
+            $e->getMessage();
+            return json_encode(['error' => 'Error al Consultar la Base de Datos.']);
         }
     }
 
@@ -185,7 +161,7 @@ function incluir()
         try {
             $co = $this->conecta();
             $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $stmt = $co->prepare("SELECT idCategoria FROM categorias WHERE idCategoria = ?");
+            $stmt = $co->prepare("SELECT idCategoria FROM categorias WHERE idCategoria = ? AND estado = 1");
             $stmt->execute([$id]);
             return $stmt->rowCount() > 0;
         } catch (Exception $e) {
@@ -198,10 +174,10 @@ function incluir()
         try {
             $co = $this->conecta();
             $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            $stmt = $co->prepare("SELECT * FROM categorias WHERE idCategoria = ?");
+            $stmt = $co->prepare("SELECT * FROM categorias WHERE idCategoria = ? AND estado = 1");
             $stmt->execute([$this->idCategoria]);
             $fila = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
             if ($fila) {
                 $envia = array('resultado' => 'encontro');
                 $envia = array_merge($envia, $fila);
@@ -210,8 +186,8 @@ function incluir()
                 return json_encode(array('resultado' => 'noencontro'));
             }
         } catch (Exception $e) {
-            return json_encode(array('resultado' => $e->getMessage()));
+            $e->getMessage();
+            return json_encode(array('resultado' => 'Error de Servidor'));
         }
     }
 }
-?>
