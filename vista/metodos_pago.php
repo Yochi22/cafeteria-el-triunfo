@@ -80,7 +80,7 @@
                 </div>
 
                 <div class="d-grid mt-4">
-                    <button type="button" class="btn btn-crear w-100 mt-3" id="btnGuardar">Guardar Método de Pago</button>
+                    <button type="submit" class="btn btn-crear w-100 mt-3" id="btnGuardar">Guardar Método de Pago</button>
                 </div>
                 </form>
                 </div>
