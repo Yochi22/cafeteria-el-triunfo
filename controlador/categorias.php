@@ -1,13 +1,14 @@
 <?php
 
-require_once("modelo/" . $pagina . ".php");
-
 if (!is_file("modelo/" . $pagina . ".php")) {
     echo "Falta Definir la Clase " . $pagina;
     exit;
 }
 
+require_once("modelo/" . $pagina . ".php");
+
 if (is_file("vista/" . $pagina . ".php")) {
+
     $o = new categorias();
 
     if (!empty($_POST)) {
@@ -15,14 +16,14 @@ if (is_file("vista/" . $pagina . ".php")) {
 
         switch ($accion) {
             case 'consultar':
-                echo $o->consultar();
+                echo json_encode($o->consultar());
                 break;
                 
             case 'incluir':
                 $o->set_nombre($_POST['nombre']);
                 $o->set_descripcion($_POST['descripcion']);
                 $o->set_foto($_POST['foto']);
-                echo $o->incluir();
+                echo json_encode($o->incluir());
                 break;
                 
             case 'modificar':
@@ -30,19 +31,20 @@ if (is_file("vista/" . $pagina . ".php")) {
                 $o->set_nombre($_POST['nombre']);
                 $o->set_descripcion($_POST['descripcion']);
                 $o->set_foto($_POST['foto']);
-                echo $o->modificar();
+                echo json_encode($o->modificar());
                 break;
                 
             case 'eliminar':
                 $o->set_idCategoria($_POST['idCategoria']);
-                echo $o->eliminar();
+                echo json_encode($o->eliminar());
                 break;
                 
             case 'consultar_id':
                 $o->set_idCategoria($_POST['idCategoria']);
-                echo $o->consultar_id();
+                echo json_encode($o->consultar_id());
                 break;
         }
+
         exit;
     }
     

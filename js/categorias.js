@@ -1,140 +1,145 @@
 $(document).ready(function () {
-    consultar();
+    try {
+        consultar();
+    } catch (e) {
+        console.error("Error en carga inicial:", e);
+    }
+
+    $("#nombre, #descripcion").on("keypress", function (e) {
+        validarkeypress(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]*$/, e);
+    });
+
+    $("#nombre").on("keyup", function () {
+        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{3,30}$/, $(this), $("#snombre"), "Nombre inválido");
+    });
+
+    $("#descripcion").on("keyup", function () {
+        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{5,150}$/, $(this), $("#sdescripcion"), "Descripción inválida");
+    });
 
     $("#f").on("submit", function (e) {
         e.preventDefault();
-        enviar();
+        
+        let accion = $("#accion").val(); 
+
+        if (accion == "incluir" || accion == "modificar") {
+            if (validarenvio()) {
+                var datos = new FormData(this);
+                enviaAjax(datos);
+            }
+        }
     });
 });
 
 function consultar() {
-    let datos = new FormData();
+    var datos = new FormData();
     datos.append('accion', 'consultar');
-
-    $.ajax({
-        url: '',
-        type: 'POST',
-        data: datos,
-        processData: false,
-        contentType: false,
-        success: function (respuesta) {
-            try {
-                let categorias = JSON.parse(respuesta);
-                let html = '';
-
-                if (categorias.error) {
-                    console.error(categorias.error);
-                    return;
-                }
-
-                categorias.forEach(function(r) {
-                    let foto = (r.foto && r.foto.trim() !== '') ? r.foto : 'img/principal.jpg';
-                    html += `
-                    <div class="col-md-4 mb-4">
-                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
-                            <img src="${foto}" class="card-img-top" style="height:180px; object-fit:cover;">
-                            <div class="card-body">
-                                <h5 class="text-dashboard fw-bold mb-1">${r.nombre}</h5>
-                                <p class="text-muted small mb-3">${r.descripcion}</p>
-                                <div class="d-flex justify-content-end gap-2">
-                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="editar(${r.idCategoria})">
-                                        <i class="bi bi-pencil-square"></i> Editar
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="eliminar(${r.idCategoria})">
-                                        <i class="bi bi-trash"></i> Eliminar
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
-                });
-
-                $("#cuadricula_categorias").html(html);
-
-            } catch (e) {
-                console.error("Error Procesando los Datos: ", e);
-            }
-        }
-    });
+    enviaAjax(datos);
 }
 
 function nuevo() {
-    $("#f")[0].reset();
-    $("#idCategoria").val("");
+    limpia();
     $("#accion").val("incluir");
     $("#modal_categoria_label").text("Nueva Categoría");
     $("#btn_guardar").text("Guardar Categoría");
-    $("#modal_categoria").modal("show");
+    
+    const modalElement = document.getElementById('modal_categoria');
+    const miModal = bootstrap.Modal.getOrCreateInstance(modalElement);
+    miModal.show();
 }
 
-function editar(id) {
-    let datos = new FormData();
-    datos.append('accion', 'consultar_id'); 
-    datos.append('idCategoria', id);
-
-    $.ajax({
-        url: '',
-        type: 'POST',
-        data: datos,
-        processData: false,
-        contentType: false,
-        success: function (respuesta) {
-            try {
-                let data = JSON.parse(respuesta);
-
-                if (data.resultado === 'encontro') {
-                    $("#idCategoria").val(data.idCategoria);
-                    $("#nombre").val(data.nombre);
-                    $("#descripcion").val(data.descripcion);
-                    $("#foto").val(data.foto);
-
-                    $("#accion").val("modificar");
-                    $("#modal_categoria_label").text("Editar Categoría");
-                    $("#btn_guardar").text("Modificar Categoría");
-                    $("#modal_categoria").modal("show");
-                } else {
-                    alert("No se Encontró la Categoría");
-                }
-            } catch (e) {
-                console.error("Error al obtener la categoría: ", e);
-            }
-        }
-    });
+function validarenvio() {
+    if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{3,30}$/, $("#nombre"), $("#snombre"), "Nombre inválido") == 0) {
+        muestraMensaje("Verifique el Nombre de la Categoría");
+        return false;
+    }
+    if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{5,150}$/, $("#descripcion"), $("#sdescripcion"), "Descripción inválida") == 0) {
+        muestraMensaje("Verifique la Descripción");
+        return false;
+    }
+    return true;
 }
 
-function eliminar(id) {
-    if (confirm("¿Estás Seguro de Eliminar esta Categoría?")) {
-        let datos = new FormData();
-        datos.append('accion', 'eliminar');
-        datos.append('idCategoria', id);
+function muestraMensaje(mensaje) {
+    alert(mensaje);
+}
 
-        $.ajax({
-            url: '',
-            type: 'POST',
-            data: datos,
-            processData: false,
-            contentType: false,
-            success: function (respuesta) {
-                alert(respuesta);
-                consultar();
-            }
-        });
+function validarkeypress(er, e) {
+    let key = e.keyCode || e.which;
+    let tecla = String.fromCharCode(key);
+    if (!er.test(tecla) && key != 8) e.preventDefault();
+}
+
+function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
+    if (er.test(etiqueta.val())) {
+        etiqueta.css("border-color", "green");
+        return 1;
+    } else {
+        etiqueta.css("border-color", "red");
+        return 0;
     }
 }
 
-function enviar() {
-    let datos = new FormData($("#f")[0]);
+function pone(id, nombre, descripcion, foto, accion) {
+    if (accion == 0) { // MODIFICAR
+        $("#accion").val("modificar");
+        $("#idCategoria").val(id);
+        $("#nombre").val(nombre);
+        $("#descripcion").val(descripcion);
+        $("#foto").val(foto);
 
+        $("#modal_categoria_label").text("Editar Categoría");
+        $("#btn_guardar").text("Modificar Categoría");
+
+        const modalElement = document.getElementById('modal_categoria');
+        const miModal = bootstrap.Modal.getOrCreateInstance(modalElement);
+        miModal.show();
+    } else {
+        if (confirm("¿Estás seguro de eliminar esta categoría?")) {
+            var datos = new FormData();
+            datos.append('accion', 'eliminar');
+            datos.append('idCategoria', id);
+            enviaAjax(datos);
+        }
+    }
+}
+
+function enviaAjax(datos) {
     $.ajax({
-        url: '',
-        type: 'POST',
+        url: "?pagina=categorias",
+        type: "POST",
+        contentType: false,
         data: datos,
         processData: false,
-        contentType: false,
+        cache: false,
         success: function (respuesta) {
-            alert(respuesta);
-            $("#modal_categoria").modal("hide");
-            consultar();
+            try {
+                var lee = JSON.parse(respuesta);
+
+                if (lee.resultado == "consultar") {
+                    $("#cuadricula_categorias").html(lee.mensaje);
+                }
+                else {
+                    muestraMensaje(lee.mensaje);
+                    if (lee.resultado !== "error") {
+                        const modalElement = document.getElementById('modal_categoria');
+                        const miModal = bootstrap.Modal.getOrCreateInstance(modalElement);
+                        miModal.hide();
+                        consultar();
+                    }
+                }
+            } catch (e) {
+                console.error("Error al procesar respuesta:", respuesta);
+            }
+        },
+        error: function () {
+            console.error("Error de conexión con el servidor");
         }
     });
+}
+
+function limpia() {
+    $("#f")[0].reset();
+    $("#idCategoria").val("");
+    $("#nombre, #descripcion, #foto").css("border-color", "");
 }
