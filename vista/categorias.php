@@ -9,7 +9,7 @@
         <main class="main-content w-100 p-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h2 class="text-dashboard">Categorías</h2>
+                    <h2 class="text-dashboard"><i class="bi bi-tags"></i> Categorías</h2>
                     <p class="text-muted">Gestiona las Categorías de tus Productos</p>
                 </div>
                 <button class="btn btn-crear d-flex align-items-center gap-2" onclick="nuevo()">
