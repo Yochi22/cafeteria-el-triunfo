@@ -2,7 +2,7 @@
 require_once('modelo/metodos_pago.php');
 
 if (!is_file("modelo/" . $pagina . ".php")) {
-    echo "Falta Definir la Clase " . $pagina;
+    echo "Falta Definir la Clase" . $pagina;
     exit;
 }
 
@@ -14,7 +14,7 @@ if (is_file("vista/" . $pagina . ".php")) {
 
         switch ($accion) {
             case 'consultar':
-                echo $o->consultar();
+                echo json_encode($o->consultar());
                 break;
                 
             case 'incluir':
@@ -22,7 +22,7 @@ if (is_file("vista/" . $pagina . ".php")) {
                 $o->set_cedulaTitular($_POST['cedulaTitular']);
                 $o->set_telefono($_POST['telefono']);
                 $o->set_cuenta($_POST['cuenta']);
-                echo $o->incluir();
+                echo json_encode($o->incluir());
                 break;
                 
             case 'modificar':
@@ -31,17 +31,17 @@ if (is_file("vista/" . $pagina . ".php")) {
                 $o->set_cedulaTitular($_POST['cedulaTitular']);
                 $o->set_telefono($_POST['telefono']);
                 $o->set_cuenta($_POST['cuenta']);
-                echo $o->modificar();
+                echo json_encode($o->modificar());
                 break;
                 
             case 'eliminar':
                 $o->set_idMetodo($_POST['idMetodo']);
-                echo $o->eliminar();
+                echo json_encode($o->eliminar());
                 break;
 
             case 'consultar_id':
                 $o->set_idMetodo($_POST['idMetodo']);
-                echo $o->consultar_id();
+                echo json_encode($o->consultar_id());
                 break;
         }
         exit;

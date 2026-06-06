@@ -36,14 +36,6 @@
                     <tbody id="listaMetodospago" class="text-center">
                     </tbody>
                 </table>
-
-                <div class="d-flex justify-content-between align-items-center mt-4">
-                    <div id="paginas" class="text-muted">Pagina 1 de 5</div>
-                    <div class="d-flex gap-4">
-                        <button class="btn btn-link text-decoration-none text-muted"><i class="bi bi-arrow-left-circle"></i> Anterior</button>
-                        <button class="btn btn-link text-decoration-none text-muted">Siguiente <i class="bi bi-arrow-right-circle"></i></button>
-                    </div>
-                </div>
             </div>
 
 <!-- seccion del modal -->
@@ -59,28 +51,32 @@
         <input type="hidden" id="idMetodoPago" name="idMetodoPago">
         <input type="hidden" id="accion" name="accion">
 
-        <div class="mb-3">
-        <label for="nombreBanco" class="form-label text-muted small">Nombre del Banco</label>
-        <input type="text" class="form-control rounded-3" id="nombreBanco" name="nombreBanco" required>
-        </div>
-
                 <div class="mb-3">
-                    <label for="cedulaTitular" class="form-label text-muted small">Cédula del Titular</label>
-                    <input type="text" class="form-control rounded-3" id="cedulaTitular" name="cedulaTitular" required>
+                <label for="nombreBanco" class="form-label text-muted small">Nombre del Banco</label>
+                <input type="text" class="form-control rounded-3" id="nombreBanco" name="nombreBanco" required>
+                <span id="snombreBanco"></span>
                 </div>
 
                 <div class="mb-3">
-                    <label for="telefono" class="form-label text-muted small">Teléfono</label>
-                    <input type="text" class="form-control rounded-3" id="telefono" name="telefono" required>
+                <label for="cedulaTitular" class="form-label text-muted small">Cédula del Titular</label>
+                <input type="text" class="form-control rounded-3" id="cedulaTitular" name="cedulaTitular" required>
+                <span id="scedulaTitular"></span>
                 </div>
 
                 <div class="mb-3">
-                    <label for="cuenta" class="form-label text-muted small">Número de Cuenta</label>
-                    <input type="text" class="form-control rounded-3" id="cuenta" name="cuenta" required>
+                <label for="telefono" class="form-label text-muted small">Teléfono</label>
+                <input type="text" class="form-control rounded-3" id="telefono" name="telefono" required>
+                <span id="stelefono"></span>
+                </div>
+
+                <div class="mb-3">
+                <label for="cuenta" class="form-label text-muted small">Num. Cuenta</label>
+                <input type="text" class="form-control rounded-3" id="cuenta" name="cuenta" required>
+                <span id="scuenta"></span>
                 </div>
 
                 <div class="d-grid mt-4">
-                    <button type="submit" class="btn btn-crear w-100 mt-3" id="btnGuardar">Guardar Método de Pago</button>
+                <button type="button" class="btn btn-crear w-100 mt-3" id="btnGuardar">Guardar Metodo de Pago</button>
                 </div>
                 </form>
                 </div>
