@@ -26,15 +26,18 @@ class categorias extends datos
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         try {
-            $resultado = $co->query("SELECT * FROM categorias WHERE idCategoria='$idCategoria' AND estado=1");
-            $fila = $resultado->fetchAll(PDO::FETCH_BOTH);
+            $st = $co->prepare("SELECT idCategoria FROM categorias WHERE idCategoria = :idCategoria AND estado = 1");
+            $st->bindParam(':idCategoria', $idCategoria);
+            $st->execute();
+            
+            $fila = $st->fetch(PDO::FETCH_ASSOC);
             return $fila ? true : false;
         } catch (Exception $e) {
             return false;
         }
     }
 
-function incluir()
+    function incluir()
     {
         $r = array();
         $co = $this->conecta();

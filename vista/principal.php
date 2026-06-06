@@ -1,5 +1,7 @@
 <!DOCTYPE html>
+
 <html lang="es">
+
 <?php require_once("comunes/encabezado.php"); ?>
 
 <body>

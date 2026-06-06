@@ -1,5 +1,7 @@
 <!DOCTYPE html>
+
 <html lang="es">
+
 <?php require_once("comunes/encabezado.php"); ?>
 
 <body>
@@ -9,7 +11,7 @@
 
         <main class="main-content w-100 p-4">
 
-            <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <div class="d-flex justify-content-between align-items-center mb-4 gap-2">
                 <div class="d-flex align-items-center">
                     <button class="btn btn-outline-dark d-md-none me-3 border-0"
                         id="btn-toggle-sidebar"

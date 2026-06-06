@@ -50,6 +50,6 @@ if (is_file("vista/" . $pagina . ".php")) {
     
     require_once("vista/" . $pagina . ".php");
 } else {
-    echo "Página en Construcción";
+    echo "PÁGINA EN CONSTRUCCIÓN";
 }
 ?>
