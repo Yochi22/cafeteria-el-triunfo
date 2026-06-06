@@ -159,13 +159,14 @@ function incluir()
                     $id = $fila['idCategoria'];
 
                     $respuesta .= '
-                    <div class="col-md-4 mb-4">
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-4">
                         <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
                             <img src="'.$foto.'" class="card-img-top" style="height:180px; object-fit:cover;">
-                            <div class="card-body">
+                            <div class="card-body d-flex flex-column">
                                 <h5 class="text-dashboard fw-bold mb-1">'.$fila['nombre'].'</h5>
                                 <p class="text-muted small mb-3">'.$fila['descripcion'].'</p>
-                                <div class="d-flex justify-content-end gap-2">
+
+                                <div class="d-flex justify-content-end gap-2 mt-auto">
                                     <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="pone('.$id.', \''.$nombre_js.'\', \''.$desc_js.'\', \''.$foto_js.'\', 0)">
                                         <i class="bi bi-pencil-square"></i> Editar
                                     </button>

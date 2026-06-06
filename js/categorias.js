@@ -2,7 +2,7 @@ $(document).ready(function () {
     try {
         consultar();
     } catch (e) {
-        console.error("Error en carga inicial:", e);
+        console.error(e);
     }
 
     $("#nombre, #descripcion").on("keypress", function (e) {
@@ -10,18 +10,16 @@ $(document).ready(function () {
     });
 
     $("#nombre").on("keyup", function () {
-        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{3,30}$/, $(this), $("#snombre"), "Nombre inválido");
+        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{3,30}$/, $(this), $("#snombre"), "");
     });
 
     $("#descripcion").on("keyup", function () {
-        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{5,150}$/, $(this), $("#sdescripcion"), "Descripción inválida");
+        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{5,150}$/, $(this), $("#sdescripcion"), "");
     });
 
     $("#f").on("submit", function (e) {
         e.preventDefault();
-        
-        let accion = $("#accion").val(); 
-
+        let accion = $("#accion").val();
         if (accion == "incluir" || accion == "modificar") {
             if (validarenvio()) {
                 var datos = new FormData(this);
@@ -42,18 +40,17 @@ function nuevo() {
     $("#accion").val("incluir");
     $("#modal_categoria_label").text("Nueva Categoría");
     $("#btn_guardar").text("Guardar Categoría");
-    
     const modalElement = document.getElementById('modal_categoria');
     const miModal = bootstrap.Modal.getOrCreateInstance(modalElement);
     miModal.show();
 }
 
 function validarenvio() {
-    if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{3,30}$/, $("#nombre"), $("#snombre"), "Nombre inválido") == 0) {
+    if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{3,30}$/, $("#nombre"), $("#snombre"), "") == 0) {
         muestraMensaje("Verifique el Nombre de la Categoría");
         return false;
     }
-    if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{5,150}$/, $("#descripcion"), $("#sdescripcion"), "Descripción inválida") == 0) {
+    if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{5,150}$/, $("#descripcion"), $("#sdescripcion"), "") == 0) {
         muestraMensaje("Verifique la Descripción");
         return false;
     }
@@ -81,16 +78,14 @@ function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
 }
 
 function pone(id, nombre, descripcion, foto, accion) {
-    if (accion == 0) { // MODIFICAR
+    if (accion == 0) {
         $("#accion").val("modificar");
         $("#idCategoria").val(id);
         $("#nombre").val(nombre);
         $("#descripcion").val(descripcion);
         $("#foto").val(foto);
-
         $("#modal_categoria_label").text("Editar Categoría");
         $("#btn_guardar").text("Modificar Categoría");
-
         const modalElement = document.getElementById('modal_categoria');
         const miModal = bootstrap.Modal.getOrCreateInstance(modalElement);
         miModal.show();
@@ -115,11 +110,9 @@ function enviaAjax(datos) {
         success: function (respuesta) {
             try {
                 var lee = JSON.parse(respuesta);
-
                 if (lee.resultado == "consultar") {
                     $("#cuadricula_categorias").html(lee.mensaje);
-                }
-                else {
+                } else {
                     muestraMensaje(lee.mensaje);
                     if (lee.resultado !== "error") {
                         const modalElement = document.getElementById('modal_categoria');
@@ -129,12 +122,10 @@ function enviaAjax(datos) {
                     }
                 }
             } catch (e) {
-                console.error("Error al procesar respuesta:", respuesta);
+                console.error(respuesta);
             }
         },
-        error: function () {
-            console.error("Error de conexión con el servidor");
-        }
+        error: function () { }
     });
 }
 
