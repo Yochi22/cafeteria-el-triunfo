@@ -2,13 +2,27 @@
 <html lang="es">
     <?php require_once("comunes/encabezado.php"); ?>
 <body>
-    <div>
+    <div class="d-flex min-vh-100 position-relative">
+
         <?php require_once("comunes/sidebar.php"); ?>
 
         <!-- Encabezado de bienvenida -->
-        <main class="main-content">
-            <h2 class="text-dashboard"><i class="bi bi-file-person"></i> Clientes</h2>
-            <p class="text-muted">Bienvenido al apartado de Clientes de la Cafeteria El Triunfo!</p>
+        <main class="main-content w-100 p-4">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-outline-dark d-md-none me-3 border-0"
+                    id="btn-toggle-sidebar"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#sidebarMenu"
+                    aria-controls="sidebarMenu"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <i class="bi bi-list" style="font-size: 2rem;"></i>
+                </button>
+                <div>
+                    <h2 class="text-dashboard"><i class="bi bi-file-person"></i> Clientes</h2>
+                    <p class="text-muted">Bienvenido al apartado de Clientes de la Cafeteria El Triunfo!</p>
+                </div>
+            </div>
 
             <div class="row">
                 <div class="col">
@@ -19,12 +33,13 @@
             <!-- boton para registrar -->
             <div class="col-12 d-flex justify-content-end mb-3">
                 <button type="button" id="incluir" class="btn text-white rounded fw-bold py-2 px-4" style="background-color: #FF8C00;" data-bs-toggle="modal" data-bs-target="#modal_cliente">
-                Añadir Cliente </button>
+                    <i class="bi bi-plus-circle fs-4"></i> Agregar Cliente 
+                </button>
                 
                 <div class="col-md-4 ms-3">
                     <div class="input-group bg-white border rounded px-3 py-2">
-                        <span class="input-group-text bg-transparent border-0"><i class="bi bi-search"></i></span>
-                        <input type="text" id="buscarVenta" name="buscarVenta" class="form-control border-0" placeholder="Buscar Cliente">
+                        <button class="btn btn-outline-secondary border-0" type="button" id="btnBuscar"><i class="bi bi-search"></i></button>
+                        <input type="text" id="buscar" name="buscar" class="form-control border-0" placeholder="Buscar Cliente">
                     </div>
                 </div>
             </div>

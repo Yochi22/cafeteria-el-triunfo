@@ -38,6 +38,10 @@ if(is_file("vista/".$pagina.".php")){
                 $o->set_dirCliente($_POST['dirCliente']);
                 echo json_encode($o->modificar());
                 break;
+            case 'buscar':
+                $valor = isset($_POST['valorBusqueda']) ? $_POST['valorBusqueda'] : '';
+                echo json_encode($o->buscar($valor));
+                break;
         }
         exit();
     }

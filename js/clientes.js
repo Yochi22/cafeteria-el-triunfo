@@ -91,6 +91,20 @@ $(document).ready(function(){
                 enviaAjax(datos);
             }
         }
+
+        // BOTON BUSCAR
+        function buscar(){
+            var valor = $("#buscar").val();
+
+            if(valor.length > 0){
+                var datos = new FormData();
+                datos.append('accion', 'buscar');
+                datos.append('buscar', valor);
+                enviaAjax();
+            } else {
+                consultar();
+            }
+        }
     });
 
     $("#incluir").on("click", function(){
@@ -219,6 +233,8 @@ function enviaAjax(datos){
                     }
                 } else if(lee.resultado == "error"){
                     mostrarMensaje(lee.mensaje);
+                } else if(lee.resultado == 'buscar'){
+                    $('#modal_clientes').html(lee.mensaje);
                 }
             } catch(e){
                 alert("Error en JSON" + e.name);

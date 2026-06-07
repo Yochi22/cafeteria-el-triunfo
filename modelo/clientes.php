@@ -130,14 +130,14 @@ class clientes extends datos{
                     $respuesta .= "<td>" . $fila['tlfCliente'] . "</td>";
                     $respuesta .= "<td>" . $fila['dirCliente'] . "</td>";
                     $respuesta .= "<td>";
-                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width me-1' style='background-color: #FF8C00;' onclick='pone(this,0)'><i class='bi bi-pencil-square'></i> Modificar</button>";
-                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width ms-1' style='background-color: #FF8C00;' onclick='pone(this,1)'><i class='bi bi-trash-fill'></i> Eliminar</button>";
+                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='pone(this,0)'><i class='bi bi-pencil-square'></i> Modificar</button>";
+                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='pone(this,1)'><i class='bi bi-trash-fill'></i> Eliminar</button>";
                     $respuesta .= "</td>";
                     $respuesta .= "</tr>";
                 }
                 $r['resultado'] = 'consultar';
                 $r['mensaje'] = $respuesta;
-            } else{
+            } else {
                 $r['resultado'] = 'consultar';
                 $r['mensaje'] = '';
             }
@@ -165,6 +165,39 @@ class clientes extends datos{
         } catch(Exception $e){
             return false;
         }
+    }
+
+    function buscar($valor){
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $valor = trim($valor);
+        $busqueda = "%" . $valor . "%";
+        $r = array();
+        try{
+            if($busqueda){
+                $bus = $co->prepare("SELECT cedulaCliente, nombreCliente, apellidoCliente, tlfCliente, dirCliente 
+                                    FROM clientes
+                                    WHERE cedulaCliente LIKE :busqueda
+                                    (OR) nombreCliente LIKE :busqueda
+                                    (OR) apellidoCliente LIKE :busqueda
+                                    (OR) tlfCliente LIKE :busqueda
+                                    (OR) dirCliente LIKE :busqueda AND estado = 1");
+                
+                $bus->bindParam(':busqueda', $busqueda);
+                $bus->execute();
+                $bus->fetchAll();
+
+                $r['resultado'] = 'buscar';
+                $r['mensaje'] = $busqueda;
+            } else {
+                $r['resultado'] = 'consultar';
+                $r['mensaje'] = '';
+            }
+        } catch(Exception $e) {
+            $r['resultado'] = 'error';
+            $r['mensaje'] = $e->getMessage();
+        }
+        return $r;
     }
 
 }
