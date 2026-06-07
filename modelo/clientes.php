@@ -102,7 +102,7 @@ class clientes extends datos{
                 $eli->execute();
 
                 $r['resultado'] = 'eliminar';
-                $r['mensaje'] = 'Cliente Eliminmado';
+                $r['mensaje'] = 'Cliente Eliminado';
             } catch(Exception $e) {
                 $r['resultado'] = 'error';
                 $r['mensaje'] = $e->getMessage();
@@ -130,11 +130,21 @@ class clientes extends datos{
                     $respuesta .= "<td>" . $fila['tlfCliente'] . "</td>";
                     $respuesta .= "<td>" . $fila['dirCliente'] . "</td>";
                     $respuesta .= "<td>";
-                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='pone(this,0)'><i class='bi bi-pencil-square'></i> Modificar</button>";
-                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='pone(this,1)'><i class='bi bi-trash-fill'></i> Eliminar</button>";
+                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='pone(this)'><i class='bi bi-pencil-square'></i> Modificar</button>";
+                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i> Eliminar</button>";
                     $respuesta .= "</td>";
                     $respuesta .= "</tr>";
                 }
+
+                if($respuesta == ""){
+                    $respuesta .= "<tr>";
+                    $respuesta .= "<td colspan = '5' class='text-center text-muted py-4>'";
+                    $respuesta .= "<span><i class='bi bi-person-fill fs-1' style='color: #FF8C00'></i></span>";
+                    $respuesta .= "<h5 class= 'text-dashboard'> No tienes Cientes Registrados </h5>";
+                    $respuesta .= "</td>";
+                    $respuesta .= "</tr>";
+                }
+
                 $r['resultado'] = 'consultar';
                 $r['mensaje'] = $respuesta;
             } else {
@@ -167,6 +177,7 @@ class clientes extends datos{
         }
     }
 
+    // funcion para buscar
     function buscar($valor){
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -177,18 +188,42 @@ class clientes extends datos{
             if($busqueda){
                 $bus = $co->prepare("SELECT cedulaCliente, nombreCliente, apellidoCliente, tlfCliente, dirCliente 
                                     FROM clientes
-                                    WHERE cedulaCliente LIKE :busqueda
-                                    (OR) nombreCliente LIKE :busqueda
-                                    (OR) apellidoCliente LIKE :busqueda
-                                    (OR) tlfCliente LIKE :busqueda
-                                    (OR) dirCliente LIKE :busqueda AND estado = 1");
+                                    WHERE (cedulaCliente LIKE :busqueda
+                                    OR nombreCliente LIKE :busqueda
+                                    OR apellidoCliente LIKE :busqueda
+                                    OR tlfCliente LIKE :busqueda
+                                    OR dirCliente LIKE :busqueda) 
+                                    AND estado = 1");
                 
                 $bus->bindParam(':busqueda', $busqueda);
                 $bus->execute();
-                $bus->fetchAll();
+                $resultado = $bus->fetchAll();
+                
+                $respuesta = "";
+                foreach($resultado as $fila){
+                    $respuesta .= "<tr>";
+                    $respuesta .= "<td>" . $fila['cedulaCliente'] . "</td>";
+                    $respuesta .= "<td>" . $fila['nombreCliente'] ." ". $fila['apellidoCliente'] . "</td>";
+                    $respuesta .= "<td>" . $fila['tlfCliente'] . "</td>";
+                    $respuesta .= "<td>" . $fila['dirCliente'] . "</td>";
+                    $respuesta .= "<td>";
+                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='pone(this)'><i class='bi bi-pencil-square'></i> Modificar</button>";
+                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i> Eliminar</button>";
+                    $respuesta .= "</td>";
+                    $respuesta .= "</tr>";
+                }
+                if($respuesta == ""){
+                    $respuesta .= "<tr>";
+                    $respuesta .= "<td colspan = '5' class='text-center text-muted py-4>'";
+                    $respuesta .= "<span><i class='bi bi-person-fill-slash fs-1' style='color : #FF8C00'></i></i></span>";
+                    $respuesta .= "<h5 class= 'text-dashboard'> No se Encuentran Registros </h5>";
+                    $respuesta .= "<h6 class= 'text-dashboard'> Intenta de Nuevo </h6>";
+                    $respuesta .= "</td>";
+                    $respuesta .= "</tr>";
+                }
 
                 $r['resultado'] = 'buscar';
-                $r['mensaje'] = $busqueda;
+                $r['mensaje'] = $respuesta;
             } else {
                 $r['resultado'] = 'consultar';
                 $r['mensaje'] = '';

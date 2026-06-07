@@ -9,7 +9,7 @@ $(document).ready(function(){
 
     consultar();
 
-    // Validacion de Datos
+    // VALIDACION DE DATOS
     // -- validacion de cedula --
     $("#cedulaCliente").on("keypress",function(e){
         validarkeypress(/^[0-9-\.]*$/,e);
@@ -91,20 +91,38 @@ $(document).ready(function(){
                 enviaAjax(datos);
             }
         }
+    });
 
-        // BOTON BUSCAR
-        function buscar(){
-            var valor = $("#buscar").val();
+    //BOTON BUSCAR
+    function ejecutarBusqueda() {
+        var valor = $("#valorBusqueda").val();
 
-            if(valor.length > 0){
-                var datos = new FormData();
-                datos.append('accion', 'buscar');
-                datos.append('buscar', valor);
-                enviaAjax();
-            } else {
-                consultar();
-            }
+        if (valor.trim().length > 0) {
+            var datos = new FormData();
+            datos.append('accion', 'buscar');
+            datos.append('valorBusqueda', valor);
+            enviaAjax(datos);
+        } else {
+            consultar();
         }
+    }
+
+    $("#valorBusqueda").on("keyup", function() {
+        ejecutarBusqueda();
+    });
+
+    $("#btnBuscar").on("click", function() {
+        ejecutarBusqueda();
+    });
+
+    // BOTON CONFIRMCAR ELIMINACION DE CLIENTE
+    $("#btnEliminar").on("click", function(){
+        var cedulaEliminada = $("#cedulaEliminar").val();
+
+        var datos = new FormData();
+        datos.append('accion', 'eliminar');
+        datos.append('cedulaCliente', cedulaEliminada);
+        enviaAjax(datos);
     });
 
     $("#incluir").on("click", function(){
@@ -174,7 +192,7 @@ function validarkeyup(er,etiqueta,etiquetamensaje,mensaje){
 }
 
 //funcion para llenar el formulario con los datos del cliente
-function pone(pos, accion){
+function pone(pos){
     linea = $(pos).closest('tr');
 
     var nombreCompleto = $(linea).find("td:eq(1)").text();
@@ -185,18 +203,23 @@ function pone(pos, accion){
     $("#apellidoCliente").val(nombreSeparado[1]);
     $("#tlfCliente").val($(linea).find("td:eq(2)").text());
     $("#dirCliente").val($(linea).find("td:eq(3)").text());
-    if(accion == 0){
-        $("#btnGuardar").text('modificar');
-    } else {
-        $("#btnGuardar").text('eliminar');
-    }
+    $("#btnGuardar").text('modificar');
     $("#modal_cliente").modal("show");
 }
+
+function eliminar(pos){
+    var linea = $(pos).closest('tr');
+    var cedula = $(linea).find("td:eq(0)").text();
+
+    $("#cedulaEliminar").val(cedula);
+    $("#modal_eliminar").modal("show");
+}
+
 
 function enviaAjax(datos){
     $.ajax({
         async: true,
-        url: "",
+        url: "index.php?pagina=clientes",
         type: "POST",
         contentType: false,
         data: datos,
@@ -228,13 +251,15 @@ function enviaAjax(datos){
                 else if(lee.resultado == 'eliminar'){
                     mostrarMensaje(lee.mensaje);
                     if(lee.mensaje == 'Cliente Eliminado'){
-                        $("#modal_cliente").modal("hide");
+                        $("#modal_eliminar").modal("hide");
                         consultar();
                     }
-                } else if(lee.resultado == "error"){
+                } 
+                else if(lee.resultado == 'buscar'){
+                    $('#listaClientes').html(lee.mensaje);
+                }
+                else if(lee.resultado == "error"){
                     mostrarMensaje(lee.mensaje);
-                } else if(lee.resultado == 'buscar'){
-                    $('#modal_clientes').html(lee.mensaje);
                 }
             } catch(e){
                 alert("Error en JSON" + e.name);

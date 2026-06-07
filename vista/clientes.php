@@ -3,12 +3,12 @@
     <?php require_once("comunes/encabezado.php"); ?>
 <body>
     <div class="d-flex min-vh-100 position-relative">
-
         <?php require_once("comunes/sidebar.php"); ?>
 
-        <!-- Encabezado de bienvenida -->
         <main class="main-content w-100 p-4">
+            
             <div class="d-flex align-items-center">
+                <!-- menu hamburguesa -->
                 <button class="btn btn-outline-dark d-md-none me-3 border-0"
                     id="btn-toggle-sidebar"
                     data-bs-toggle="collapse"
@@ -18,6 +18,8 @@
                     aria-label="Toggle navigation">
                     <i class="bi bi-list" style="font-size: 2rem;"></i>
                 </button>
+
+                <!-- Encabezado de bienvenida -->
                 <div>
                     <h2 class="text-dashboard"><i class="bi bi-file-person"></i> Clientes</h2>
                     <p class="text-muted">Bienvenido al apartado de Clientes de la Cafeteria El Triunfo!</p>
@@ -30,18 +32,24 @@
                 </div>
             </div>
             
-            <!-- boton para registrar -->
+            
             <div class="col-12 d-flex justify-content-end mb-3">
+
+                <!-- boton para registrar -->
                 <button type="button" id="incluir" class="btn text-white rounded fw-bold py-2 px-4" style="background-color: #FF8C00;" data-bs-toggle="modal" data-bs-target="#modal_cliente">
-                    <i class="bi bi-plus-circle fs-4"></i> Agregar Cliente 
+                    <i class="bi bi-plus-circle fs-5"></i> Agregar Cliente 
                 </button>
-                
+
+                <!-- boton de busqueda -->    
                 <div class="col-md-4 ms-3">
-                    <div class="input-group bg-white border rounded px-3 py-2">
-                        <button class="btn btn-outline-secondary border-0" type="button" id="btnBuscar"><i class="bi bi-search"></i></button>
-                        <input type="text" id="buscar" name="buscar" class="form-control border-0" placeholder="Buscar Cliente">
+                    <div class="input-group bg-white border rounded-3 px-2 py-2 align-items-center">
+                        <button class="btn p-0 border-0 link-secondary" type="button" id="btnBuscar">
+                            <i class="bi bi-search fs-5"></i>
+                        </button>
+                        <input type="text" id="valorBusqueda" name="valorBusqueda" class="form-control border-0 py-0 py-2 shadow-none" placeholder="Buscar Cliente">
                     </div>
                 </div>
+
             </div>
 
             <!-- lista de Clientes -->
@@ -115,6 +123,9 @@
                 </div>
             </div>
             <!--fin de seccion modal-->
+
+            <!-- Llamada del modal de confirmacion se eliminacion -->
+            <?php require_once("comunes/modal_eliminar.php"); ?>
             <!--Llamada a archivo modal.php, dentro de el hay una sección modal-->
             <?php require_once("comunes/modal.php"); ?>
         </div>
