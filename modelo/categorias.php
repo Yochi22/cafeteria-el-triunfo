@@ -60,7 +60,7 @@ class categorias extends datos
                     $m->execute();
                     
                     $r['resultado'] = 'incluir';
-                    $r['mensaje'] = 'Registro Incluido.';
+                    $r['mensaje'] = 'Registro Incluido';
                 }
             } else {
                 $m = $co->prepare("INSERT INTO categorias(nombre, descripcion, foto) VALUES(:nombre, :descripcion, :foto)");
