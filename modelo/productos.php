@@ -11,21 +11,48 @@ class productos extends datos
     private $idCategoria;
     private $estado;
 
-    function set_idProducto($valor) { $this->idProducto = $valor; }
-    function set_nombre($valor) { $this->nombre = $valor; }
-    function set_precio($valor) { $this->precio = $valor; }
-    function set_descripcion($valor) { $this->descripcion = $valor; }
-    function set_foto($valor) { $this->foto = $valor; }
-    function set_idCategoria($valor) { $this->idCategoria = $valor; }
-    function set_estado($valor) { $this->estado = $valor; }
+    function set_idProducto($valor) { 
+        $this->idProducto = $valor; 
+    }
+    function set_nombre($valor) { 
+        $this->nombre = $valor; 
+    }
+    function set_precio($valor) { 
+        $this->precio = $valor; 
+    }
+    function set_descripcion($valor) { 
+        $this->descripcion = $valor; 
+    }
+    function set_foto($valor) {
+     $this->foto = $valor; 
+   }
+    function set_idCategoria($valor) { 
+        $this->idCategoria = $valor; 
+    }
+    function set_estado($valor) { 
+        $this->estado = $valor; 
+    }
 
-    function get_idProducto() { return $this->idProducto; }
-    function get_nombre() { return $this->nombre; }
-    function get_precio() { return $this->precio; }
-    function get_descripcion() { return $this->descripcion; }
-    function get_foto() { return $this->foto; }
-    function get_idCategoria() { return $this->idCategoria; }
-    function get_estado() { return $this->estado; }
+    function get_idProducto() { 
+        return $this->idProducto; 
+    }
+    function get_nombre() { 
+        return $this->nombre; 
+    }
+    function get_precio() { 
+        return $this->precio; 
+    }
+    function get_descripcion() { 
+        return $this->descripcion; 
+    }
+    function get_foto() { 
+        return $this->foto; 
+    }
+    function get_idCategoria()  { 
+        return $this->idCategoria; 
+    }
+    function get_estado() { return $this->estado; 
+    }
 
     private function existe_id($idProducto)
     {

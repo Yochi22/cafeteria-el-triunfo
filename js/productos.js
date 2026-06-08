@@ -108,7 +108,6 @@ function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
     }
 }
 
-// Función estandarizada para editar/eliminar
 function pone(id, nombre, precio, descripcion, foto, idCategoria, accion) {
     if (accion == 0) {
         $("#accion").val("modificar");
@@ -134,7 +133,6 @@ function pone(id, nombre, precio, descripcion, foto, idCategoria, accion) {
     }
 }
 
-// Único conducto AJAX estandarizado
 function enviaAjax(datos) {
     $.ajax({
         url: "?pagina=productos",
@@ -147,7 +145,6 @@ function enviaAjax(datos) {
             try {
                 var lee = JSON.parse(respuesta);
                 
-                // Manejamos las vistas
                 if (lee.resultado == "listar_categorias" || lee.resultado == "listar_productos") {
                     $("#cuadricula_items").html(lee.mensaje);
                 } 
