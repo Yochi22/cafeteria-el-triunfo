@@ -11,48 +11,21 @@ class productos extends datos
     private $idCategoria;
     private $estado;
 
-    function set_idProducto($valor) { 
-        $this->idProducto = $valor; 
-    }
-    function set_nombre($valor) { 
-        $this->nombre = $valor; 
-    }
-    function set_precio($valor) { 
-        $this->precio = $valor; 
-    }
-    function set_descripcion($valor) { 
-        $this->descripcion = $valor; 
-    }
-    function set_foto($valor) {
-     $this->foto = $valor; 
-   }
-    function set_idCategoria($valor) { 
-        $this->idCategoria = $valor; 
-    }
-    function set_estado($valor) { 
-        $this->estado = $valor; 
-    }
+    function set_idProducto($valor) { $this->idProducto = $valor; }
+    function set_nombre($valor) { $this->nombre = $valor; }
+    function set_precio($valor) { $this->precio = $valor; }
+    function set_descripcion($valor) { $this->descripcion = $valor; }
+    function set_foto($valor) { $this->foto = $valor; }
+    function set_idCategoria($valor) { $this->idCategoria = $valor; }
+    function set_estado($valor) { $this->estado = $valor; }
 
-    function get_idProducto() { 
-        return $this->idProducto; 
-    }
-    function get_nombre() { 
-        return $this->nombre; 
-    }
-    function get_precio() { 
-        return $this->precio; 
-    }
-    function get_descripcion() { 
-        return $this->descripcion; 
-    }
-    function get_foto() { 
-        return $this->foto; 
-    }
-    function get_idCategoria()  { 
-        return $this->idCategoria; 
-    }
-    function get_estado() { return $this->estado; 
-    }
+    function get_idProducto() { return $this->idProducto; }
+    function get_nombre() { return $this->nombre; }
+    function get_precio() { return $this->precio; }
+    function get_descripcion() { return $this->descripcion; }
+    function get_foto() { return $this->foto; }
+    function get_idCategoria()  { return $this->idCategoria; }
+    function get_estado() { return $this->estado; }
 
     private function existe_id($idProducto)
     {
@@ -84,8 +57,8 @@ class productos extends datos
 
             if ($producto_existente) {
                 if ($producto_existente['estado'] == 1) {
-                    $r['resultado'] = 'incluir';
-                    $r['mensaje'] = 'Ya Existe un Producto con ese Nombre y Descripción';
+                    $r['resultado'] = 'error';
+                    $r['mensaje'] = 'Ya existe un producto con ese nombre y descripción.';
                 } else {
                     $m = $co->prepare("UPDATE productos SET precio = :precio, foto = :foto, idCategoria = :idCategoria, estado = 1 WHERE idProducto = :idProducto");
                     $m->bindParam(':idProducto', $producto_existente['idProducto']);
@@ -135,8 +108,8 @@ class productos extends datos
                 $r['resultado'] = 'modificar';
                 $r['mensaje'] = 'Registro Modificado';
             } else {
-                $r['resultado'] = 'modificar';
-                $r['mensaje'] = 'No Existe ese Producto';
+                $r['resultado'] = 'error';
+                $r['mensaje'] = 'Producto no registrado.';
             }
         } catch (Exception $e) {
             $r['resultado'] = 'error';
@@ -159,8 +132,8 @@ class productos extends datos
                 $r['resultado'] = 'eliminar';
                 $r['mensaje'] = 'Registro Eliminado';
             } else {
-                $r['resultado'] = 'eliminar';
-                $r['mensaje'] = 'No Existe ese Producto';
+                $r['resultado'] = 'error';
+                $r['mensaje'] = 'Producto no registrado.';
             }
         } catch (Exception $e) {
             $r['resultado'] = 'error';
@@ -184,7 +157,7 @@ class productos extends datos
                 $r['mensaje'] = $fila;
             } else {
                 $r['resultado'] = 'error';
-                $r['mensaje'] = 'Producto no encontrado';
+                $r['mensaje'] = 'Producto no encontrado.';
             }
         } catch (Exception $e) {
             $r['resultado'] = 'error';

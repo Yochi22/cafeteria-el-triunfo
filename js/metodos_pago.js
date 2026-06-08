@@ -5,6 +5,25 @@ $(document).ready(function () {
         console.error(e);
     }
 
+    $("#nombreBanco").on("keypress", function (e) {
+        validarkeypress(/^[A-Za-z0-9\s\u00f1\u00d1\u00E0-\u00FC]*$/, e);
+    });
+
+    $("#cedulaTitular").on("keypress", function (e) {
+        validarkeypress(/^[VvEeJjGgP0-9-]*$/, e);
+    });
+
+    $("#telefono").on("keypress", function (e) {
+        validarkeypress(/^[0-9\-\+\s]*$/, e);
+    });
+
+    $("#cuenta").on("keypress", function (e) {
+        if (e.key === 'e' || e.key === 'E' || e.key === '+' || e.key === '-') {
+            e.preventDefault();
+        }
+        validarkeypress(/^[0-9]*$/, e);
+    });
+
     $("#nombreBanco").on("keyup", function () {
         validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{3,40}$/, $(this), $("#snombreBanco"), "");
     });
@@ -44,9 +63,7 @@ function nuevo() {
     $("#accion").val("incluir");
     $("#modal_metodo_label").text("Nuevo Método de Pago");
     $("#btn_guardar").text("Guardar");
-    const modalElement = document.getElementById('modal_metodo');
-    const miModal = bootstrap.Modal.getOrCreateInstance(modalElement);
-    miModal.show();
+    $("#modal_metodo").modal("show");
 }
 
 function validarenvio() {
@@ -71,6 +88,14 @@ function validarenvio() {
 
 function muestraMensaje(mensaje) {
     alert(mensaje);
+}
+
+function validarkeypress(er, e) {
+    let key = e.keyCode || e.which;
+    let tecla = String.fromCharCode(key);
+    if (!er.test(tecla) && key != 8 && key != 13) {
+        e.preventDefault();
+    }
 }
 
 function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
@@ -103,9 +128,7 @@ function pone(boton, accion) {
         $("#modal_metodo_label").text("Editar Datos Bancarios");
         $("#btn_guardar").text("Modificar");
         
-        const modalElement = document.getElementById('modal_metodo');
-        const miModal = bootstrap.Modal.getOrCreateInstance(modalElement);
-        miModal.show();
+        $("#modal_metodo").modal("show");
     } else {
         if (confirm("¿Estás seguro de eliminar estos datos bancarios?")) {
             var datos = new FormData();
@@ -118,31 +141,58 @@ function pone(boton, accion) {
 
 function enviaAjax(datos) {
     $.ajax({
-        url: "?pagina=metodos_pago",
+        async: true,
+        url: "index.php?pagina=metodos_pago",
         type: "POST",
         contentType: false,
         data: datos,
         processData: false,
         cache: false,
+        beforeSend: function () {},
+        timeout: 10000,
         success: function (respuesta) {
+            console.log(respuesta);
             try {
                 var lee = JSON.parse(respuesta);
-                if (lee.resultado == "consultar") {
+                
+                if (lee.resultado == 'consultar') {
                     $("#tabla_metodos").html(lee.mensaje);
-                } else {
+                } 
+                else if (lee.resultado == 'incluir') {
                     muestraMensaje(lee.mensaje);
-                    if (lee.resultado !== "error") {
-                        const modalElement = document.getElementById('modal_metodo');
-                        const miModal = bootstrap.Modal.getOrCreateInstance(modalElement);
-                        miModal.hide();
+                    if (lee.mensaje == 'Método Registrado') { 
+                        $("#modal_metodo").modal("hide");
                         consultar();
                     }
+                } 
+                else if (lee.resultado == 'modificar') {
+                    muestraMensaje(lee.mensaje);
+                    if (lee.mensaje == 'Método Modificado') {
+                        $("#modal_metodo").modal("hide");
+                        consultar();
+                    }
+                } 
+                else if (lee.resultado == 'eliminar') {
+                    muestraMensaje(lee.mensaje);
+                    if (lee.mensaje == 'Método Eliminado') {
+                        consultar();
+                    }
+                } 
+                else if (lee.resultado == 'error') {
+                    muestraMensaje(lee.mensaje);
                 }
             } catch (e) {
-                console.error(respuesta);
+                alert("Error en JSON" + e.name);
             }
         },
-        error: function () { }
+        error: function(request, status, err) {
+            if (status == "timeout") {
+                muestraMensaje("Servidor Ocupado, Intente de Nuevo");
+            } else {
+                muestraMensaje("ERROR: <br/>" + request + status + err);
+            }
+        },
+        complete: function () {},
     });
 }
 

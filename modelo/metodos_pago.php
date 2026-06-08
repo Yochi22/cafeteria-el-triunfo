@@ -115,7 +115,7 @@ class metodos_pago extends datos
             }
         } else {
             $r['resultado'] = 'error';
-            $r['mensaje'] =  'Registro no encontrado';
+            $r['mensaje'] =  'Método de pago no registrado.';
         }
         return $r;
     }
@@ -140,7 +140,7 @@ class metodos_pago extends datos
             }
         } else {
             $r['resultado'] = 'error';
-            $r['mensaje'] = 'Registro no encontrado';
+            $r['mensaje'] = 'Método de pago no registrado.';
         }
         return $r;
     }
@@ -156,7 +156,7 @@ class metodos_pago extends datos
                 $respuesta = '';
                 foreach ($resultado as $fila) {
                     $respuesta .= "<tr>";
-                    $respuesta .= "<td style='display:none;'>" . $fila['idMetodo'] . "</td>"; // ID oculto
+                    $respuesta .= "<td style='display:none;'>" . $fila['idMetodo'] . "</td>";
                     $respuesta .= "<td>" . $fila['nombreBanco'] . "</td>";
                     $respuesta .= "<td>" . $fila['cedulaTitular'] ."</td>";
                     $respuesta .= "<td>" . $fila['telefono'] . "</td>";

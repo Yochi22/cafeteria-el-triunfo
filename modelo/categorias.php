@@ -50,8 +50,7 @@ class categorias extends datos
 
             if ($categoria_existente) {
                 if ($categoria_existente['estado'] == 1) {
-                    $r['resultado'] = 'incluir';
-                    $r['mensaje'] = 'Ya Existe una Categoría con ese Nombre.';
+                    $r['mensaje'] = 'Ya existe una categoría con ese nombre.';
                 } else {
                     $m = $co->prepare("UPDATE categorias SET descripcion = :descripcion, foto = :foto, estado = 1 WHERE idCategoria = :idCategoria");
                     $m->bindParam(':idCategoria', $categoria_existente['idCategoria']);
@@ -93,8 +92,8 @@ class categorias extends datos
                 $m_check->execute();
 
                 if ($m_check->rowCount() > 0) {
-                    $r['resultado'] = 'modificar';
-                    $r['mensaje'] = 'Ya Existe Otra Categoría con ese Nombre.';
+                    $r['resultado'] = 'error';
+                    $r['mensaje'] = 'Ya existe otra categoría con ese nombre.';
                     return $r;
                 }
 
@@ -112,8 +111,8 @@ class categorias extends datos
                 $r['mensaje'] =  $e->getMessage();
             }
         } else {
-            $r['resultado'] = 'modificar';
-            $r['mensaje'] =  'Categoría no Registrada';
+            $r['resultado'] = 'error';
+            $r['mensaje'] =  'Categoría no registrada.';
         }
         return $r;
     }
@@ -137,8 +136,8 @@ class categorias extends datos
                 $r['mensaje'] =  $e->getMessage();
             }
         } else {
-            $r['resultado'] = 'eliminar';
-            $r['mensaje'] = 'Categoría no Registrada';
+            $r['resultado'] = 'error';
+            $r['mensaje'] = 'Categoría no registrada.';
         }
         return $r;
     }
@@ -152,10 +151,8 @@ class categorias extends datos
             $resultado = $co->query("SELECT * FROM categorias WHERE estado = 1");
             if ($resultado) {
                 $respuesta = '';
-
                 foreach ($resultado as $fila) {
                     $foto = (!empty($fila['foto']) && trim($fila['foto']) !== '') ? $fila['foto'] : 'img/principal.jpg';
-
                     $nombre_js = addslashes($fila['nombre']);
                     $desc_js = addslashes($fila['descripcion']);
                     $foto_js = addslashes($fila['foto']);
@@ -168,7 +165,6 @@ class categorias extends datos
                             <div class="card-body d-flex flex-column">
                                 <h5 class="text-dashboard fw-bold mb-1">'.$fila['nombre'].'</h5>
                                 <p class="text-muted small mb-3">'.$fila['descripcion'].'</p>
-
                                 <div class="d-flex justify-content-end gap-2 mt-auto">
                                     <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="pone('.$id.', \''.$nombre_js.'\', \''.$desc_js.'\', \''.$foto_js.'\', 0)">
                                         <i class="bi bi-pencil-square"></i> Editar
@@ -210,7 +206,7 @@ class categorias extends datos
                 $r['mensaje'] = $fila; 
             } else {
                 $r['resultado'] = 'error';
-                $r['mensaje'] = 'Categoría no encontrada';
+                $r['mensaje'] = 'Categoría no encontrada.';
             }
         } catch (Exception $e) {
             $r['resultado'] = 'error';

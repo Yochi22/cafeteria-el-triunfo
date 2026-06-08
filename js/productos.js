@@ -10,6 +10,13 @@ $(document).ready(function() {
         validarkeypress(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]*$/, e);
     });
 
+    $("#precio").on("keypress", function (e) {
+        if (e.key === 'e' || e.key === 'E' || e.key === '+' || e.key === '-') {
+            e.preventDefault();
+        }
+        validarkeypress(/^[0-9.]*$/, e);
+    });
+
     $("#nombre").on("keyup", function () {
         validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{3,50}$/, $(this), $("#snombre"), "");
     });
@@ -73,9 +80,7 @@ function nuevoProducto() {
 
     $("#modal_producto_label").text("Nuevo Producto");
     $("#btn_guardar_prod").text("Guardar Producto"); 
-    const modalElement = document.getElementById('modal_producto');
-    const miModal = bootstrap.Modal.getOrCreateInstance(modalElement);
-    miModal.show();
+    $("#modal_producto").modal("show");
 }
 
 function validarenvio() {
@@ -93,7 +98,9 @@ function muestraMensaje(mensaje) {
 function validarkeypress(er, e) {
     let key = e.keyCode || e.which;
     let tecla = String.fromCharCode(key);
-    if (!er.test(tecla) && key != 8) e.preventDefault();
+    if (!er.test(tecla) && key != 8 && key != 13) {
+        e.preventDefault();
+    }
 }
 
 function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
@@ -118,9 +125,7 @@ function pone(id, nombre, precio, descripcion, foto, idCategoria, accion) {
         
         $("#modal_producto_label").text("Editar Producto");
         $("#btn_guardar_prod").text("Modificar Producto");
-        const modalElement = document.getElementById('modal_producto');
-        const miModal = bootstrap.Modal.getOrCreateInstance(modalElement);
-        miModal.show();
+        $("#modal_producto").modal("show");
     } else {
         if (confirm("¿Estás seguro de eliminar este producto?")) {
             var datos = new FormData();
@@ -133,41 +138,64 @@ function pone(id, nombre, precio, descripcion, foto, idCategoria, accion) {
 
 function enviaAjax(datos) {
     $.ajax({
-        url: "?pagina=productos",
+        async: true,
+        url: "index.php?pagina=productos",
         type: "POST",
         contentType: false,
         data: datos,
         processData: false,
         cache: false,
+        beforeSend: function () {},
+        timeout: 10000,
         success: function (respuesta) {
+            console.log(respuesta);
             try {
                 var lee = JSON.parse(respuesta);
                 
-                if (lee.resultado == "listar_categorias" || lee.resultado == "listar_productos") {
+                if (lee.resultado == 'listar_categorias' || lee.resultado == 'listar_productos') {
                     $("#cuadricula_items").html(lee.mensaje);
                 } 
-                else if (lee.resultado == "cargar_select_categorias") {
+                else if (lee.resultado == 'cargar_select_categorias') {
                     $("#idCategoria_select").html(lee.mensaje);
                 }
-                else {
+                else if (lee.resultado == 'incluir') {
                     muestraMensaje(lee.mensaje);
-                    if (lee.resultado !== "error") {
-                        const modalElement = document.getElementById('modal_producto');
-                        const miModal = bootstrap.Modal.getOrCreateInstance(modalElement);
-                        miModal.hide();
-
-                        if (categoriaActual !== null) {
-                            verCategoria(categoriaActual, $("#titulo_seccion").text());
-                        } else {
-                            cargarCategorias();
-                        }
+                    if (lee.mensaje == 'Producto Registrado') { 
+                        $("#modal_producto").modal("hide");
+                        if (categoriaActual !== null) verCategoria(categoriaActual, $("#titulo_seccion").text());
+                        else cargarCategorias();
                     }
+                } 
+                else if (lee.resultado == 'modificar') {
+                    muestraMensaje(lee.mensaje);
+                    if (lee.mensaje == 'Producto Modificado') {
+                        $("#modal_producto").modal("hide");
+                        if (categoriaActual !== null) verCategoria(categoriaActual, $("#titulo_seccion").text());
+                        else cargarCategorias();
+                    }
+                } 
+                else if (lee.resultado == 'eliminar') {
+                    muestraMensaje(lee.mensaje);
+                    if (lee.mensaje == 'Producto Eliminado') {
+                        if (categoriaActual !== null) verCategoria(categoriaActual, $("#titulo_seccion").text());
+                        else cargarCategorias();
+                    }
+                } 
+                else if (lee.resultado == 'error') {
+                    muestraMensaje(lee.mensaje);
                 }
             } catch (e) {
-                console.error(respuesta);
+                alert("Error en JSON" + e.name);
             }
         },
-        error: function () { }
+        error: function(request, status, err) {
+            if (status == "timeout") {
+                muestraMensaje("Servidor Ocupado, Intente de Nuevo");
+            } else {
+                muestraMensaje("ERROR: <br/>" + request + status + err);
+            }
+        },
+        complete: function () {},
     });
 }
 

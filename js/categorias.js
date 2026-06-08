@@ -40,9 +40,7 @@ function nuevo() {
     $("#accion").val("incluir");
     $("#modal_categoria_label").text("Nueva Categoría");
     $("#btn_guardar").text("Guardar Categoría");
-    const modalElement = document.getElementById('modal_categoria');
-    const miModal = bootstrap.Modal.getOrCreateInstance(modalElement);
-    miModal.show();
+    $("#modal_categoria").modal("show");
 }
 
 function validarenvio() {
@@ -86,9 +84,7 @@ function pone(id, nombre, descripcion, foto, accion) {
         $("#foto").val(foto);
         $("#modal_categoria_label").text("Editar Categoría");
         $("#btn_guardar").text("Modificar Categoría");
-        const modalElement = document.getElementById('modal_categoria');
-        const miModal = bootstrap.Modal.getOrCreateInstance(modalElement);
-        miModal.show();
+        $("#modal_categoria").modal("show");
     } else {
         if (confirm("¿Estás seguro de eliminar esta categoría?")) {
             var datos = new FormData();
@@ -101,31 +97,58 @@ function pone(id, nombre, descripcion, foto, accion) {
 
 function enviaAjax(datos) {
     $.ajax({
-        url: "?pagina=categorias",
+        async: true,
+        url: "index.php?pagina=categorias",
         type: "POST",
         contentType: false,
         data: datos,
         processData: false,
         cache: false,
+        beforeSend: function () {},
+        timeout: 10000,
         success: function (respuesta) {
+            console.log(respuesta);
             try {
                 var lee = JSON.parse(respuesta);
-                if (lee.resultado == "consultar") {
+                
+                if (lee.resultado == 'consultar') {
                     $("#cuadricula_categorias").html(lee.mensaje);
-                } else {
+                } 
+                else if (lee.resultado == 'incluir') {
                     muestraMensaje(lee.mensaje);
-                    if (lee.resultado !== "error") {
-                        const modalElement = document.getElementById('modal_categoria');
-                        const miModal = bootstrap.Modal.getOrCreateInstance(modalElement);
-                        miModal.hide();
+                    if (lee.mensaje == 'Categoría Registrada') { 
+                        $("#modal_categoria").modal("hide");
                         consultar();
                     }
+                } 
+                else if (lee.resultado == 'modificar') {
+                    muestraMensaje(lee.mensaje);
+                    if (lee.mensaje == 'Categoría Modificada') {
+                        $("#modal_categoria").modal("hide");
+                        consultar();
+                    }
+                } 
+                else if (lee.resultado == 'eliminar') {
+                    muestraMensaje(lee.mensaje);
+                    if (lee.mensaje == 'Categoría Eliminada') {
+                        consultar();
+                    }
+                } 
+                else if (lee.resultado == 'error') {
+                    muestraMensaje(lee.mensaje);
                 }
             } catch (e) {
-                console.error(respuesta);
+                alert("Error en JSON" + e.name);
             }
         },
-        error: function () { }
+        error: function(request, status, err) {
+            if (status == "timeout") {
+                muestraMensaje("Servidor Ocupado, Intente de Nuevo");
+            } else {
+                muestraMensaje("ERROR: <br/>" + request + status + err);
+            }
+        },
+        complete: function () {},
     });
 }
 
