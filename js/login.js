@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   'use strict'
-
-  // Ahora sí, buscará los formularios cuando el HTML ya exista
+  
   const forms = document.querySelectorAll('.needs-validation')
 
   Array.from(forms).forEach(form => {

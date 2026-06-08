@@ -135,27 +135,27 @@ $(document).ready(function(){
 //validacion de los datos antes de enviarlos
 function validarEnvio(){
     // -- validacion de envio de cedula --
-    if(validarkeyup(/^[0-9\.]{7,11}$/,$("#cedulaCliente"), $("#scedulaCliente"),"Cedula Invalida <br>" + "(El Formato debe ser: 999999999)")==0){
-        mostrarMensaje("Cedula Invalid <br/>"+ "(El formato debe ser: 99999999)");	
+    if(validarkeyup(/^[0-9\.]{7,11}$/,$("#cedulaCliente"), $("#scedulaCliente"),"Cedula Invalida - (El Formato debe ser: 999999999)")==0){
+        mostrarMensaje("Cedula Invalida <br/>" + "(El formato debe ser: 99999999)");	
 		return false;					
 	}
     // -- validacion de envio de nombre --
-    else if(validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#nombreCliente"),$("#snombreCliente"),"Nombre Invalido <br/>" + "(Solo letras entre 3 y 100 caracteres)")==0){
+    else if(validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#nombreCliente"),$("#snombreCliente"),"Nombre Invalido - (Solo letras entre 3 y 100 caracteres)")==0){
 		mostrarMensaje("Nombre Invalido <br>" + "(Solo letras entre 3 y 100 caracteres)");
 		return false;
 	}
     // validacion de envio de apellido --
-    else if(validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#apellidoCliente"),$("#sapellidoCliente"),"apellido Invalido <br/>" + "(Solo letras entre 3 y 100 caracteres)")==0){
+    else if(validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#apellidoCliente"),$("#sapellidoCliente"),"apellido Invalido - (Solo letras entre 3 y 100 caracteres)")==0){
 		mostrarMensaje("Apellido Invalido <br>" + "(Solo letras entre 3 y 100 caracteres)");
 		return false;
 	}
     // validacion de envio de telefono --
-    if(validarkeyup(/^[0-9\-+ ]{7,12}$/,$("#tlfCliente"), $("#stlfCliente"),"Telefono Invalido <br>" + "(Formato de: 0000-0000000)")==0){
+    if(validarkeyup(/^[0-9\-+ ]{7,12}$/,$("#tlfCliente"), $("#stlfCliente"),"Telefono Invalido - (Formato de: 0000-0000000)")==0){
         mostrarMensaje("Telefono Invalido <br>" + "(Formato de: 0000-0000000)");	
 		return false;					
 	}
     // -- validacion de envio de direccion --
-    else if(validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,200}$/, $("#dirCliente"),$("#sdirCliente"),"Direccion Invalida <br>" + "(Solo letras entre 3 y 200 caracteres")==0){
+    else if(validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,200}$/, $("#dirCliente"),$("#sdirCliente"),"Direccion Invalida - (Solo letras entre 3 y 200 caracteres)")==0){
 		mostrarMensaje("Direccion Invalida <br>" + "(Solo letras entre 3 y 200 caracteres");
 		return false;
 	}
