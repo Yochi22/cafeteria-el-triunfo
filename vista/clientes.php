@@ -36,7 +36,7 @@
             <div class="col-12 d-flex justify-content-end mb-3">
 
                 <!-- boton para registrar -->
-                <button type="button" id="incluir" class="btn text-white rounded fw-bold py-2 px-4" style="background-color: #FF8C00;" data-bs-toggle="modal" data-bs-target="#modal_cliente">
+                <button type="button" id="incluir" class="btn btn-crear" data-bs-toggle="modal" data-bs-target="#modal_cliente">
                     <i class="bi bi-plus-circle fs-5"></i> Agregar Cliente 
                 </button>
 
