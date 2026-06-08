@@ -34,7 +34,7 @@
                 <i class="bi bi-file-earmark-bar-graph"></i> Reporte
             </a>
 
-            <a class="nav-link logout-link text-white-50" href="?pagina=logout">
+            <a class="nav-link logout-link text-white-50" href="?pagina=login">
                 <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
             </a>
         </nav>
