@@ -8,7 +8,6 @@
         <main class="main-content w-100 p-4">
             
             <div class="d-flex align-items-center">
-                
                 <!-- menu hamburguesa -->
                 <button class="btn btn-outline-dark d-md-none me-3 border-0"
                     id="btn-toggle-sidebar"
@@ -37,8 +36,9 @@
             <div class="col-12 d-flex justify-content-end mb-3">
 
                 <!-- boton para registrar -->
-                <button type="button" id="incluir" class="btn btn-crear;" data-bs-toggle="modal" data-bs-target="#modal_cliente">
-                    <i class="bi bi-plus-circle fs-5"></i> Agregar Cliente 
+                <button type="button" id="incluir" class="btn btn-crear" data-bs-toggle="modal" data-bs-target="#modal_cliente">
+                    <i class="bi bi-plus-circle fs-5"></i> 
+                    <span class="d-none d-sm-inline">Agregar Cliente</span>
                 </button>
 
                 <!-- boton de busqueda -->    
@@ -54,7 +54,8 @@
             </div>
 
             <!-- lista de Clientes -->
-            <table class="table table-hover align-items-center text-center">
+            <div class="table-responsive">
+            <table class="table table-hover align-items-center text-center table-sm">
                 <thead class="text-dashboard border-bottom">
                     <tr>
                         <th>Cédula</th>
@@ -68,6 +69,7 @@
                     
                 </tbody>
             </table>
+            </div>
 
             <!-- seccion del modal -->
             <div class="modal fade" id="modal_cliente" tabindex="-1" aria-labelledby="modal_cliente_label" aria-hidden="true">

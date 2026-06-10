@@ -33,8 +33,9 @@
             
             <div class="col-12 d-flex justify-content-end mb-3">
 
-                <button type="button" id="incluir" class="btn btn-crear;" data-bs-toggle="modal" data-bs-target="#modal_personal">
-                    <i class="bi bi-plus-circle fs-5"></i> Agregar Personal 
+                <button type="button" id="incluir" class="btn btn-crear" data-bs-toggle="modal" data-bs-target="#modal_personal">
+                    <i class="bi bi-plus-circle fs-5"></i>
+                    <span class="d-none d-sm-inline">Agregar Personal</span>
                 </button>
 
                 <div class="col-md-4 ms-3">
@@ -48,20 +49,23 @@
 
             </div>
 
-            <table class="table table-hover align-items-center text-center">
-                <thead class="text-dashboard border-bottom">
-                    <tr>
-                        <th>Cédula</th>
-                        <th>Nombre y Apellido</th>
-                        <th>Contraseña</th>
-                        <th>Rol</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="listaPersonal" class="text-center">
-                    
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-hover align-items-center text-center table-sm">
+                    <thead class="text-dashboard border-bottom">
+                        <tr>
+                            <th>Cédula</th>
+                            <th>Nombre y Apellido</th>
+                            <th>Contraseña</th>
+                            <th>Rol</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaPersonal" class="text-center">
+                        
+                    </tbody>
+                </table>
+            </div>
+
 
             <div class="modal fade" id="modal_personal" tabindex="-1" aria-labelledby="modal_personal_label" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">

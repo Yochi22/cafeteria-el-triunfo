@@ -27,7 +27,8 @@
 
                 <div>
                     <button type="button" id="incluir" class="btn btn-crear" data-bs-toggle="modal" data-bs-target="#modal_cliente">
-                        <i class="bi bi-plus-circle fs-5"></i> Crear Pedido 
+                        <i class="bi bi-plus-circle fs-5"></i>
+                        <span class="d-none d-sm-inline">Crear Pedido</span>
                     </button>
                 </div>
 
@@ -72,19 +73,19 @@
                         <div class="col-6 d-flex justify-content-end gap-2 mt-5">
                             <button type="button" class="btn btn-outline-warning d-flex flex-column align-items-center p-2 ms-2">
                                 <i class="bi bi-file-earmark-text-fill"></i>
-                                <span>Ver Pedido</span>
+                                <span class="d-none d-sm-inline">Ver Pedido</span>
                             </button>
                             <button type="button" class="btn btn-outline-secondary d-flex flex-column align-items-center p-2 ms-2">
                                 <i class="bi bi-pencil-square"></i> 
-                                <span>Editar Pedido</span>
+                                <span class="d-none d-sm-inline">Editar Pedido</span>
                             </button>
                             <button type="button" class="btn btn-outline-danger d-flex flex-column align-items-center p-2 ms-2">
                                 <i class="bi bi-trash-fill"></i>
-                                <span>Eliminar</span>
+                                <span class="d-none d-sm-inline">Eliminar</span>
                             </button>
                             <button type="button" class="btn btn-outline-success d-flex flex-column align-items-center p-2 ms-2">
                                 <i class="bi bi-check-circle-fill"></i> 
-                                <span>Finalizar</span>
+                                <span class="d-none d-sm-inline">Finalizar</span>
                             </button>
                         </div>
                     </div>
