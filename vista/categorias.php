@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <?php require_once("comunes/encabezado.php"); ?>
+
 <body>
     <div class="d-flex min-vh-100 position-relative">
 
@@ -8,27 +9,51 @@
 
         <main class="main-content w-100 p-4">
 
-            <div class="d-flex justify-content-between align-items-center mb-4 gap-2">
-                <div class="d-flex align-items-center">
-                    <button class="btn btn-outline-dark d-md-none me-3 border-0"
+            <div class="row align-items-center mb-4 g-3">
+
+                <div class="col-12 col-md-5 d-flex align-items-center">
+                    <button class="btn btn-outline-dark d-md-none me-2 border-0 p-1"
                         id="btn-toggle-sidebar"
                         data-bs-toggle="collapse"
                         data-bs-target="#sidebarMenu"
                         aria-controls="sidebarMenu"
                         aria-expanded="false"
                         aria-label="Toggle navigation">
-                        <i class="bi bi-list" style="font-size: 2rem;"></i>
+                        <i class="bi bi-list" style="font-size: 1.8rem;"></i>
                     </button>
                     <div>
-                        <h2 class="text-dashboard mb-0"><i class="bi bi-tags"></i> Categorías</h2>
-                        <p class="text-muted mb-0">Gestiona las Categorías de tus Productos</p>
+                        <h2 class="text-dashboard mb-0 fs-3"><i class="bi bi-tags"></i> Categorías</h2>
+                        <p class="text-muted mb-0 small d-none d-sm-block">Gestiona las Categorías de tus Productos</p>
                     </div>
                 </div>
 
-                <button class="btn btn-crear d-flex align-items-center gap-2" onclick="nuevo()">
-                    <i class="bi bi-plus-circle fs-4"></i>
-                    <span class="d-none d-sm-inline">Agregar Categoría</span>
-                </button>
+                <div class="col-12 col-md-7">
+                    <div class="row g-2 justify-content-md-end align-items-center flex-nowrap">
+
+                        <div class="col">
+                            <div class="input-group bg-white border rounded-3 px-2 py-1 align-items-center">
+                                <button class="btn p-0 border-0 link-secondary" type="button" id="btnBuscar">
+                                    <i class="bi bi-search fs-5"></i>
+                                </button>
+                                <input type="text" id="valorBusqueda" name="valorBusqueda" class="form-control border-0 py-0 py-2 shadow-none" placeholder="Buscar...">
+                            </div>
+                        </div>
+
+                        <div class="col-auto">
+                            <button class="btn btn-crear d-flex align-items-center gap-2 py-2" id="incluir">
+                                <i class="bi bi-plus-circle fs-4"></i>
+                                <span class="d-none d-sm-inline">Agregar</span>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col">
+                    <hr class="border border-secundary">
+                </div>
             </div>
 
             <div id="contenedor_categorias" class="mt-4">
@@ -71,7 +96,7 @@
                         </div>
 
                         <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-crear py-2" id="btn_guardar">Guardar Categoría</button>
+                            <button type="button" class="btn btn-crear py-2" id="btnGuardar">incluir</button>
                         </div>
                     </form>
                 </div>
@@ -80,6 +105,8 @@
         </div>
     </div>
 
+    <?php require_once("comunes/modal_eliminar.php"); ?>
+    <?php require_once("comunes/modal.php"); ?>
     <script src="js/categorias.js"></script>
 </body>
 

@@ -28,7 +28,7 @@ class clientes extends datos{
     function get_estado(){ return $this->estado; }
  
 
-    // funcion de Resgistrar Cliente
+    // funcion de Registrar Cliente
     function incluir(){
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -58,7 +58,7 @@ class clientes extends datos{
         return $r;
     }
 
-    // funcion de Mofidicar cliente
+    // funcion de Modificar cliente
     function modificar(){
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

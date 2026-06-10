@@ -39,7 +39,7 @@ $(document).ready(function(){
         validarkeypress(/^[0-9\-+ ]*$/, e);
     });
     $("#tlfCliente").on("keyup",function(){
-        validarkeyup(/^[0-9\-+ ]{10,12}$/,$(this), $("#stlfCliente"),"Telefono Invalido - Formato de: 0000-0000000");
+        validarkeyup(/^[0-9\-+ ]{11,12}$/,$(this), $("#stlfCliente"),"Telefono Invalido - Formato de: 0000-0000000");
 	});
 
     // -- validacion de direccion --
@@ -150,7 +150,7 @@ function validarEnvio(){
 		return false;
 	}
     // validacion de envio de telefono --
-    if(validarkeyup(/^[0-9\-+ ]{7,12}$/,$("#tlfCliente"), $("#stlfCliente"),"Telefono Invalido - (Formato de: 0000-0000000)")==0){
+    if(validarkeyup(/^[0-9\-+ ]{11,12}$/,$("#tlfCliente"), $("#stlfCliente"),"Telefono Invalido - (Formato de: 0000-0000000)")==0){
         mostrarMensaje("Telefono Invalido <br>" + "(Formato de: 0000-0000000)");	
 		return false;					
 	}

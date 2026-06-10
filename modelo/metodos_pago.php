@@ -8,18 +8,21 @@ class metodos_pago extends datos
     private $cedulaTitular;
     private $telefono;
     private $cuenta;
+    private $estado;
 
     function set_idMetodo($valor) { $this->idMetodo = $valor; }
     function set_nombreBanco($valor) { $this->nombreBanco = $valor; }
     function set_cedulaTitular($valor) { $this->cedulaTitular = $valor; }
     function set_telefono($valor) { $this->telefono = $valor; }
     function set_cuenta($valor) { $this->cuenta = $valor; }
+    function set_estado($valor) {$this->estado = $valor;}
 
     function get_idMetodo() { return $this->idMetodo; }
     function get_nombreBanco() { return $this->nombreBanco; }
     function get_cedulaTitular() { return $this->cedulaTitular; }
     function get_telefono() { return $this->telefono; }
     function get_cuenta() { return $this->cuenta; }
+    function get_estado() {return $this->estado;}
 
     private function existe($idMetodo)
     {

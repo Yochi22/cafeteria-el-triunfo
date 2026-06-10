@@ -8,7 +8,6 @@
         <main class="main-content w-100 p-4">
             
             <div class="d-flex align-items-center">
-                <!-- menu hamburguesa -->
                 <button class="btn btn-outline-dark d-md-none me-3 border-0"
                     id="btn-toggle-sidebar"
                     data-bs-toggle="collapse"
@@ -19,10 +18,9 @@
                     <i class="bi bi-list" style="font-size: 2rem;"></i>
                 </button>
 
-                <!-- Encabezado de bienvenida -->
                 <div>
-                    <h2 class="text-dashboard"><i class="bi bi-file-person"></i> Clientes</h2>
-                    <p class="text-muted">Bienvenido al apartado de Clientes de la Cafeteria El Triunfo!</p>
+                    <h2 class="text-dashboard"><i class="bi bi-file-person"></i> Personal</h2>
+                    <p class="text-muted">Bienvenido al apartado de Personal de la Cafeteria El Triunfo!</p>
                 </div>
             </div>
 
@@ -35,102 +33,90 @@
             
             <div class="col-12 d-flex justify-content-end mb-3">
 
-                <!-- boton para registrar -->
-                <button type="button" id="incluir" class="btn btn-crear" data-bs-toggle="modal" data-bs-target="#modal_cliente">
-                    <i class="bi bi-plus-circle fs-5"></i> Agregar Cliente 
+                <button type="button" id="incluir" class="btn btn-crear" data-bs-toggle="modal" data-bs-target="#modal_personal">
+                    <i class="bi bi-plus-circle fs-5"></i> Agregar Personal 
                 </button>
 
-                <!-- boton de busqueda -->    
                 <div class="col-md-4 ms-3">
                     <div class="input-group bg-white border rounded-3 px-2 py-2 align-items-center">
                         <button class="btn p-0 border-0 link-secondary" type="button" id="btnBuscar">
                             <i class="bi bi-search fs-5"></i>
                         </button>
-                        <input type="text" id="valorBusqueda" name="valorBusqueda" class="form-control border-0 py-0 py-2 shadow-none" placeholder="Buscar Cliente">
+                        <input type="text" id="valorBusqueda" name="valorBusqueda" class="form-control border-0 py-0 py-2 shadow-none" placeholder="Buscar Personal">
                     </div>
                 </div>
 
             </div>
 
-            <!-- lista de Clientes -->
             <table class="table table-hover align-items-center text-center">
                 <thead class="text-dashboard border-bottom">
                     <tr>
                         <th>Cédula</th>
                         <th>Nombre y Apellido</th>
-                        <th>Teléfono</th>
-                        <th>Dirección</th>
+                        <th>Contraseña</th>
+                        <th>Rol</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
-                <tbody id="listaClientes" class="text-center">
+                <tbody id="listaPersonal" class="text-center">
                     
                 </tbody>
             </table>
 
-            <!-- seccion del modal -->
-            <div class="modal fade" id="modal_cliente" tabindex="-1" aria-labelledby="modal_cliente_label" aria-hidden="true">
+            <div class="modal fade" id="modal_personal" tabindex="-1" aria-labelledby="modal_personal_label" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content border-0 rounded-4 shadow">
                         
-                        <!-- Encabezado del modal -->
                         <div class="modal-header border-0 pb-0">
-                            <h5 class="modal-title fw-bold text-dashboard" id="modal_cliente_label">Formulario de Cliente</h5>
+                            <h5 class="modal-title fw-bold text-dashboard" id="modal_personal_label">Formulario de Personal</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         
-                        <!-- Cuerpo del modal -->
                         <div class="modal-body pt-3">
                             <form id="f">
                                 <input type="hidden" id="accion" name="accion">
-                                <!-- DATOS DEL CLIENTE -->
                                 <div class="mb-3">
-                                    <label for="cedulaCliente" class="form-label text-muted small">Cédula</label>
-                                    <input type="text" class="form-control rounded-3" id="cedulaCliente" name="cedulaCliente" required>
-                                    <span id="scedulaCliente"></span>
+                                    <label for="cedulaPer" class="form-label text-muted small">Cédula</label>
+                                    <input type="text" class="form-control rounded-3" id="cedulaPer" name="cedulaPer" required>
+                                    <span id="scedulaPer"></span>
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label for="nombreCliente" class="form-label text-muted small">Nombre</label>
-                                    <input type="text" class="form-control rounded-3" id="nombreCliente" name="nombreCliente" required>
-                                    <span id="snombreCliente"></span>
+                                    <label for="nombre" class="form-label text-muted small">Nombre</label>
+                                    <input type="text" class="form-control rounded-3" id="nombre" name="nombre" required>
+                                    <span id="snombre"></span>
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label for="apellidoCliente" class="form-label text-muted small">Apellido</label>
-                                    <input type="text" class="form-control rounded-3" id="apellidoCliente" name="apellidoCliente" required>
-                                    <span id="sapellidoCliente"></span>
+                                    <label for="apellido" class="form-label text-muted small">Apellido</label>
+                                    <input type="text" class="form-control rounded-3" id="apellido" name="apellido" required>
+                                    <span id="sapellido"></span>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="tlfCliente" class="form-label text-muted small">Teléfono</label>
-                                    <input type="text" class="form-control rounded-3" id="tlfCliente" name="tlfCliente" required>
-                                    <span id="stlfCliente"></span>
+                                    <label for="password" class="form-label text-muted small">Contraseña</label>
+                                    <input type="password" class="form-control rounded-3" id="password" name="password" required>
+                                    <span id="spassword"></span>
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label for="dirCliente" class="form-label text-muted small">Dirección</label>
-                                    <input type="text" class="form-control rounded-3" id="dirCliente" name="dirCliente" required>
-                                    <span id="sdirCliente"></span>
+                                    <label for="rol" class="form-label text-muted small">Rol</label>
+                                    <input type="text" class="form-control rounded-3" id="rol" name="rol" required>
+                                    <span id="srol"></span>
                                 </div>
                                 
                                 <div class="d-grid mt-4">
-                                    <button type="button" class="btn btn-crear w-100 mt-3" id="btnGuardar">Guardar Cliente</button>
+                                    <button type="button" class="btn btn-crear w-100 mt-3" id="btnGuardar">Guardar Personal</button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
-            <!--fin de seccion modal-->
-
-            <!-- Llamada del modal de confirmacion se eliminacion -->
             <?php require_once("comunes/modal_eliminar.php"); ?>
-            <!--Llamada a archivo modal.php, dentro de el hay una sección modal-->
             <?php require_once("comunes/modal.php"); ?>
-        </div>
-        <!--Llama del java script-->
-        <script src="js/clientes.js"></script>
+        </main>
+        <script src="js/personal.js"></script>
     </div>
 </body>
 </html>
