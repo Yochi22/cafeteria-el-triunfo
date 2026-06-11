@@ -53,7 +53,8 @@
             </div>
 
             <!-- lista de Clientes -->
-            <table class="table table-hover align-items-center text-center">
+            <div class="table-responsive">
+            <table class="table table-hover align-items-center text-center table-sm">
                 <thead class="text-dashboard border-bottom">
                     <tr>
                         <th>Cédula</th>
@@ -67,6 +68,7 @@
                     
                 </tbody>
             </table>
+            </div>
 
             <!-- seccion del modal -->
             <div class="modal fade" id="modal_cliente" tabindex="-1" aria-labelledby="modal_cliente_label" aria-hidden="true">

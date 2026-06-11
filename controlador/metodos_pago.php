@@ -28,7 +28,6 @@ if (is_file("vista/" . $pagina . ".php")) {
                 break;
                 
             case 'modificar':
-                $o->set_idMetodo($_POST['idMetodo']);
                 $o->set_nombreBanco($_POST['nombreBanco']);
                 $o->set_cedulaTitular($_POST['cedulaTitular']);
                 $o->set_telefono($_POST['telefono']);
@@ -37,8 +36,13 @@ if (is_file("vista/" . $pagina . ".php")) {
                 break;
                 
             case 'eliminar':
-                $o->set_idMetodo($_POST['idMetodo']);
+                $o->set_cuenta($_POST['cuenta']);
                 echo json_encode($o->eliminar());
+                break;
+
+            case 'buscar':
+                $valor = isset($_POST['valorBusqueda']) ? $_POST['valorBusqueda'] : '';
+                echo json_encode($o->buscar($valor));
                 break;
         }
         exit;

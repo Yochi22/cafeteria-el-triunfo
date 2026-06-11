@@ -3,184 +3,227 @@ require_once("modelo/datos.php");
 
 class metodos_pago extends datos
 {
-    private $idMetodo;
+    //definicion de variables
     private $nombreBanco;
     private $cedulaTitular;
     private $telefono;
     private $cuenta;
     private $estado;
 
-    function set_idMetodo($valor) { $this->idMetodo = $valor; }
+    //setters
     function set_nombreBanco($valor) { $this->nombreBanco = $valor; }
     function set_cedulaTitular($valor) { $this->cedulaTitular = $valor; }
     function set_telefono($valor) { $this->telefono = $valor; }
     function set_cuenta($valor) { $this->cuenta = $valor; }
     function set_estado($valor) {$this->estado = $valor;}
 
-    function get_idMetodo() { return $this->idMetodo; }
+    //getters
     function get_nombreBanco() { return $this->nombreBanco; }
     function get_cedulaTitular() { return $this->cedulaTitular; }
     function get_telefono() { return $this->telefono; }
     function get_cuenta() { return $this->cuenta; }
     function get_estado() {return $this->estado;}
 
-    private function existe($idMetodo)
-    {
+    //funcion INCLUIR
+    function incluir(){
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        try {
-            $st = $co->prepare("SELECT idMetodo FROM metodospago WHERE idMetodo = :idMetodo AND estado = 1");
-            $st->bindParam(':idMetodo', $idMetodo);
-            $st->execute();
-            $fila = $st->fetch(PDO::FETCH_ASSOC);
-            return $fila ? true : false;
-        } catch (Exception $e) {
-            return false;
-        }
-    }
-
-    function incluir()
-    {
         $r = array();
-        $co = $this->conecta();
-        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        try {
-            $st = $co->prepare("SELECT idMetodo, estado FROM metodospago WHERE cuenta = :cuenta");
-            $st->bindParam(':cuenta', $this->cuenta);
-            $st->execute();
-            $metodo_existente = $st->fetch(PDO::FETCH_ASSOC);
+        if(!$this->existe($this->cuenta)){
+            try{
+                $inc = $co->prepare("INSERT INTO metodospago(nombreBanco, cedulaTitular, telefono, cuenta)
+                VALUES (:nombreBanco, :cedulaTitular, :telefono, :cuenta)");
 
-            if ($metodo_existente) {
-                if ($metodo_existente['estado'] == 1) {
-                    $r['resultado'] = 'error';
-                    $r['mensaje'] = 'Ya existe un método de pago con ese número de cuenta.';
-                } else {
-                    $m = $co->prepare("UPDATE metodospago SET nombreBanco = :nombreBanco, cedulaTitular = :cedulaTitular, telefono = :telefono, estado = 1 WHERE idMetodo = :idMetodo");
-                    $m->bindParam(':idMetodo', $metodo_existente['idMetodo']);
-                    $m->bindParam(':nombreBanco', $this->nombreBanco);
-                    $m->bindParam(':cedulaTitular', $this->cedulaTitular);
-                    $m->bindParam(':telefono', $this->telefono);
-                    $m->execute();
-                    
-                    $r['resultado'] = 'incluir';
-                    $r['mensaje'] = 'Registro Incluido';
-                }
-            } else {
-                $m = $co->prepare("INSERT INTO metodospago(nombreBanco, cedulaTitular, telefono, cuenta, estado) VALUES(:nombreBanco, :cedulaTitular, :telefono, :cuenta, 1)");
-                $m->bindParam(':nombreBanco', $this->nombreBanco);
-                $m->bindParam(':cedulaTitular', $this->cedulaTitular);
-                $m->bindParam(':telefono', $this->telefono);
-                $m->bindParam(':cuenta', $this->cuenta);
-                $m->execute();
-                
+                $inc->bindParam(':nombreBanco', $this->nombreBanco);
+                $inc->bindParam(':cedulaTitular', $this->cedulaTitular);
+                $inc->bindParam(':telefono', $this->telefono);
+                $inc->bindParam(':cuenta', $this->cuenta);
+                $inc->execute();
+
                 $r['resultado'] = 'incluir';
-                $r['mensaje'] = 'Registro Incluido';
-            }
-        } catch (Exception $e) {
-            $r['resultado'] = 'error';
-            $r['mensaje'] = $e->getMessage();
-        }
-        return $r;
-    }
-
-    function modificar()
-    {
-        $co = $this->conecta();
-        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $r = array();
-        
-        if ($this->existe($this->idMetodo)) {
-            try {
-                $m_check = $co->prepare("SELECT idMetodo FROM metodospago WHERE cuenta = :cuenta AND idMetodo != :idMetodo AND estado = 1");
-                $m_check->bindParam(':cuenta', $this->cuenta);
-                $m_check->bindParam(':idMetodo', $this->idMetodo);
-                $m_check->execute();
-
-                if ($m_check->rowCount() > 0) {
-                    $r['resultado'] = 'error';
-                    $r['mensaje'] = 'Ya existe otro método de pago con ese número de cuenta.';
-                    return $r;
-                }
-
-                $m = $co->prepare("UPDATE metodospago SET nombreBanco = :nombreBanco, cedulaTitular = :cedulaTitular, telefono = :telefono, cuenta = :cuenta WHERE idMetodo = :idMetodo");
-                $m->bindParam(':idMetodo', $this->idMetodo);
-                $m->bindParam(':nombreBanco', $this->nombreBanco);
-                $m->bindParam(':cedulaTitular', $this->cedulaTitular);
-                $m->bindParam(':telefono', $this->telefono);
-                $m->bindParam(':cuenta', $this->cuenta);
-                $m->execute();
-
-                $r['resultado'] = 'modificar';
-                $r['mensaje'] = 'Registro Modificado';
-            } catch (Exception $e) {
+                $r['mensaje'] = 'Metodo de Pago Registrado';
+            } catch(Exception $e){
                 $r['resultado'] = 'error';
-                $r['mensaje'] =  $e->getMessage();
+                $r['mensaje'] = $e->getMessage();
             }
-        } else {
-            $r['resultado'] = 'error';
-            $r['mensaje'] =  'Método de pago no registrado.';
+        } else{
+            $r['resultado'] = 'incluir';
+            $r['mensaje'] = 'Ya existe el Numero de Cuenta a resgitrar.';
         }
         return $r;
     }
 
-    function eliminar()
-    {
+    //funcion MODIFICAR
+    function modificar(){
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $r = array();
-        
-        if ($this->existe($this->idMetodo)) {
+        if($this->existe($this->cuenta)){
+            try{
+                $mod = $co->prepare("UPDATE metodospago SET nombreBanco = :nombreBanco, cedulaTitular = :cedulaTitular, 
+                telefono = :telefono, cuenta = :cuenta WHERE cuenta = :cuenta");
+
+                $mod->bindParam(':nombreBanco', $this->nombreBanco);
+                $mod->bindParam(':cedulaTitular', $this->cedulaTitular);
+                $mod->bindParam(':telefono', $this->telefono);
+                $mod->bindParam(':cuenta', $this->cuenta);
+                $mod->execute();
+                
+                $r['resultado'] = 'modificar';
+                $r['mensaje'] = 'Metodo de Pago Modificado';
+            } catch(Exception $e){
+                $r['resultado'] = 'error';
+                $r['mensaje'] = $e->getMessage();
+            }
+        } else{
+            $r['resultado'] = 'modificar';
+            $r['mensaje'] = 'El Numero de Cuenta no Existe';
+        }
+        return $r;
+    }
+
+    //funcion ELIMINAR
+    function eliminar(){
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $r = array();
+        if ($this->existe($this->cuenta)) {
             try {
-                $e = $co->prepare("UPDATE metodospago SET estado = 0 WHERE idMetodo = :idMetodo");
-                $e->bindParam(':idMetodo', $this->idMetodo);
-                $e->execute();
+                $eli = $co->prepare("UPDATE metodospago SET estado = 0 WHERE cuenta = :cuenta");
+                $eli->bindParam(':cuenta', $this->cuenta);
+                $eli->execute();
                 
                 $r['resultado'] = 'eliminar';
-                $r['mensaje'] = 'Registro Eliminado';
-            } catch (Exception $e) {
+                $r['mensaje'] = 'Metodo de Pago Eliminado';
+            } catch(Exception $e) {
                 $r['resultado'] = 'error';
-                $r['mensaje'] =  $e->getMessage();
+                $r['mensaje'] = $e->getMessage();
             }
-        } else {
-            $r['resultado'] = 'error';
-            $r['mensaje'] = 'Método de pago no registrado.';
+        } else{
+            $r['resultado'] = 'eliminar';
+            $r['mensaje'] = 'El Metodo de Pago No Existe';
         }
         return $r;
     }
 
-    function consultar()
-    {
+   function consultar(){
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $r = array();
-        try {
+        try{
             $resultado = $co->query("SELECT * FROM metodospago WHERE estado = 1");
-            if ($resultado) {
+            if($resultado){
                 $respuesta = '';
-                foreach ($resultado as $fila) {
+                foreach($resultado as $fila){
                     $respuesta .= "<tr>";
-                    $respuesta .= "<td style='display:none;'>" . $fila['idMetodo'] . "</td>";
                     $respuesta .= "<td>" . $fila['nombreBanco'] . "</td>";
                     $respuesta .= "<td>" . $fila['cedulaTitular'] ."</td>";
                     $respuesta .= "<td>" . $fila['telefono'] . "</td>";
                     $respuesta .= "<td>" . $fila['cuenta'] . "</td>";
                     $respuesta .= "<td class='text-center'>";
-                    $respuesta .= "<button type='button' class='btn text-white w-80 small-width me-1' style='background-color: #FF8C00;' onclick='pone(this,0)'><i class='bi bi-pencil-square'></i> Modificar</button>";
-                    $respuesta .= "<button type='button' class='btn text-white w-80 small-width ms-1' style='background-color: #FF8C00;' onclick='pone(this,1)'><i class='bi bi-trash-fill'></i> Eliminar</button>";
+                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='pone(this)'><i class='bi bi-pencil-square'></i> Modificar</button>";
+                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i> Eliminar</button>";
                     $respuesta .= "</td>";
                     $respuesta .= "</tr>";
                 }
+
+                if($respuesta == ""){
+                    $respuesta .= "<tr>";
+                    $respuesta .= "<td colspan = '5' class='text-center text-muted py-4>'";
+                    $respuesta .= "<span><i class='bi bi-person-fill fs-1' style='color: #FF8C00'></i></span>";
+                    $respuesta .= "<h5 class= 'text-dashboard'> No tienes Metodos de Pago Registrados </h5>";
+                    $respuesta .= "</td>";
+                    $respuesta .= "</tr>";
+                }
+
                 $r['resultado'] = 'consultar';
                 $r['mensaje'] = $respuesta;
             } else {
                 $r['resultado'] = 'consultar';
-                $r['mensaje'] = '<tr><td colspan="5" class="text-center py-4">No hay registros disponibles</td></tr>';
+                $r['mensaje'] = '';
             }
-        } catch (Exception $e) {
+        } catch(Exception $e){
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }
         return $r;
     }
+
+//funcion para saber si ya el Metodo de Pago esta resgitrado
+    function existe($cuenta){
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try{
+            $resultado = $co->prepare("SELECT * FROM metodospago WHERE cuenta = :cuenta AND estado = 1");
+            $resultado->bindParam(':cuenta', $cuenta);
+            $resultado->execute();
+            $fila = $resultado->fetchAll(PDO::FETCH_BOTH);
+            if($fila){
+                return true;
+            } else{
+                return false;
+            }
+        } catch(Exception $e){
+            return false;
+        }
+    }
+
+    // funcion para buscar
+    function buscar($valor){
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $valor = trim($valor);
+        $busqueda = "%" . $valor . "%";
+        $r = array();
+        try{
+            if($busqueda){
+                $bus = $co->prepare("SELECT nombreBanco, cedulaTitular, telefono, cuenta 
+                                    FROM metodospago
+                                    WHERE (nombreBanco LIKE :busqueda
+                                    OR cedulaTitular LIKE :busqueda
+                                    OR telefono LIKE :busqueda
+                                    OR cuenta LIKE :busqueda)
+                                    AND estado = 1");
+                
+                $bus->bindParam(':busqueda', $busqueda);
+                $bus->execute();
+                $resultado = $bus->fetchAll();
+                
+                $respuesta = "";
+                foreach($resultado as $fila){
+                    $respuesta .= "<tr>";
+                    $respuesta .= "<td>" . $fila['nombreBanco'] . "</td>";
+                    $respuesta .= "<td>" . $fila['cedulaTitular'] . "</td>";
+                    $respuesta .= "<td>" . $fila['telefono'] . "</td>";
+                    $respuesta .= "<td>" . $fila['cuenta'] . "</td>";
+                    $respuesta .= "<td>";
+                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='pone(this)'><i class='bi bi-pencil-square'></i> Modificar</button>";
+                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i> Eliminar</button>";
+                    $respuesta .= "</td>";
+                    $respuesta .= "</tr>";
+                }
+                if($respuesta == ""){
+                    $respuesta .= "<tr>";
+                    $respuesta .= "<td colspan = '5' class='text-center text-muted py-4>'";
+                    $respuesta .= "<span><i class='bi bi-person-fill-slash fs-1' style='color : #FF8C00'></i></i></span>";
+                    $respuesta .= "<h5 class= 'text-dashboard'> No se Encuentran Registros </h5>";
+                    $respuesta .= "<h6 class= 'text-dashboard'> Intenta de Nuevo </h6>";
+                    $respuesta .= "</td>";
+                    $respuesta .= "</tr>";
+                }
+
+                $r['resultado'] = 'buscar';
+                $r['mensaje'] = $respuesta;
+            } else {
+                $r['resultado'] = 'consultar';
+                $r['mensaje'] = '';
+            }
+        } catch(Exception $e) {
+            $r['resultado'] = 'error';
+            $r['mensaje'] = $e->getMessage();
+        }
+        return $r;
+    }
+
 }
 ?>

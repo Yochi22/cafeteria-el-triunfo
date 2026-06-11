@@ -48,6 +48,7 @@
 
             </div>
 
+<<<<<<< HEAD
             <table class="table table-hover align-items-center text-center">
                 <thead class="text-dashboard border-bottom">
                     <tr>
@@ -62,6 +63,25 @@
                     
                 </tbody>
             </table>
+=======
+            <div class="table-responsive">
+                <table class="table table-hover align-items-center text-center table-sm">
+                    <thead class="text-dashboard border-bottom">
+                        <tr>
+                            <th>Cédula</th>
+                            <th>Nombre y Apellido</th>
+                            <th>Contraseña</th>
+                            <th>Rol</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaPersonal" class="text-center">
+                        
+                    </tbody>
+                </table>
+            </div>
+
+>>>>>>> 9e8588b3a2072d053e5c8a31e02f263071312e4b
 
             <div class="modal fade" id="modal_personal" tabindex="-1" aria-labelledby="modal_personal_label" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
