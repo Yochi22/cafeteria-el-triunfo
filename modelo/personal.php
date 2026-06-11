@@ -27,8 +27,7 @@ class personal extends datos{
     function get_rol($valor){ $this->rol = $valor; }
     function get_estado($valor){ $this->estado = $valor; }
 
- 
-
+    // funcion de Registrar Cliente
     function incluir(){
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
