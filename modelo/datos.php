@@ -2,7 +2,7 @@
 class datos
 {
     private $ip         = "localhost";
-    private $bd         = "cafeteria";
+    private $bd         = "cafeteria_el_triunfo";
     private $usuario    = "root";
     private $contrasena = "";
 

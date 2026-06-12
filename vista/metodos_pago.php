@@ -103,9 +103,9 @@
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label for="telefono" class="form-label text-muted small fw-bold">Teléfono</label>
-                                <input type="text" class="form-control rounded-3" id="telefono" name="telefono" required>
-                                <span id="stelefono" class="small text-danger"></span>
+                                <label for="tlfCuenta" class="form-label text-muted small fw-bold">Teléfono</label>
+                                <input type="text" class="form-control rounded-3" id="tlfCuenta" name="tlfCuenta" required>
+                                <span id="stlfCuenta" class="small text-danger"></span>
                             </div>
                         </div>
 

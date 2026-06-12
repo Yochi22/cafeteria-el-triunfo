@@ -22,7 +22,7 @@ if (is_file("vista/" . $pagina . ".php")) {
             case 'incluir':
                 $o->set_nombreBanco($_POST['nombreBanco']);
                 $o->set_cedulaTitular($_POST['cedulaTitular']);
-                $o->set_telefono($_POST['telefono']);
+                $o->set_tlfCuenta($_POST['tlfCuenta']);
                 $o->set_cuenta($_POST['cuenta']);
                 echo json_encode($o->incluir());
                 break;
@@ -30,7 +30,7 @@ if (is_file("vista/" . $pagina . ".php")) {
             case 'modificar':
                 $o->set_nombreBanco($_POST['nombreBanco']);
                 $o->set_cedulaTitular($_POST['cedulaTitular']);
-                $o->set_telefono($_POST['telefono']);
+                $o->set_tlfCuenta($_POST['tlfCuenta']);
                 $o->set_cuenta($_POST['cuenta']);
                 echo json_encode($o->modificar());
                 break;

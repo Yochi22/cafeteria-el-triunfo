@@ -26,13 +26,13 @@ $(document).ready(function(){
         validarkeyup(/^[0-9\.]{7,12}$/,$(this), $("#scedulaTitular"),"Cedula Invalida - Escriba de 7 a 8 numeros sin espacios.");
     });
 
-    //1.3 telefono
-    $("#telefono").on("keypress", function (e) {
+    //1.3 teléfono
+    $("#tlfCuenta").on("keypress", function (e) {
         validarkeypress(/^[0-9\-+ ]*$/, e);
     });
 
-    $("#telefono").on("keyup", function () {
-        validarkeyup(/^[0-9\-+ ]{10,12}$/,$(this), $("#stelefono"),"Telefono Invalido - Formato de 11 numeros sin espacios.");
+    $("#tlfCuenta").on("keyup", function () {
+        validarkeyup(/^[0-9\-+ ]{10,12}$/,$(this), $("#stlfCuenta"),"Teléfono Invalido - Formato de 11 numeros sin espacios.");
     });
 
     //1.4 cuenta
@@ -65,7 +65,7 @@ $(document).ready(function(){
               datos.append('accion', 'incluir');
               datos.append('nombreBanco', $("#nombreBanco").val());
               datos.append('cedulaTitular', $("#cedulaTitular").val());
-              datos.append('telefono', $("#telefono").val());
+              datos.append('tlfCuenta', $("#tlfCuenta").val());
               datos.append('cuenta', $("#cuenta").val());
               enviaAjax(datos);
             }
@@ -78,7 +78,7 @@ $(document).ready(function(){
               datos.append('accion', 'modificar');
               datos.append('nombreBanco', $("#nombreBanco").val());
               datos.append('cedulaTitular', $("#cedulaTitular").val());
-              datos.append('telefono', $("#telefono").val());
+              datos.append('tlfCuenta', $("#tlfCuenta").val());
               datos.append('cuenta', $("#cuenta").val());
               enviaAjax(datos);
             }
@@ -152,9 +152,9 @@ function validarEnvio(){
         mostrarMensaje("Cedula Invalida <br>" + "Escriba de 7 a 8 numeros sin espacios.");
         return false;
     }	
-    //validacion de envio de telefono
-    else if(validarkeyup(/^[0-9\-+ ]{10,12}$/,$("#telefono"),$("#stelefono"),"Telefono Invalido - Formato de 11 numeros sin espacios.")==0){
-        mostrarMensaje("Telefono Invalido <br>" + "Formato de 11 numeros sin espacios.");
+    //validacion de envio de teléfono
+    else if(validarkeyup(/^[0-9\-+ ]{10,12}$/,$("#tlfCuenta"),$("#stlfCuenta"),"tlfCuenta Invalido - Formato de 11 numeros sin espacios.")==0){
+        mostrarMensaje("Teléfono Invalido <br>" + "Formato de 11 numeros sin espacios.");
         return false;
     }
     //validacion de envio de num cuenta
@@ -200,7 +200,7 @@ function pone(pos){
 
     $("#nombreBanco").val($(linea).find("td:eq(0)").text().trim());
     $("#cedulaTitular").val($(linea).find("td:eq(1)").text().trim());
-    $("#telefono").val($(linea).find("td:eq(2)").text().trim());
+    $("#tlfCuenta").val($(linea).find("td:eq(2)").text().trim());
     $("#cuenta").val($(linea).find("td:eq(3)").text().trim());
     $("#btnGuardar").text('modificar');
     $("#modal_metodo").modal("show");
@@ -279,6 +279,6 @@ function enviaAjax(datos){
 function limpia(){
     $("#nombreBanco").val("");
     $("#cedulaTitular").val("");
-    $("#telefono").val("");
+    $("#tlfCuenta").val("");
     $("#cuenta").val("");
 }
