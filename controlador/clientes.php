@@ -17,25 +17,23 @@ if(is_file("vista/".$pagina.".php")){
                 break;
 
             case 'eliminar':
-                $o->set_cedulaCliente($_POST['cedulaCliente']);
+                $o->set_cedulaCli($_POST['cedulaCli']);
                 echo json_encode($o->eliminar());
                 break;
 
             case 'incluir':
-                $o->set_cedulaCliente($_POST['cedulaCliente']);
-                $o->set_nombreCliente($_POST['nombreCliente']);
-                $o->set_apellidoCliente($_POST['apellidoCliente']);
-                $o->set_tlfCliente($_POST['tlfCliente']);
-                $o->set_dirCliente($_POST['dirCliente']);
+                $o->set_cedulaCli($_POST['cedulaCli']);
+                $o->set_nombreCli($_POST['nombreCli']);
+                $o->set_apellidoCli($_POST['apellidoCli']);
+                $o->set_tlfCli($_POST['tlfCli']);
                 echo json_encode($o->incluir());
                 break;
 
             case 'modificar':
-                $o->set_cedulaCliente($_POST['cedulaCliente']);
-                $o->set_nombreCliente($_POST['nombreCliente']);
-                $o->set_apellidoCliente($_POST['apellidoCliente']);
-                $o->set_tlfCliente($_POST['tlfCliente']);
-                $o->set_dirCliente($_POST['dirCliente']);
+                $o->set_cedulaCli($_POST['cedulaCli']);
+                $o->set_nombreCli($_POST['nombreCli']);
+                $o->set_apellidoCli($_POST['apellidoCli']);
+                $o->set_tlfCli($_POST['tlfCli']);
                 echo json_encode($o->modificar());
                 break;
             case 'buscar':

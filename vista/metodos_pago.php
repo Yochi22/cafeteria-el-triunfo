@@ -8,9 +8,9 @@
         <main class="main-content w-100 p-4">
 
             <div class="d-flex align-items-center mb-2">
-               
-            <!--sidebar-->
-            <div class="d-flex align-items-center mb-2">
+
+                <!--sidebar-->
+                <div class="d-flex align-items-center mb-2">
                     <button class="btn btn-outline-dark d-md-none me-3 border-0"
                         id="btn-toggle-sidebar"
                         data-bs-toggle="collapse"
@@ -20,31 +20,31 @@
                         aria-label="Toggle navigation">
                         <i class="bi bi-list" style="font-size: 2rem;"></i>
                     </button>
-            
-            <!--Encabezado del modulo-->
+
+                    <!--Encabezado del modulo-->
                     <div>
-                    <h2 class="text-dashboard"><i class="bi bi-bank"></i> Métodos de Pago</h2>
-                    <p class="text-muted">Bienvenido a la gestión de Métodos de Pago de la Cafeteria El Triunfo!</p>
+                        <h2 class="text-dashboard"><i class="bi bi-bank"></i> Métodos de Pago</h2>
+                        <p class="text-muted">Bienvenido a la gestión de Métodos de Pago de la Cafeteria El Triunfo!</p>
                     </div>
+                </div>
             </div>
-    </div>
             <div class="row">
                 <div class="col">
                     <hr class="border border-secundary">
                 </div>
             </div>
 
-        <div class="col-12 d-flex justify-content-end mb-3">
-            <!--botones-->
+            <div class="col-12 d-flex justify-content-end mb-3">
+                <!--botones-->
 
-            <!--Registro-->
-            <button type="button" id="incluir" class="btn btn-crear;" data-bs-toggle="modal" data-bs-target="#modal_metodo" style="color: white; background-color: #FF8C00;">
+                <!--Registro-->
+                <button type="button" id="incluir" class="btn btn-crear" data-bs-toggle="modal" data-bs-target="#modal_metodo">
                     <i class="bi bi-plus-circle fs-4"></i>
                     <span class="d-none d-sm-inline">Agregar Método</span>
                 </button>
-            
 
-            <!--boton de busqueda-->    
+
+                <!--boton de busqueda-->
                 <div class="col-md-4 ms-3">
                     <div class="input-group bg-white border rounded-3 px-2 py-2 align-items-center">
                         <button class="btn p-0 border-0 link-secondary" type="button" id="btnBuscar">
@@ -53,23 +53,25 @@
                         <input type="text" id="valorBusqueda" name="valorBusqueda" class="form-control border-0 py-0 py-2 shadow-none" placeholder="Buscar Cliente">
                     </div>
                 </div>
-        </div>
+            </div>
 
-        <!--lista -->
-            <table class="table table-hover align-items-center text-center">
-                <thead class="text-dashboard border-bottom">
-                    <tr>
-                        <th>Banco</th>
-                        <th>Cédula Titular</th>
-                        <th>Teléfono</th>
-                        <th>N° de Cuenta</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="listaMetodos" class="text-center">
-                    
-                </tbody>
-            </table>
+            <!--lista -->
+            <div class="table-responsive bg-gray p-5 rounded shadow-sm">
+                <table class="table table-hover align-items-center text-center">
+                    <thead class="text-dashboard border-bottom">
+                        <tr>
+                            <th>Banco</th>
+                            <th>Cédula Titular</th>
+                            <th>Teléfono</th>
+                            <th>N° de Cuenta</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaMetodos" class="text-center">
+
+                    </tbody>
+                </table>
+            </div>
     </div>
 
     <div class="modal fade" id="modal_metodo" tabindex="-1" aria-labelledby="modal_metodo_label" aria-hidden="true">
@@ -87,7 +89,6 @@
                 <div class="modal-body pt-3">
                     <form id="f">
                         <input type="hidden" id="accion" name="accion">
-                        
                         <!--Campos-->
                         <div class="mb-3">
                             <label for="nombreBanco" class="form-label text-muted small fw-bold">Nombre del Banco</label>
@@ -124,16 +125,16 @@
             </div>
         </div>
     </div>
-<!--definicion de input oculto para evitar errores al borrar-->
+    <!--definicion de input oculto para evitar errores al borrar-->
     <input type="hidden" id="cuentaEliminar" value="">
-<!--Fin de Modal-->
+    <!--Fin de Modal-->
 
-<!-- Llamada del modal de confirmacion se eliminacion -->
-<?php require_once("comunes/modal_eliminar.php"); ?>
-<!--Llamada a archivo modal.php, dentro de el hay una sección modal-->
-<?php require_once("comunes/modal.php"); ?>
+    <!-- Llamada del modal de confirmacion se eliminacion -->
+    <?php require_once("comunes/modal_eliminar.php"); ?>
+    <!--Llamada a archivo modal.php, dentro de el hay una sección modal-->
+    <?php require_once("comunes/modal.php"); ?>
 
-<!--llamada a java-->
+    <!--llamada a java-->
     <script src="js/metodos_pago.js"></script>
 
 </body>
