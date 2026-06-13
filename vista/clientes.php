@@ -30,7 +30,7 @@
                 <div class="col">
                     <hr class="border border-secundary">
                 </div>
-            </div>
+            </div> 
             
             
             <div class="col-12 d-flex justify-content-end mb-3">
