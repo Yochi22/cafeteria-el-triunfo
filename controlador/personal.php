@@ -14,6 +14,7 @@ if(is_file("vista/".$pagina.".php")){
 
             case 'consultar':
                 echo json_encode($o->consultar());
+              
                 break;
 
             case 'eliminar':
@@ -23,8 +24,8 @@ if(is_file("vista/".$pagina.".php")){
 
             case 'incluir':
                 $o->set_cedulaPer($_POST['cedulaPer']);
-                $o->set_nombre($_POST['nombre']);
-                $o->set_apellido($_POST['apellido']);
+                $o->set_nombrePer($_POST['nombrePer']);
+                $o->set_apellidoPer($_POST['apellidoPer']);
                 $o->set_password($_POST['password']);
                 $o->set_rol($_POST['rol']);
                 echo json_encode($o->incluir());
@@ -32,8 +33,8 @@ if(is_file("vista/".$pagina.".php")){
 
             case 'modificar':
                 $o->set_cedulaPer($_POST['cedulaPer']);
-                $o->set_nombre($_POST['nombre']);
-                $o->set_apellido($_POST['apellido']);
+                $o->set_nombrePer($_POST['nombrePer']);
+                $o->set_apellidoPer($_POST['apellidoPer']);
                 $o->set_password($_POST['password']);
                 $o->set_rol($_POST['rol']);
                 echo json_encode($o->modificar());
