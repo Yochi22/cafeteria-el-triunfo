@@ -82,15 +82,15 @@
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label for="nombre" class="form-label text-muted small">Nombre</label>
-                                    <input type="text" class="form-control rounded-3" id="nombre" name="nombre" required>
-                                    <span id="snombre"></span>
+                                    <label for="nombrePer" class="form-label text-muted small">Nombre</label>
+                                    <input type="text" class="form-control rounded-3" id="nombrePer" name="nombrePer" required>
+                                    <span id="snombrePer"></span>
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label for="apellido" class="form-label text-muted small">Apellido</label>
-                                    <input type="text" class="form-control rounded-3" id="apellido" name="apellido" required>
-                                    <span id="sapellido"></span>
+                                    <label for="apellidoPer" class="form-label text-muted small">Apellido</label>
+                                    <input type="text" class="form-control rounded-3" id="apellidoPer" name="apellidoPer" required>
+                                    <span id="sapellidoPer"></span>
                                 </div>
 
                                 <div class="mb-3">

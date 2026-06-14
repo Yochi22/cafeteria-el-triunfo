@@ -5,28 +5,27 @@ function consultar() {
 }
 
 $(document).ready(function () {
-
     consultar();
 
-    $("#idCategoria").on("keypress", function (e) {
-        validarkeypress(/^[0-9]*$/, e);
-    });
-    $("#idCategoria").on("keyup", function () {
-        validarkeyup(/^[0-9]{1,11}$/, $(this), $("#sidCategoria"), "ID Invalido - Solo números permitidos");
-    });
-
-    $("#nombre").on("keypress", function (e) {
+    $("#codigoCat").on("keypress", function (e) {
         validarkeypress(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]*$/, e);
     });
-    $("#nombre").on("keyup", function () {
-        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this), $("#snombre"), "Nombre Invalido - Entre 3 y 100 caracteres");
+    $("#codigoCat").on("keyup", function () {
+        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{5,50}$/, $(this), $("#scodigoCat"), "Código inválido.");
     });
 
-    $("#descripcion").on("keypress", function (e) {
+    $("#nombreCat").on("keypress", function (e) {
+        validarkeypress(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]*$/, e);
+    });
+    $("#nombreCat").on("keyup", function () {
+        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{3,50}$/, $(this), $("#snombreCat"), "Nombre inválido.");
+    });
+
+    $("#descCat").on("keypress", function (e) {
         validarkeypress(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]*$/, e);
     });
-    $("#descripcion").on("keyup", function () {
-        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{3,200}$/, $(this), $("#sdescripcion"), "Descripción Invalida - Entre 3 y 200 caracteres");
+    $("#descCat").on("keyup", function () {
+        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{3,150}$/, $(this), $("#sdescCat"), "Descripción inválida.");
     });
 
     $("#btnGuardar").on("click", function () {
@@ -34,10 +33,10 @@ $(document).ready(function () {
             if (validarEnvio()) {
                 var datos = new FormData();
                 datos.append('accion', 'incluir');
-                datos.append('idCategoria', $("#idCategoria").val());
-                datos.append('nombre', $("#nombre").val());
-                datos.append('descripcion', $("#descripcion").val());
-                datos.append('foto', $("#foto").val());
+                datos.append('codigoCat', $("#codigoCat").val());
+                datos.append('nombreCat', $("#nombreCat").val());
+                datos.append('descCat', $("#descCat").val());
+                datos.append('fotoCat', $("#fotoCat").val());
                 enviaAjax(datos);
             }
         }
@@ -45,10 +44,11 @@ $(document).ready(function () {
             if (validarEnvio()) {
                 var datos = new FormData();
                 datos.append('accion', 'modificar');
-                datos.append('idCategoria', $("#idCategoria").val());
-                datos.append('nombre', $("#nombre").val());
-                datos.append('descripcion', $("#descripcion").val());
-                datos.append('foto', $("#foto").val());
+                datos.append('codigoOriginal', $("#codigoOriginal").val());
+                datos.append('codigoCat', $("#codigoCat").val());
+                datos.append('nombreCat', $("#nombreCat").val());
+                datos.append('descCat', $("#descCat").val());
+                datos.append('fotoCat', $("#fotoCat").val());
                 enviaAjax(datos);
             }
         }
@@ -76,10 +76,10 @@ $(document).ready(function () {
     });
 
     $("#btnEliminar").on("click", function () {
-        var idEliminado = $("#idEliminar").val();
+        var codigoEliminado = $("#codigoEliminar").val();
         var datos = new FormData();
         datos.append('accion', 'eliminar');
-        datos.append('idCategoria', idEliminado);
+        datos.append('codigoCat', codigoEliminado);
         enviaAjax(datos);
     });
 
@@ -92,19 +92,23 @@ $(document).ready(function () {
 
 function validarEnvio() {
     if ($("#btnGuardar").text() == 'modificar') {
-        if (validarkeyup(/^[0-9]{1,11}$/, $("#idCategoria"), $("#sidCategoria"), "ID Invalido - (Solo números)") == 0) {
-            mostrarMensaje("ID Invalido - (Solo números)");
+        if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{3,50}$/, $("#codigoCat"), $("#scodigoCat"), "Código inválida.") == 0) {
+            mostrarMensaje("Código inválido.");
+
             return false;
         }
     }
-    if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#nombre"), $("#snombre"), "Nombre Invalido - (Entre 3 y 100 caracteres)") == 0) {
-        mostrarMensaje("Nombre Invalido - (Entre 3 y 100 caracteres)");
+    if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{3,50}$/, $("#nombreCat"), $("#snombreCat"), "Nombre inválido.") == 0) {
+        mostrarMensaje("Nombre inválido.");
+
         return false;
     }
-    if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{3,200}$/, $("#descripcion"), $("#sdescripcion"), "Descripción Invalida - (Entre 3 y 200 caracteres)") == 0) {
-        mostrarMensaje("Descripción Invalida - (Entre 3 y 200 caracteres)");
+    if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{3,150}$/, $("#descCat"), $("#sdescCat"), "Descripción inválida.") == 0) {
+        mostrarMensaje("Descripción inválida.");
+
         return false;
     }
+
     return true;
 }
 
@@ -134,18 +138,19 @@ function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
     }
 }
 
-function pone(id, nombre, descripcion, foto) {
-    $("#idCategoria").val(id);
-    $("#nombre").val(nombre);
-    $("#descripcion").val(descripcion);
-    $("#foto").val(foto);
+function pone(codigoCat, nombreCat, descCat, fotoCat) {
+    $("#codigoOriginal").val(codigoCat);
+    $("#codigoCat").val(codigoCat);
+    $("#nombreCat").val(nombreCat);
+    $("#descCat").val(descCat);
+    $("#fotoCat").val(fotoCat);
 
     $("#btnGuardar").text('modificar');
     $("#modal_categoria").modal("show");
 }
 
-function eliminar(id) {
-    $("#idEliminar").val(id);
+function eliminar(codigoCat) {
+    $("#codigoEliminar").val(codigoCat);
     $("#modal_eliminar").modal("show");
 }
 
@@ -169,21 +174,21 @@ function enviaAjax(datos) {
                 }
                 else if (lee.resultado == 'incluir') {
                     mostrarMensaje(lee.mensaje);
-                    if (lee.mensaje == 'Categoría Registrada') {
+                    if (lee.mensaje == 'Categoría registrada.') {
                         $("#modal_categoria").modal("hide");
                         consultar();
                     }
                 }
                 else if (lee.resultado == 'modificar') {
                     mostrarMensaje(lee.mensaje);
-                    if (lee.mensaje == 'Categoría Modificada') {
+                    if (lee.mensaje == 'Categoría modificada.') {
                         $("#modal_categoria").modal("hide");
                         consultar();
                     }
                 }
                 else if (lee.resultado == 'eliminar') {
                     mostrarMensaje(lee.mensaje);
-                    if (lee.mensaje == 'Categoría Eliminada') {
+                    if (lee.mensaje == 'Categoría eliminada.') {
                         $("#modal_eliminar").modal("hide");
                         consultar();
                     }
@@ -200,7 +205,7 @@ function enviaAjax(datos) {
         },
         error: function (request, status, err) {
             if (status == "timeout") {
-                mostrarMensaje("Servidor Ocupado, Intente de Nuevo");
+                mostrarMensaje("Servidor ocupado, intente de nuevo.");
             } else {
                 mostrarMensaje("ERROR: <br/>" + request + status + err);
             }
@@ -210,10 +215,13 @@ function enviaAjax(datos) {
 }
 
 function limpia() {
-    $("#idCategoria").val("");
-    $("#nombre").val("");
-    $("#descripcion").val("");
-    $("#foto").val("");
-    $("#snombre").text("");
-    $("#sdescripcion").text("");
+    $("#codigoOriginal").val("");
+    $("#codigoCat").val("");
+    $("#nombreCat").val("");
+    $("#descCat").val("");
+    $("#fotoCat").val("");
+    $("#scodigoOriginal").text("");
+    $("#scodigoCat").text("");
+    $("#snombreCat").text("");
+    $("#sdescCat").text("");
 }

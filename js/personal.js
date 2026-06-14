@@ -18,20 +18,20 @@ $(document).ready(function(){
         validarkeyup(/^[0-9\.]{7,12}$/,$(this), $("#scedulaPer"),"Cédula Inválida - El Formato debe ser: 99999999");
     });
     
-    // -- validacion de nombre --
-    $("#nombre").on("keypress",function(e){
+    // -- validacion de nombrePer --
+    $("#nombrePer").on("keypress",function(e){
         validarkeypress(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]*$/,e);
     });
-    $("#nombre").on("keyup",function(){
-        validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this),$("#snombre"),"Nombre Inválido - Solo letras entre 3 y 100 caracteres");
+    $("#nombrePer").on("keyup",function(){
+        validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this),$("#snombrePer"),"nombrePer Inválido - Solo letras entre 3 y 100 caracteres");
     });
 
-    // -- Validacion de apellido --
-    $("#apellido").on("keypress",function(e){
+    // -- Validacion de apellidoPer --
+    $("#apellidoPer").on("keypress",function(e){
         validarkeypress(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]*$/,e);
     });
-    $("#apellido").on("keyup",function(){
-        validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this),$("#sapellido"),"Apellido Inválido - Solo letras entre 3 y 100 caracteres");
+    $("#apellidoPer").on("keyup",function(){
+        validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this),$("#sapellidoPer"),"apellidoPer Inválido - Solo letras entre 3 y 100 caracteres");
     });
 
     // -- validacion de contraseña --
@@ -57,8 +57,8 @@ $(document).ready(function(){
               var datos = new FormData();
               datos.append('accion', 'incluir');
               datos.append('cedulaPer', $("#cedulaPer").val());
-              datos.append('nombre', $("#nombre").val());
-              datos.append('apellido', $("#apellido").val());
+              datos.append('nombrePer', $("#nombrePer").val());
+              datos.append('apellidoPer', $("#apellidoPer").val());
               datos.append('password', $("#password").val());
               datos.append('rol', $("#rol").val());
               enviaAjax(datos);
@@ -70,8 +70,8 @@ $(document).ready(function(){
                 var datos = new FormData();
                 datos.append('accion', 'modificar');
                 datos.append('cedulaPer', $("#cedulaPer").val());
-                datos.append('nombre', $("#nombre").val());
-                datos.append('apellido', $("#apellido").val());
+                datos.append('nombrePer', $("#nombrePer").val());
+                datos.append('apellidoPer', $("#apellidoPer").val());
                 datos.append('password', $("#password").val());
                 datos.append('rol', $("#rol").val());
                 enviaAjax(datos);
@@ -125,6 +125,7 @@ $(document).ready(function(){
 
     $("#incluir").on("click", function(){
         limpia();
+        $("#cedulaPer").prop("readonly", false);
         $("#btnGuardar").text("incluir");
         $("#modal_personal").modal("show");
     });
@@ -137,14 +138,14 @@ function validarEnvio(){
         mostrarMensaje("Cédula Inválida <br/>" + "(El formato debe ser: 99999999)");    
         return false;                   
     }
-    // -- validacion de envio de nombre --
-    else if(validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#nombre"),$("#snombre"),"Nombre Inválido - (Solo letras entre 3 y 100 caracteres)")==0){
-        mostrarMensaje("Nombre Inválido <br>" + "(Solo letras entre 3 y 100 caracteres)");
+    // -- validacion de envio de nombrePer --
+    else if(validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#nombrePer"),$("#snombrePer"),"nombrePer Inválido - (Solo letras entre 3 y 100 caracteres)")==0){
+        mostrarMensaje("nombrePer Inválido <br>" + "(Solo letras entre 3 y 100 caracteres)");
         return false;
     }
-    // validacion de envio de apellido --
-    else if(validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#apellido"),$("#sapellido"),"Apellido Inválido - (Solo letras entre 3 y 100 caracteres)")==0){
-        mostrarMensaje("Apellido Inválido <br>" + "(Solo letras entre 3 y 100 caracteres)");
+    // validacion de envio de apellidoPer --
+    else if(validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#apellidoPer"),$("#sapellidoPer"),"apellidoPer Inválido - (Solo letras entre 3 y 100 caracteres)")==0){
+        mostrarMensaje("apellidoPer Inválido <br>" + "(Solo letras entre 3 y 100 caracteres)");
         return false;
     }
     // validacion de envio de contraseña --
@@ -192,13 +193,13 @@ function validarkeyup(er,etiqueta,etiquetamensaje,mensaje){
 //funcion para llenar el formulario con los datos del personal
 function pone(pos){
     linea = $(pos).closest('tr');
-
-    var nombreCompleto = $(linea).find("td:eq(1)").text();
-    var nombreSeparado = nombreCompleto.split(' ');
+    $("#cedulaPer").prop("readonly", true);
+    var nombrePerCompleto = $(linea).find("td:eq(1)").text();
+    var nombrePerSeparado = nombrePerCompleto.split(' ');
 
     $("#cedulaPer").val($(linea).find("td:eq(0)").text());
-    $("#nombre").val(nombreSeparado[0]);
-    $("#apellido").val(nombreSeparado[1]);
+    $("#nombrePer").val(nombrePerSeparado[0]);
+    $("#apellidoPer").val(nombrePerSeparado[1]);
     $("#password").val($(linea).find("td:eq(2)").text());
     $("#rol").val($(linea).find("td:eq(3)").text());
     $("#btnGuardar").text('modificar');
@@ -276,8 +277,8 @@ function enviaAjax(datos){
 
 function limpia(){
     $("#cedulaPer").val("");
-    $("#nombre").val("");
-    $("#apellido").val("");
+    $("#nombrePer").val("");
+    $("#apellidoPer").val("");
     $("#password").val("");
     $("#rol").val("");
 }

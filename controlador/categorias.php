@@ -15,27 +15,29 @@ if (is_file("vista/" . $pagina . ".php")) {
         $accion = $_POST['accion'];
 
         switch ($accion) {
+            case 'incluir':
+                $o->set_codigoCat($_POST['codigoCat']);
+                $o->set_nombreCat($_POST['nombreCat']);
+                $o->set_descCat($_POST['descCat']);
+                $o->set_fotoCat($_POST['fotoCat']);
+                echo json_encode($o->incluir());
+                break;
+
             case 'consultar':
                 echo json_encode($o->consultar());
                 break;
 
-            case 'incluir':
-                $o->set_nombre($_POST['nombre']);
-                $o->set_descripcion($_POST['descripcion']);
-                $o->set_foto($_POST['foto']);
-                echo json_encode($o->incluir());
-                break;
-
             case 'modificar':
-                $o->set_idCategoria($_POST['idCategoria']);
-                $o->set_nombre($_POST['nombre']);
-                $o->set_descripcion($_POST['descripcion']);
-                $o->set_foto($_POST['foto']);
+                $o->set_codigoOriginal($_POST['codigoOriginal']);
+                $o->set_codigoCat($_POST['codigoCat']);
+                $o->set_nombreCat($_POST['nombreCat']);
+                $o->set_descCat($_POST['descCat']);
+                $o->set_fotoCat($_POST['fotoCat']);
                 echo json_encode($o->modificar());
                 break;
 
             case 'eliminar':
-                $o->set_idCategoria($_POST['idCategoria']);
+                $o->set_codigoCat($_POST['codigoCat']);
                 echo json_encode($o->eliminar());
                 break;
 
@@ -52,3 +54,5 @@ if (is_file("vista/" . $pagina . ".php")) {
 } else {
     echo "PÁGINA EN CONSTRUCCIÓN";
 }
+
+?>

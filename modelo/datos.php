@@ -1,4 +1,5 @@
 <?php
+
 class datos
 {
     private $ip         = "localhost";
@@ -13,7 +14,10 @@ class datos
             $this->usuario,
             $this->contrasena
         );
+
         $pdo->exec("set names utf8");
         return $pdo;
     }
 }
+
+?>
