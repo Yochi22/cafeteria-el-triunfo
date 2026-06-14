@@ -1,8 +1,9 @@
 <?php
+
 class datos
 {
     private $ip         = "localhost";
-    private $bd         = "cafeteria";
+    private $bd         = "cafeteria_el_triunfo";
     private $usuario    = "root";
     private $contrasena = "";
 
@@ -13,7 +14,10 @@ class datos
             $this->usuario,
             $this->contrasena
         );
+
         $pdo->exec("set names utf8");
         return $pdo;
     }
 }
+
+?>

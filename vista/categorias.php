@@ -23,7 +23,7 @@
                     </button>
                     <div>
                         <h2 class="text-dashboard mb-0 fs-3"><i class="bi bi-tags"></i> Categorías</h2>
-                        <p class="text-muted mb-0 small d-none d-sm-block">Gestiona las Categorías de tus Productos</p>
+                        <p class="text-muted mb-0 small d-none d-sm-block">¡Gestiona las Categorías de tus Productos!</p>
                     </div>
                 </div>
 
@@ -75,28 +75,34 @@
 
                 <div class="modal-body pt-3">
                     <form id="f" autocomplete="off">
-                        <input type="hidden" id="idCategoria" name="idCategoria">
+                        <input type="hidden" id="codigoOriginal" name="codigoOriginal">
                         <input type="hidden" id="accion" name="accion">
 
                         <div class="mb-3">
-                            <label for="nombre" class="form-label text-muted small fw-bold">Nombre de la Categoría</label>
-                            <input type="text" class="form-control rounded-3" id="nombre" name="nombre" placeholder="Ej. Bebidas, Postres..." required>
-                            <span id="snombre" class="small red"></span>
+                            <label for="codigoCat" class="form-label text-muted small fw-bold">Código de la Categoría</label>
+                            <input type="text" class="form-control rounded-3" id="codigoCat" name="codigoCat" placeholder="Ej. CAT01, CAT02..." required>
+                            <span id="scodigoCat" class="small red"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label for="descripcion" class="form-label text-muted small fw-bold">Descripción</label>
-                            <textarea class="form-control rounded-3" id="descripcion" name="descripcion" rows="3" placeholder="Breve descripción de los productos de esta categoría..." required></textarea>
-                            <span id="sdescripcion" class="small red"></span>
+                            <label for="nombreCat" class="form-label text-muted small fw-bold">Nombre de la Categoría</label>
+                            <input type="text" class="form-control rounded-3" id="nombreCat" name="nombreCat" placeholder="Ej. Bebidas, Postres..." required>
+                            <span id="snombreCat" class="small red"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label for="foto" class="form-label text-muted small fw-bold">URL de la Foto (Opcional)</label>
-                            <input type="text" class="form-control rounded-3" id="foto" name="foto" placeholder="https://ejemplo.com/imagen.jpg">
+                            <label for="descCat" class="form-label text-muted small fw-bold">Descripción</label>
+                            <textarea class="form-control rounded-3" id="descCat" name="descCat" rows="3" placeholder="Breve descripción de los productos de esta categoría..." required></textarea>
+                            <span id="sdescCat" class="small red"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="fotoCat" class="form-label text-muted small fw-bold">URL de la Foto (Opcional)</label>
+                            <input type="text" class="form-control rounded-3" id="fotoCat" name="fotoCat" placeholder="https://ejemplo.com/imagen.jpg">
                         </div>
 
                         <div class="d-grid mt-4">
-                            <button type="button" class="btn btn-crear py-2" id="btnGuardar">incluir</button>
+                            <button type="button" class="btn btn-crear py-2" id="btnGuardar">Incluir</button>
                         </div>
                     </form>
                 </div>
