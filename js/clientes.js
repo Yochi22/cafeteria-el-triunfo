@@ -192,7 +192,7 @@ function pone(pos){
     $("#btnGuardar").text('modificar');
     $("#modal_cliente").modal("show");
 
-   $("#cedulaCli").prop('readonly', true);
+    $("#cedulaCli").prop('readonly', true);
 }
 
 function eliminar(pos){
