@@ -48,6 +48,7 @@ $(document).ready(function(){
         // BOTON INCLUIR
         if($(this).text() == 'incluir'){
             if(validarEnvio()){
+
               var datos = new FormData();
               datos.append('accion', 'incluir');
               datos.append('cedulaCli', $("#cedulaCli").val());
@@ -117,6 +118,7 @@ $(document).ready(function(){
 
     $("#incluir").on("click", function(){
         limpia();
+        $("#cedulaCli").prop('readonly', false);
         $("#btnGuardar").text("incluir");
         $("#modal_cliente").modal("show");
     });
@@ -189,6 +191,8 @@ function pone(pos){
     $("#tlfCli").val($(linea).find("td:eq(2)").text());
     $("#btnGuardar").text('modificar');
     $("#modal_cliente").modal("show");
+
+   $("#cedulaCli").prop('readonly', true);
 }
 
 function eliminar(pos){
