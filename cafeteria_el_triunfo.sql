@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 14-06-2026 a las 00:43:24
+-- Tiempo de generación: 14-06-2026 a las 04:22:10
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `categorias` (
   `idCategoria` int(11) NOT NULL,
-  `codigoCat` int(11) NOT NULL,
+  `codigoCat` varchar(50) NOT NULL,
   `nombreCat` varchar(50) NOT NULL,
   `descCat` varchar(150) NOT NULL,
   `fotoCat` varchar(250) DEFAULT NULL
@@ -138,7 +138,7 @@ CREATE TABLE `personal` (
 CREATE TABLE `productos` (
   `idProducto` int(11) NOT NULL,
   `idCategoria` int(11) NOT NULL,
-  `codigoProd` int(11) NOT NULL,
+  `codigoProd` varchar(50) NOT NULL,
   `nombreProd` varchar(50) NOT NULL,
   `precioProd` decimal(10,0) NOT NULL,
   `descProd` varchar(150) NOT NULL,

@@ -11,43 +11,35 @@ $(document).ready(function(){
 
     // VALIDACION DE DATOS
     // -- validacion de cedula --
-    $("#cedulaCliente").on("keypress",function(e){
+    $("#cedulaCli").on("keypress",function(e){
         validarkeypress(/^[0-9-\.]*$/,e);
     });
-    $("#cedulaCliente").on("keyup",function(){
-        validarkeyup(/^[0-9\.]{7,12}$/,$(this), $("#scedulaCliente"),"Cedula Invalida - El Formato debe ser: 999999999");
+    $("#cedulaCli").on("keyup",function(){
+        validarkeyup(/^[0-9\.]{7,12}$/,$(this), $("#scedulaCli"),"Cedula Invalida - El Formato debe ser: 999999999");
 	});
     
     // -- validacion de nombre --
-    $("#nombreCliente").on("keypress",function(e){
+    $("#nombreCli").on("keypress",function(e){
 		validarkeypress(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]*$/,e);
 	});
-	$("#nombreCliente").on("keyup",function(){
-		validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this),$("#snombreCliente"),"Nombre Invalido - Solo letras entre 3 y 100 caracteres");
+	$("#nombreCli").on("keyup",function(){
+		validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this),$("#snombreCli"),"Nombre Invalido - Solo letras entre 3 y 100 caracteres");
 	});
 
     // -- Validacion de apellido --
-    $("#apellidoCliente").on("keypress",function(e){
+    $("#apellidoCli").on("keypress",function(e){
 		validarkeypress(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]*$/,e);
 	});
-	$("#apellidoCliente").on("keyup",function(){
-		validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this),$("#sapellidoCliente"),"Apellido Invalido - Solo letras entre 3 y 100 caracteres");
+	$("#apellidoCli").on("keyup",function(){
+		validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this),$("#sapellidoCli"),"Apellido Invalido - Solo letras entre 3 y 100 caracteres");
 	});
 
     // -- validacion de telefono --
-    $("#tlfCliente").on("keypress",function(e){
+    $("#tlfCli").on("keypress",function(e){
         validarkeypress(/^[0-9\-+ ]*$/, e);
     });
-    $("#tlfCliente").on("keyup",function(){
-        validarkeyup(/^[0-9\-+ ]{11,12}$/,$(this), $("#stlfCliente"),"Telefono Invalido - Formato de: 0000-0000000");
-	});
-
-    // -- validacion de direccion --
-    $("#dirCliente").on("keypress",function(e){
-		validarkeypress(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]*$/,e);
-	});
-	$("#dirCliente").on("keyup",function(){
-		validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,200}$/, $(this),$("#sdirCliente"),"Direccion Invalida - Solo letras entre 3 y 200 caracteres");
+    $("#tlfCli").on("keyup",function(){
+        validarkeyup(/^[0-9\-+ ]{11,12}$/,$(this), $("#stlfCli"),"Telefono Invalido - Formato de: 0000-0000000");
 	});
     // Fin de Validaciones de datos
 
@@ -58,11 +50,10 @@ $(document).ready(function(){
             if(validarEnvio()){
               var datos = new FormData();
               datos.append('accion', 'incluir');
-              datos.append('cedulaCliente', $("#cedulaCliente").val());
-              datos.append('nombreCliente', $("#nombreCliente").val());
-              datos.append('apellidoCliente', $("#apellidoCliente").val());
-              datos.append('tlfCliente', $("#tlfCliente").val());
-              datos.append('dirCliente', $("#dirCliente").val());
+              datos.append('cedulaCli', $("#cedulaCli").val());
+              datos.append('nombreCli', $("#nombreCli").val());
+              datos.append('apellidoCli', $("#apellidoCli").val());
+              datos.append('tlfCli', $("#tlfCli").val());
               enviaAjax(datos);
             }
         }
@@ -71,23 +62,22 @@ $(document).ready(function(){
             if(validarEnvio()){
                 var datos = new FormData();
                 datos.append('accion', 'modificar');
-                datos.append('cedulaCliente', $("#cedulaCliente").val());
-                datos.append('nombreCliente', $("#nombreCliente").val());
-                datos.append('apellidoCliente', $("#apellidoCliente").val());
-                datos.append('tlfCliente', $("#tlfCliente").val());
-                datos.append('dirCliente', $("#dirCliente").val());
+                datos.append('cedulaCli', $("#cedulaCli").val());
+                datos.append('nombreCli', $("#nombreCli").val());
+                datos.append('apellidoCli', $("#apellidoCli").val());
+                datos.append('tlfCli', $("#tlfCli").val());
                 enviaAjax(datos);
             }
         }
         // BOTON ELIMINAR
         if($(this).text() == 'eliminar'){
-            if(validarkeyup(/^[0-9\.]{7,12}$/,$("#cedulaCliente"), 
-            $("#scedulaCliente"),"El formato debe ser 9999999")==0){ 
+            if(validarkeyup(/^[0-9\.]{7,12}$/,$("#cedulaCli"), 
+            $("#scedulaCli"),"El formato debe ser 9999999")==0){ 
                 mostrarMensaje("Cedula Invalida - El formato debe ser: 99999999");
             } else{
                 var datos = new FormData();
                 datos.append('accion', 'eliminar');
-                datos.append('cedulaCliente', $("#cedulaCliente").val());
+                datos.append('cedulaCli', $("#cedulaCli").val());
                 enviaAjax(datos);
             }
         }
@@ -121,7 +111,7 @@ $(document).ready(function(){
 
         var datos = new FormData();
         datos.append('accion', 'eliminar');
-        datos.append('cedulaCliente', cedulaEliminada);
+        datos.append('cedulaCli', cedulaEliminada);
         enviaAjax(datos);
     });
 
@@ -135,29 +125,24 @@ $(document).ready(function(){
 //validacion de los datos antes de enviarlos
 function validarEnvio(){
     // -- validacion de envio de cedula --
-    if(validarkeyup(/^[0-9\.]{7,11}$/,$("#cedulaCliente"), $("#scedulaCliente"),"Cedula Invalida - (El Formato debe ser: 999999999)")==0){
+    if(validarkeyup(/^[0-9\.]{7,11}$/,$("#cedulaCli"), $("#scedulaCli"),"Cedula Invalida - (El Formato debe ser: 999999999)")==0){
         mostrarMensaje("Cedula Invalida <br/>" + "(El formato debe ser: 99999999)");	
-		return false;					
+		return false;
 	}
     // -- validacion de envio de nombre --
-    else if(validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#nombreCliente"),$("#snombreCliente"),"Nombre Invalido - (Solo letras entre 3 y 100 caracteres)")==0){
+    else if(validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#nombreCli"),$("#snombreCli"),"Nombre Invalido - (Solo letras entre 3 y 100 caracteres)")==0){
 		mostrarMensaje("Nombre Invalido <br>" + "(Solo letras entre 3 y 100 caracteres)");
 		return false;
 	}
     // validacion de envio de apellido --
-    else if(validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#apellidoCliente"),$("#sapellidoCliente"),"apellido Invalido - (Solo letras entre 3 y 100 caracteres)")==0){
+    else if(validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#apellidoCli"),$("#sapellidoCli"),"apellido Invalido - (Solo letras entre 3 y 100 caracteres)")==0){
 		mostrarMensaje("Apellido Invalido <br>" + "(Solo letras entre 3 y 100 caracteres)");
 		return false;
 	}
     // validacion de envio de telefono --
-    if(validarkeyup(/^[0-9\-+ ]{11,12}$/,$("#tlfCliente"), $("#stlfCliente"),"Telefono Invalido - (Formato de: 0000-0000000)")==0){
+    else if(validarkeyup(/^[0-9\-+ ]{11,12}$/,$("#tlfCli"), $("#stlfCli"),"Telefono Invalido - (Formato de: 0000-0000000)")==0){
         mostrarMensaje("Telefono Invalido <br>" + "(Formato de: 0000-0000000)");	
 		return false;					
-	}
-    // -- validacion de envio de direccion --
-    else if(validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,200}$/, $("#dirCliente"),$("#sdirCliente"),"Direccion Invalida - (Solo letras entre 3 y 200 caracteres)")==0){
-		mostrarMensaje("Direccion Invalida <br>" + "(Solo letras entre 3 y 200 caracteres");
-		return false;
 	}
     return true;
 }
@@ -198,11 +183,10 @@ function pone(pos){
     var nombreCompleto = $(linea).find("td:eq(1)").text();
     var nombreSeparado = nombreCompleto.split(' ');
 
-    $("#cedulaCliente").val($(linea).find("td:eq(0)").text());
-    $("#nombreCliente").val(nombreSeparado[0]);
-    $("#apellidoCliente").val(nombreSeparado[1]);
-    $("#tlfCliente").val($(linea).find("td:eq(2)").text());
-    $("#dirCliente").val($(linea).find("td:eq(3)").text());
+    $("#cedulaCli").val($(linea).find("td:eq(0)").text());
+    $("#nombreCli").val(nombreSeparado[0]);
+    $("#apellidoCli").val(nombreSeparado[1]);
+    $("#tlfCli").val($(linea).find("td:eq(2)").text());
     $("#btnGuardar").text('modificar');
     $("#modal_cliente").modal("show");
 }
@@ -277,9 +261,8 @@ function enviaAjax(datos){
 }
 
 function limpia(){
-    $("#cedulaCliente").val("");
-	$("#nombreCliente").val("");
-	$("#apellidoCliente").val("");
-    $("#tlfCliente").val("");
-    $("#dirCliente").val("");
+    $("#cedulaCli").val("");
+	$("#nombreCli").val("");
+	$("#apellidoCli").val("");
+    $("#tlfCli").val("");
 }

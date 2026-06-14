@@ -7,7 +7,7 @@
 
         <nav class="nav flex-column">
             <a class="nav-link <?= $pagina == 'principal' ? 'active' : '' ?>" href="?pagina=principal">
-                <i class="bi bi-house-door"></i> Dashboard
+                <i class="bi bi-house-door"></i> Inicio
             </a>
             <a class="nav-link <?= $pagina == 'clientes' ? 'active' : '' ?>" href="?pagina=clientes">
                 <i class="bi bi-people"></i> Clientes

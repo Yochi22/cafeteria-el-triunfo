@@ -4,28 +4,22 @@ require_once('modelo/datos.php');
 class clientes extends datos{
 
     //Atributos
-    private $cedulaCliente;
-    private $nombreCliente;
-    private $apellidoCliente;
-    private $tlfCliente;
-    private $dirCliente;
-    private $estado;
+    private $cedulaCli;
+    private $nombreCli;
+    private $apellidoCli;
+    private $tlfCli;
 
     //funcion SET
-    function set_cedulaCliente($valor){ $this->cedulaCliente = $valor; }
-    function set_nombreCliente($valor){ $this->nombreCliente = $valor; }
-    function set_apellidoCliente($valor){ $this->apellidoCliente = $valor; }
-    function set_tlfCliente($valor){ $this->tlfCliente = $valor; }
-    function set_dirCliente($valor){ $this->dirCliente = $valor; }
-    function set_estado($valor) {$this->estado = $valor; }
+    function set_cedulaCli($valor){ $this->cedulaCli = $valor; }
+    function set_nombreCli($valor){ $this->nombreCli = $valor; }
+    function set_apellidoCli($valor){ $this->apellidoCli = $valor; }
+    function set_tlfCli($valor){ $this->tlfCli = $valor; }
 
     //funcion GET
-    function get_cedulaCliente(){ return $this->cedulaCliente; }
-    function get_nombreCliente(){ return $this->nombreCliente; }
-    function get_apellidoCliente(){ return $this->apellidoCliente; }
-    function get_tlfCliente(){ return $this->tlfCliente; }
-    function get_dirCliente(){ return $this->dirCliente;}
-    function get_estado(){ return $this->estado; }
+    function get_cedulaCli(){ return $this->cedulaCli; }
+    function get_nombreCli(){ return $this->nombreCli; }
+    function get_apellidoCli(){ return $this->apellidoCli; }
+    function get_tlfCli(){ return $this->tlfCli; }
  
 
     // funcion de Registrar Cliente
@@ -33,16 +27,15 @@ class clientes extends datos{
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $r = array();
-        if(!$this->existe($this->cedulaCliente)){
+        if(!$this->existe($this->cedulaCli)){
             try{
-                $inc = $co->prepare("INSERT INTO clientes(cedulaCliente, nombreCliente, apellidoCliente, tlfCliente, dirCliente)
-                VALUES (:cedulaCliente, :nombreCliente, :apellidoCliente, :tlfCliente, :dirCliente)");
+                $inc = $co->prepare("INSERT INTO clientes(cedulaCli, nombreCli, apellidoCli, tlfCli)
+                VALUES (:cedulaCli, :nombreCli, :apellidoCli, :tlfCli)");
 
-                $inc->bindParam(':cedulaCliente', $this->cedulaCliente);
-                $inc->bindParam(':nombreCliente', $this->nombreCliente);
-                $inc->bindParam(':apellidoCliente', $this->apellidoCliente);
-                $inc->bindParam(':tlfCliente', $this->tlfCliente);
-                $inc->bindParam(':dirCliente', $this->dirCliente);
+                $inc->bindParam(':cedulaCli', $this->cedulaCli);
+                $inc->bindParam(':nombreCli', $this->nombreCli);
+                $inc->bindParam(':apellidoCli', $this->apellidoCli);
+                $inc->bindParam(':tlfCli', $this->tlfCli);
                 $inc->execute();
 
                 $r['resultado'] = 'incluir';
@@ -63,17 +56,16 @@ class clientes extends datos{
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $r = array();
-        if($this->existe($this->cedulaCliente)){
+        if($this->existe($this->cedulaCli)){
             try{
                 $mod = $co->prepare("UPDATE clientes
-                    SET cedulaCliente = :cedulaCliente, nombreCliente = :nombreCliente, apellidoCliente = :apellidoCliente, tlfCliente = :tlfCliente, dirCliente = :dirCliente 
-                    WHERE cedulaCliente = :cedulaCliente");
+                    SET cedulaCli = :cedulaCli, nombreCli = :nombreCli, apellidoCli = :apellidoCli, tlfCli = :tlfCli 
+                    WHERE cedulaCli = :cedulaCli");
 
-                $mod->bindParam(':cedulaCliente', $this->cedulaCliente);
-                $mod->bindParam(':nombreCliente', $this->nombreCliente);
-                $mod->bindParam(':apellidoCliente', $this->apellidoCliente);
-                $mod->bindParam(':tlfCliente', $this->tlfCliente);
-                $mod->bindParam(':dirCliente', $this->dirCliente);
+                $mod->bindParam(':cedulaCli', $this->cedulaCli);
+                $mod->bindParam(':nombreCli', $this->nombreCli);
+                $mod->bindParam(':apellidoCli', $this->apellidoCli);
+                $mod->bindParam(':tlfCli', $this->tlfCli);
                 $mod->execute();
                 
                 $r['resultado'] = 'modificar';
@@ -94,11 +86,11 @@ class clientes extends datos{
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $r = array();
-        if($this->existe($this->cedulaCliente)){
+        if($this->existe($this->cedulaCli)){
             try{
-                $eli = $co->prepare("UPDATE clientes SET estado = 0 WHERE cedulaCliente = :cedulaCliente");
+                $eli = $co->prepare("DELETE FROM clientes WHERE cedulaCli = :cedulaCli");
 
-                $eli->bindParam(':cedulaCliente', $this->cedulaCliente);
+                $eli->bindParam(':cedulaCli', $this->cedulaCli);
                 $eli->execute();
 
                 $r['resultado'] = 'eliminar';
@@ -120,18 +112,17 @@ class clientes extends datos{
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $r = array();
         try{
-            $resultado = $co->query("SELECT * FROM clientes WHERE estado = 1");
+            $resultado = $co->query("SELECT * FROM clientes");
             if($resultado){
                 $respuesta = '';
                 foreach($resultado as $fila){
                     $respuesta .= "<tr>";
-                    $respuesta .= "<td>" . $fila['cedulaCliente'] . "</td>";
-                    $respuesta .= "<td>" . $fila['nombreCliente'] ." ". $fila['apellidoCliente'] . "</td>";
-                    $respuesta .= "<td>" . $fila['tlfCliente'] . "</td>";
-                    $respuesta .= "<td>" . $fila['dirCliente'] . "</td>";
+                    $respuesta .= "<td>" . $fila['cedulaCli'] . "</td>";
+                    $respuesta .= "<td>" . $fila['nombreCli'] ." ". $fila['apellidoCli'] . "</td>";
+                    $respuesta .= "<td>" . $fila['tlfCli'] . "</td>";
                     $respuesta .= "<td>";
-                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='pone(this)'><i class='bi bi-pencil-square'></i> Modificar</button>";
-                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i> Eliminar</button>";
+                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='pone(this)'><i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span></button>";
+                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i><span class='d-none d-sm-inline'> Eliminar</span></button>";
                     $respuesta .= "</td>";
                     $respuesta .= "</tr>";
                 }
@@ -159,12 +150,12 @@ class clientes extends datos{
     }
 
     //funcion para saber si ya el Cliente esta resgitrado
-    function existe($cedulaCliente){
+    function existe($cedulaCli){
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         try{
-            $resultado = $co->prepare("SELECT * FROM clientes WHERE cedulaCliente = :cedulaCliente AND estado = 1");
-            $resultado->bindParam(':cedulaCliente', $cedulaCliente);
+            $resultado = $co->prepare("SELECT * FROM clientes WHERE cedulaCli = :cedulaCli");
+            $resultado->bindParam(':cedulaCli', $cedulaCli);
             $resultado->execute();
             $fila = $resultado->fetchAll(PDO::FETCH_BOTH);
             if($fila){
@@ -186,14 +177,12 @@ class clientes extends datos{
         $r = array();
         try{
             if($busqueda){
-                $bus = $co->prepare("SELECT cedulaCliente, nombreCliente, apellidoCliente, tlfCliente, dirCliente 
+                $bus = $co->prepare("SELECT cedulaCli, nombreCli, apellidoCli, tlfCli 
                                     FROM clientes
-                                    WHERE (cedulaCliente LIKE :busqueda
-                                    OR nombreCliente LIKE :busqueda
-                                    OR apellidoCliente LIKE :busqueda
-                                    OR tlfCliente LIKE :busqueda
-                                    OR dirCliente LIKE :busqueda) 
-                                    AND estado = 1");
+                                    WHERE cedulaCli LIKE :busqueda
+                                    OR nombreCli LIKE :busqueda
+                                    OR apellidoCli LIKE :busqueda
+                                    OR tlfCli LIKE :busqueda");
                 
                 $bus->bindParam(':busqueda', $busqueda);
                 $bus->execute();
@@ -202,10 +191,9 @@ class clientes extends datos{
                 $respuesta = "";
                 foreach($resultado as $fila){
                     $respuesta .= "<tr>";
-                    $respuesta .= "<td>" . $fila['cedulaCliente'] . "</td>";
-                    $respuesta .= "<td>" . $fila['nombreCliente'] ." ". $fila['apellidoCliente'] . "</td>";
-                    $respuesta .= "<td>" . $fila['tlfCliente'] . "</td>";
-                    $respuesta .= "<td>" . $fila['dirCliente'] . "</td>";
+                    $respuesta .= "<td>" . $fila['cedulaCli'] . "</td>";
+                    $respuesta .= "<td>" . $fila['nombreCli'] ." ". $fila['apellidoCli'] . "</td>";
+                    $respuesta .= "<td>" . $fila['tlfCli'] . "</td>";
                     $respuesta .= "<td>";
                         $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='pone(this)'><i class='bi bi-pencil-square'></i> Modificar</button>";
                         $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i> Eliminar</button>";

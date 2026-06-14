@@ -6,21 +6,21 @@ class metodos_pago extends datos
     //definicion de variables
     private $nombreBanco;
     private $cedulaTitular;
-    private $telefono;
+    private $tlfCuenta;
     private $cuenta;
     private $estado;
 
     //setters
     function set_nombreBanco($valor) { $this->nombreBanco = $valor; }
     function set_cedulaTitular($valor) { $this->cedulaTitular = $valor; }
-    function set_telefono($valor) { $this->telefono = $valor; }
+    function set_tlfCuenta($valor) { $this->tlfCuenta = $valor; }
     function set_cuenta($valor) { $this->cuenta = $valor; }
     function set_estado($valor) {$this->estado = $valor;}
 
     //getters
     function get_nombreBanco() { return $this->nombreBanco; }
     function get_cedulaTitular() { return $this->cedulaTitular; }
-    function get_telefono() { return $this->telefono; }
+    function get_tlfCuenta() { return $this->tlfCuenta; }
     function get_cuenta() { return $this->cuenta; }
     function get_estado() {return $this->estado;}
 
@@ -31,12 +31,12 @@ class metodos_pago extends datos
         $r = array();
         if(!$this->existe($this->cuenta)){
             try{
-                $inc = $co->prepare("INSERT INTO metodospago(nombreBanco, cedulaTitular, telefono, cuenta)
-                VALUES (:nombreBanco, :cedulaTitular, :telefono, :cuenta)");
+                $inc = $co->prepare("INSERT INTO metodospago(nombreBanco, cedulaTitular, tlfCuenta, cuenta)
+                VALUES (:nombreBanco, :cedulaTitular, :tlfCuenta, :cuenta)");
 
                 $inc->bindParam(':nombreBanco', $this->nombreBanco);
                 $inc->bindParam(':cedulaTitular', $this->cedulaTitular);
-                $inc->bindParam(':telefono', $this->telefono);
+                $inc->bindParam(':tlfCuenta', $this->tlfCuenta);
                 $inc->bindParam(':cuenta', $this->cuenta);
                 $inc->execute();
 
@@ -61,11 +61,11 @@ class metodos_pago extends datos
         if($this->existe($this->cuenta)){
             try{
                 $mod = $co->prepare("UPDATE metodospago SET nombreBanco = :nombreBanco, cedulaTitular = :cedulaTitular, 
-                telefono = :telefono, cuenta = :cuenta WHERE cuenta = :cuenta");
+                tlfCuenta = :tlfCuenta, cuenta = :cuenta WHERE cuenta = :cuenta");
 
                 $mod->bindParam(':nombreBanco', $this->nombreBanco);
                 $mod->bindParam(':cedulaTitular', $this->cedulaTitular);
-                $mod->bindParam(':telefono', $this->telefono);
+                $mod->bindParam(':tlfCuenta', $this->tlfCuenta);
                 $mod->bindParam(':cuenta', $this->cuenta);
                 $mod->execute();
                 
@@ -118,11 +118,11 @@ class metodos_pago extends datos
                     $respuesta .= "<tr>";
                     $respuesta .= "<td>" . $fila['nombreBanco'] . "</td>";
                     $respuesta .= "<td>" . $fila['cedulaTitular'] ."</td>";
-                    $respuesta .= "<td>" . $fila['telefono'] . "</td>";
+                    $respuesta .= "<td>" . $fila['tlfCuenta'] . "</td>";
                     $respuesta .= "<td>" . $fila['cuenta'] . "</td>";
                     $respuesta .= "<td class='text-center'>";
-                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='pone(this)'><i class='bi bi-pencil-square'></i> Modificar</button>";
-                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i> Eliminar</button>";
+                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='pone(this)'><i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span></button>";
+                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i><span class='d-none d-sm-inline'> Eliminar</span></button>";
                     $respuesta .= "</td>";
                     $respuesta .= "</tr>";
                 }
@@ -177,11 +177,11 @@ class metodos_pago extends datos
         $r = array();
         try{
             if($busqueda){
-                $bus = $co->prepare("SELECT nombreBanco, cedulaTitular, telefono, cuenta 
+                $bus = $co->prepare("SELECT nombreBanco, cedulaTitular, tlfCuenta, cuenta 
                                     FROM metodospago
                                     WHERE (nombreBanco LIKE :busqueda
                                     OR cedulaTitular LIKE :busqueda
-                                    OR telefono LIKE :busqueda
+                                    OR tlfCuenta LIKE :busqueda
                                     OR cuenta LIKE :busqueda)
                                     AND estado = 1");
                 
@@ -194,7 +194,7 @@ class metodos_pago extends datos
                     $respuesta .= "<tr>";
                     $respuesta .= "<td>" . $fila['nombreBanco'] . "</td>";
                     $respuesta .= "<td>" . $fila['cedulaTitular'] . "</td>";
-                    $respuesta .= "<td>" . $fila['telefono'] . "</td>";
+                    $respuesta .= "<td>" . $fila['tlfCuenta'] . "</td>";
                     $respuesta .= "<td>" . $fila['cuenta'] . "</td>";
                     $respuesta .= "<td>";
                         $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='pone(this)'><i class='bi bi-pencil-square'></i> Modificar</button>";

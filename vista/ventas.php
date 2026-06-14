@@ -6,20 +6,34 @@
         <?php require_once("comunes/sidebar.php"); ?>
 
         <main class="main-content w-100 p-4">
-            <div class="d-flex align-items-center">
-                <button class="btn btn-outline-dark d-md-none me-3 border-0"
-                    id="btn-toggle-sidebar"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#sidebarMenu"
-                    aria-controls="sidebarMenu"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation">
+
+            <div class="row align-items-center mb-4 g-3">
+                <div class="col-9 col-md-5 d-flex align-items-center">
+                    <button class="btn btn-outline-dark d-md-none me-3 border-0"
+                        id="btn-toggle-sidebar"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#sidebarMenu"
+                        aria-controls="sidebarMenu"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
                     <i class="bi bi-list" style="font-size: 2rem;"></i>
-                </button>
-                <div>
-                    <h2 class="text-dashboard"><i class="bi bi-graph-up-arrow"></i> Ventas</h2>
-                    <p class="text-muted"> Hola, Esta es tu Seccion de Ventas, aqui se registran todas tus ventas!</p>
+                    </button>
+                    <div>
+                        <h2 class="text-dashboard"><i class="bi bi-graph-up-arrow"></i> Ventas</h2>
+                        <p class="text-muted"> Hola, Esta es tu Seccion de Ventas, aqui se registran todas tus ventas!</p>
+                    </div>
                 </div>
+                <div class="col-3 col-md-7">
+                    <div class="row g-2 justify-content-md-end align-items-center flex-nowrap">
+                        <div class="col-auto">
+                            <button class="btn btn-crear d-flex align-items-center gap-2 py-2" id="incluir">
+                                <i class="bi bi-plus-circle fs-4"></i>
+                                <span class="d-none d-sm-inline"> Añadir Venta</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
             </div>
 
             <div class="row">
@@ -62,7 +76,14 @@
                         </tr>
                     </thead>
                     <tbody id="listaVentas" class="text-center">
-                        
+                        <tr>
+                            <td> 001 </td>
+                            <td> luis alvarado </td>
+                            <td> 5 </td>
+                            <td> 20 </td>
+                            <td> pago movil </td>
+                            <td> <button type="button" class="btn text-white w-80 small-width m-1" style="background-color: #FF8C00";><i class="bi bi-pencil-square"></i> consultar</button></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

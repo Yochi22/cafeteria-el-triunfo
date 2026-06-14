@@ -21,7 +21,7 @@
                     <i class="bi bi-list" style="font-size: 2rem;"></i>
                 </button>
                 <div>
-                    <h2 class="text-dashboard mb-0"><i class="bi bi-house-door"></i> Dashboard</h2>
+                    <h2 class="text-dashboard mb-0"><i class="bi bi-house-door"></i> Inicio</h2>
                     <p class="text-muted mb-0">¡Hola, bienvenid@ de nuevo!</p>
                 </div>
             </div>

@@ -37,7 +37,8 @@
 
                 <!-- boton para registrar -->
                 <button type="button" id="incluir" class="btn btn-crear" data-bs-toggle="modal" data-bs-target="#modal_cliente">
-                    <i class="bi bi-plus-circle fs-5"></i> Agregar Cliente 
+                    <i class="bi bi-plus-circle fs-5"></i>
+                    <span class="d-none d-sm-inline">Agregar Cliente</span>
                 </button>
 
                 <!-- boton de busqueda -->    
@@ -53,21 +54,21 @@
             </div>
 
             <!-- lista de Clientes -->
-            <table class="table table-hover align-items-center text-center">
-                <thead class="text-dashboard border-bottom">
-                    <tr>
-                        <th>Cédula</th>
-                        <th>Nombre y Apellido</th>
-                        <th>Teléfono</th>
-                        <th>Dirección</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="listaClientes" class="text-center">
-                    
-                </tbody>
-            </table>
-
+            <div class="table-responsive bg-gray p-5 rounded shadow-sm">
+                <table class="table table-hover align-items-center text-center">
+                    <thead class="text-dashboard border-bottom">
+                        <tr>
+                            <th>Cédula</th>
+                            <th>Nombre y Apellido</th>
+                            <th>Teléfono</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaClientes" class="text-center">
+                        
+                    </tbody>
+                </table>
+            </div>
             <!-- seccion del modal -->
             <div class="modal fade" id="modal_cliente" tabindex="-1" aria-labelledby="modal_cliente_label" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
@@ -85,33 +86,27 @@
                                 <input type="hidden" id="accion" name="accion">
                                 <!-- DATOS DEL CLIENTE -->
                                 <div class="mb-3">
-                                    <label for="cedulaCliente" class="form-label text-muted small">Cédula</label>
-                                    <input type="text" class="form-control rounded-3" id="cedulaCliente" name="cedulaCliente" required>
-                                    <span id="scedulaCliente"></span>
+                                    <label for="cedulaCli" class="form-label text-muted small">Cédula</label>
+                                    <input type="text" class="form-control rounded-3" id="cedulaCli" name="cedulaCli" required>
+                                    <span id="scedulaCli"></span>
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label for="nombreCliente" class="form-label text-muted small">Nombre</label>
-                                    <input type="text" class="form-control rounded-3" id="nombreCliente" name="nombreCliente" required>
-                                    <span id="snombreCliente"></span>
+                                    <label for="nombreCli" class="form-label text-muted small">Nombre</label>
+                                    <input type="text" class="form-control rounded-3" id="nombreCli" name="nombreCli" required>
+                                    <span id="snombreCli"></span>
                                 </div>
                                 
                                 <div class="mb-3">
-                                    <label for="apellidoCliente" class="form-label text-muted small">Apellido</label>
-                                    <input type="text" class="form-control rounded-3" id="apellidoCliente" name="apellidoCliente" required>
-                                    <span id="sapellidoCliente"></span>
+                                    <label for="apellidoCli" class="form-label text-muted small">Apellido</label>
+                                    <input type="text" class="form-control rounded-3" id="apellidoCli" name="apellidoCli" required>
+                                    <span id="sapellidoCli"></span>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="tlfCliente" class="form-label text-muted small">Teléfono</label>
-                                    <input type="text" class="form-control rounded-3" id="tlfCliente" name="tlfCliente" required>
-                                    <span id="stlfCliente"></span>
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label for="dirCliente" class="form-label text-muted small">Dirección</label>
-                                    <input type="text" class="form-control rounded-3" id="dirCliente" name="dirCliente" required>
-                                    <span id="sdirCliente"></span>
+                                    <label for="tlfCli" class="form-label text-muted small">Teléfono</label>
+                                    <input type="text" class="form-control rounded-3" id="tlfCli" name="tlfCli" required>
+                                    <span id="stlfCli"></span>
                                 </div>
                                 
                                 <div class="d-grid mt-4">
