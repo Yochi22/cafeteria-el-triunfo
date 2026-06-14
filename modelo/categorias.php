@@ -209,7 +209,7 @@ class categorias extends datos
         $r = array();
 
         try {
-            $b = $co->prepare("SELECT * FROM categorias WHERE (nombreCat LIKE :busqueda OR descCat LIKE :busqueda)");
+            $b = $co->prepare("SELECT * FROM categorias WHERE (codigoCat LIKE :busqueda OR nombreCat LIKE :busqueda OR descCat LIKE :busqueda)");
             $b->bindParam(':busqueda', $busqueda);
             $b->execute();
             $resultado = $b->fetchAll(PDO::FETCH_ASSOC);

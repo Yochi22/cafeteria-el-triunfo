@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <?php require_once("comunes/encabezado.php"); ?>
+
 <body>
     <div class="d-flex min-vh-100 position-relative">
         <?php require_once("comunes/sidebar.php"); ?>
@@ -63,6 +64,7 @@
                             <th>Banco</th>
                             <th>Cédula Titular</th>
                             <th>Teléfono</th>
+                            <th>Tipo de Cuenta</th>
                             <th>N° de Cuenta</th>
                             <th>Acciones</th>
                         </tr>
@@ -110,15 +112,27 @@
                             </div>
                         </div>
 
-                        <div class="mb-3">
-                            <label for="cuenta" class="form-label text-muted small fw-bold">Número de Cuenta</label>
-                            <input type="text" class="form-control rounded-3" id="cuenta" name="cuenta" required>
-                            <span id="scuenta" class="small text-danger"></span>
-                        </div>
+                        <div class="row">
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="tipoCuenta" class="form-label text-muted small fw-bold">Tipo de Cuenta</label>
+                                <select class="form-select" aria-label="Default select example" name="tipoCuenta" id="tipoCuenta" required>
+                                    <option value="Ahorro">Ahorro</option>
+                                    <option value="Corriente">Corriente</option>
+                                    <span id="stipoCuenta" class="small text-danger"></span>
+                                </select>
+                            </div>
 
-                        <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-crear w-100 mt-3" style="background-color: #FF8C00;" id="btnGuardar">Guardar</button>
-                        </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="numCuenta" class="form-label text-muted small fw-bold">Número de Cuenta</label>
+                                <input type="text" class="form-control rounded-3" id="numCuenta" name="numCuenta" required>
+                                <span id="snumCuenta" class="small text-danger"></span>
+                            </div>
+
+                        </div> 
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="btn btn-crear w-100 mt-3" style="background-color: #FF8C00;" id="btnGuardar">Guardar</button>
+                            </div>
                     </form>
                 </div>
 

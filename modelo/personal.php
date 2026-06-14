@@ -5,27 +5,27 @@ class personal extends datos{
 
   
     private $cedulaPer;
-    private $nombre;
-    private $apellido;
+    private $nombrePer;
+    private $apellidoPer;
     private $password;
     private $rol;
-    private $estado;
+  
     
 
     function set_cedulaPer($valor){ $this->cedulaPer = $valor; }
-    function set_nombre($valor){ $this->nombre = $valor; }
-    function set_apellido($valor){ $this->apellido = $valor; }
+    function set_nombrePer($valor){ $this->nombrePer = $valor; }
+    function set_apellidoPer($valor){ $this->apellidoPer = $valor; }
     function set_password($valor){ $this->password = $valor; }
     function set_rol($valor){ $this->rol = $valor; }
-    function set_estado($valor){ $this->estado = $valor; }
+
 
 
     function get_cedulaPer($valor){ $this->cedulaPer = $valor; }
-    function get_nombre($valor){ $this->nombre = $valor; }
-    function get_apellido($valor){ $this->apellido = $valor; }
+    function get_nombrePer($valor){ $this->nombrePer = $valor; }
+    function get_apellidoPer($valor){ $this->apellidoPer = $valor; }
     function get_password($valor){ $this->password = $valor; }
     function get_rol($valor){ $this->rol = $valor; }
-    function get_estado($valor){ $this->estado = $valor; }
+
 
     // funcion de Registrar Cliente
     function incluir(){
@@ -34,12 +34,12 @@ class personal extends datos{
         $r = array();
         if(!$this->existe($this->cedulaPer)){
             try{
-                $inc = $co->prepare("INSERT INTO personal(cedulaPer, nombre, apellido, password, rol, estado)
-                VALUES (:cedulaPer, :nombre, :apellido, :password, :rol, 1)");
+                $inc = $co->prepare("INSERT INTO personal(cedulaPer, nombrePer, apellidoPer, password, rol)
+                VALUES (:cedulaPer, :nombrePer, :apellidoPer, :password, :rol)");
 
                 $inc->bindParam(':cedulaPer', $this->cedulaPer);
-                $inc->bindParam(':nombre', $this->nombre);
-                $inc->bindParam(':apellido', $this->apellido);
+                $inc->bindParam(':nombrePer', $this->nombrePer);
+                $inc->bindParam(':apellidoPer', $this->apellidoPer);
                 $inc->bindParam(':password', $this->password);
                 $inc->bindParam(':rol', $this->rol);
                 $inc->execute();
@@ -65,12 +65,12 @@ class personal extends datos{
         if($this->existe($this->cedulaPer)){
             try{
                 $mod = $co->prepare("UPDATE personal
-                    SET nombre = :nombre, apellido = :apellido, password = :password, rol = :rol 
+                    SET nombrePer = :nombrePer, apellidoPer = :apellidoPer, password = :password, rol = :rol 
                     WHERE cedulaPer = :cedulaPer");
 
                 $mod->bindParam(':cedulaPer', $this->cedulaPer);
-                $mod->bindParam(':nombre', $this->nombre);
-                $mod->bindParam(':apellido', $this->apellido);
+                $mod->bindParam(':nombrePer', $this->nombrePer);
+                $mod->bindParam(':apellidoPer', $this->apellidoPer);
                 $mod->bindParam(':password', $this->password);
                 $mod->bindParam(':rol', $this->rol);
                 $mod->execute();
@@ -95,7 +95,7 @@ class personal extends datos{
         $r = array();
         if($this->existe($this->cedulaPer)){
             try{
-                $eli = $co->prepare("UPDATE personal SET estado = 0 WHERE cedulaPer = :cedulaPer");
+                $eli = $co->prepare("DELETE FROM personal WHERE cedulaPer = :cedulaPer");
 
                 $eli->bindParam(':cedulaPer', $this->cedulaPer);
                 $eli->execute();
@@ -118,13 +118,12 @@ class personal extends datos{
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $r = array();
         try{
-            $resultado = $co->query("SELECT * FROM personal WHERE estado = 1");
-            if($resultado){
+                $resultado = $co->query("SELECT * FROM personal");            if($resultado){
                 $respuesta = '';
                 foreach($resultado as $fila){
                     $respuesta .= "<tr>";
                     $respuesta .= "<td>" . $fila['cedulaPer'] . "</td>";
-                    $respuesta .= "<td>" . $fila['nombre'] ." ". $fila['apellido'] . "</td>";
+                    $respuesta .= "<td>" . $fila['nombrePer'] ." ". $fila['apellidoPer'] . "</td>";
                     $respuesta .= "<td>" . $fila['password'] . "</td>";
                     $respuesta .= "<td>" . $fila['rol'] . "</td>";
                     $respuesta .= "<td>";
@@ -161,7 +160,7 @@ class personal extends datos{
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         try{
-            $resultado = $co->prepare("SELECT * FROM personal WHERE cedulaPer = :cedulaPer AND estado = 1");
+            $resultado = $co->prepare("SELECT * FROM personal WHERE cedulaPer = :cedulaPer");
             $resultado->bindParam(':cedulaPer', $cedulaPer);
             $resultado->execute();
             $fila = $resultado->fetchAll(PDO::FETCH_BOTH);
@@ -184,14 +183,13 @@ class personal extends datos{
         $r = array();
         try{
             if($busqueda){
-                $bus = $co->prepare("SELECT cedulaPer, nombre, apellido, password, rol 
+                $bus = $co->prepare("SELECT cedulaPer, nombrePer, apellidoPer, password, rol 
                                     FROM personal
                                     WHERE (cedulaPer LIKE :busqueda
-                                    OR nombre LIKE :busqueda
-                                    OR apellido LIKE :busqueda
+                                    OR nombrePer LIKE :busqueda
+                                    OR apellidoPer LIKE :busqueda
                                     OR password LIKE :busqueda
-                                    OR rol LIKE :busqueda) 
-                                    AND estado = 1");
+                                    OR rol LIKE :busqueda");
                 
                 $bus->bindParam(':busqueda', $busqueda);
                 $bus->execute();
@@ -201,7 +199,7 @@ class personal extends datos{
                 foreach($resultado as $fila){
                     $respuesta .= "<tr>";
                     $respuesta .= "<td>" . $fila['cedulaPer'] . "</td>";
-                    $respuesta .= "<td>" . $fila['nombre'] ." ". $fila['apellido'] . "</td>";
+                    $respuesta .= "<td>" . $fila['nombrePer'] ." ". $fila['apellidoPer'] . "</td>";
                     $respuesta .= "<td>" . $fila['password'] . "</td>";
                     $respuesta .= "<td>" . $fila['rol'] . "</td>";
                     $respuesta .= "<td>";
@@ -212,7 +210,7 @@ class personal extends datos{
                 }
                 if($respuesta == ""){
                     $respuesta .= "<tr>";
-                    $respuesta .= "<td colspan = '5' class='text-center text-muted py-4>'";
+                    $respuesta .= "<td colspan='5' class='text-center text-muted py-4'>";
                     $respuesta .= "<span><i class='bi bi-person-fill-slash fs-1' style='color : #FF8C00'></i></i></span>";
                     $respuesta .= "<h5 class= 'text-dashboard'> No se Encuentran Registros </h5>";
                     $respuesta .= "<h6 class= 'text-dashboard'> Intenta de Nuevo </h6>";

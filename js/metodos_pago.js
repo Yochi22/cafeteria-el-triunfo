@@ -35,13 +35,21 @@ $(document).ready(function(){
         validarkeyup(/^[0-9\-+ ]{10,12}$/,$(this), $("#stlfCuenta"),"Teléfono Invalido - Formato de 11 numeros sin espacios.");
     });
 
-    //1.4 cuenta
-    $("#cuenta").on("keypress", function (e) {
+    //1.4 tipo cuenta
+    $("#tipoCuenta").on("keypress", function (e) {
+        validarkeypress(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]*$/,e);
+    });
+    $("#tipoCuenta").on("keyup", function () {
+        validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this),$("#stipoCuenta"),"Tipo de Cuenta Invalido - Solo letras entre 3 y 100 caracteres");
+    });
+
+    //1.5 numero de cuenta
+    $("#numCuenta").on("keypress", function (e) {
     validarkeypress(/^[0-9]*$/, e);
     });
 
-    $("#cuenta").on("keyup", function () {
-        validarkeyup(/^[0-9]{20}$/, $(this), $("#scuenta"), "Cuenta Inválida - Debe tener exactamente 20 números.");
+    $("#numCuenta").on("keyup", function () {
+        validarkeyup(/^[0-9]{20}$/, $(this), $("#snumCuenta"), "Cuenta Inválida - Debe tener exactamente 20 números.");
     });
 
 
@@ -66,7 +74,8 @@ $(document).ready(function(){
               datos.append('nombreBanco', $("#nombreBanco").val());
               datos.append('cedulaTitular', $("#cedulaTitular").val());
               datos.append('tlfCuenta', $("#tlfCuenta").val());
-              datos.append('cuenta', $("#cuenta").val());
+              datos.append('tipoCuenta', $("#tipoCuenta").val());
+              datos.append('numCuenta', $("#numCuenta").val());
               enviaAjax(datos);
             }
         }
@@ -79,20 +88,21 @@ $(document).ready(function(){
               datos.append('nombreBanco', $("#nombreBanco").val());
               datos.append('cedulaTitular', $("#cedulaTitular").val());
               datos.append('tlfCuenta', $("#tlfCuenta").val());
-              datos.append('cuenta', $("#cuenta").val());
+              datos.append('tipoCuenta', $("#tipoCuenta").val());
+              datos.append('numCuenta', $("#numCuenta").val());
               enviaAjax(datos);
             }
         }
 
         //2.3 eliminar
         if($(this).text() == 'eliminar'){
-        if (validarkeyup(/^[0-9]{20}$/, $("#cuenta"), 
+        if (validarkeyup(/^[0-9]{20}$/, $("#numCuenta"), 
         $("#scuenta"), "El formato debe ser 20 numeros sin espacios") == 0) {
             mostrarMensaje("Verifique la Cuenta (Debe tener 20 números)");
         } else{
              var datos = new FormData();
              datos.append('accion', 'eliminar');
-             datos.append('cuenta', $("#cuenta").val());
+             datos.append('numCuenta', $("#numCuenta").val());
              enviaAjax(datos);
             }
         }
@@ -105,12 +115,13 @@ $(document).ready(function(){
 
         var datos = new FormData();
         datos.append('accion', 'eliminar');
-        datos.append('cuenta', cuentaEliminada);
+        datos.append('numCuenta', cuentaEliminada);
         enviaAjax(datos);
     });
 
     $("#incluir").on("click", function(){
         limpia();
+        $("#numCuenta").prop('readonly', false);
         $("#btnGuardar").text("incluir");
         $("#modal_metodo").modal("show");
     });
@@ -157,8 +168,13 @@ function validarEnvio(){
         mostrarMensaje("Teléfono Invalido <br>" + "Formato de 11 numeros sin espacios.");
         return false;
     }
+    //validacion de envio de tipo cuenta
+    if(validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/,$("#tipoCuenta"),$("#stipoCuenta"),"Tipo de Cuenta Invalido - Solo letras entre 3 y 100 caracteres)")==0){
+        mostrarMensaje("Nombre Invalido <br>" + "Solo letras entre 3 y 100 caracteres)");
+        return false;
+    }
     //validacion de envio de num cuenta
-    if(validarkeyup(/^[0-9]{20}$/, $("#cuenta"), $("#scuenta"),"Cuenta Inválida - Debe tener exactamente 20 números.")==0){
+    if(validarkeyup(/^[0-9]{20}$/, $("#numCuenta"), $("#snumCuenta"),"Cuenta Inválida - Debe tener exactamente 20 números.")==0){
         mostrarMensaje("Cuenta Inválida <br>" + "Debe tener exactamente 20 números.");
         return false;
     }
@@ -201,9 +217,12 @@ function pone(pos){
     $("#nombreBanco").val($(linea).find("td:eq(0)").text().trim());
     $("#cedulaTitular").val($(linea).find("td:eq(1)").text().trim());
     $("#tlfCuenta").val($(linea).find("td:eq(2)").text().trim());
-    $("#cuenta").val($(linea).find("td:eq(3)").text().trim());
+    $("#tipoCuenta").val($(linea).find("td:eq(3)").text().trim());
+    $("#numCuenta").val($(linea).find("td:eq(4)").text().trim());
     $("#btnGuardar").text('modificar');
     $("#modal_metodo").modal("show");
+
+    $("#numCuenta").prop('readonly', true);
 }
 
 //boton conectado a funcion ELIMINAR
@@ -280,5 +299,6 @@ function limpia(){
     $("#nombreBanco").val("");
     $("#cedulaTitular").val("");
     $("#tlfCuenta").val("");
-    $("#cuenta").val("");
+    $("#tipoCuenta").val("");
+    $("#numCuenta").val("");
 }

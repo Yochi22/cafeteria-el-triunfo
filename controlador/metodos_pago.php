@@ -23,7 +23,8 @@ if (is_file("vista/" . $pagina . ".php")) {
                 $o->set_nombreBanco($_POST['nombreBanco']);
                 $o->set_cedulaTitular($_POST['cedulaTitular']);
                 $o->set_tlfCuenta($_POST['tlfCuenta']);
-                $o->set_cuenta($_POST['cuenta']);
+                $o->set_tipoCuenta($_POST['tipoCuenta']);
+                $o->set_numCuenta($_POST['numCuenta']);
                 echo json_encode($o->incluir());
                 break;
                 
@@ -31,12 +32,13 @@ if (is_file("vista/" . $pagina . ".php")) {
                 $o->set_nombreBanco($_POST['nombreBanco']);
                 $o->set_cedulaTitular($_POST['cedulaTitular']);
                 $o->set_tlfCuenta($_POST['tlfCuenta']);
-                $o->set_cuenta($_POST['cuenta']);
+                $o->set_tipoCuenta($_POST['tipoCuenta']);
+                $o->set_numCuenta($_POST['numCuenta']);
                 echo json_encode($o->modificar());
                 break;
                 
             case 'eliminar':
-                $o->set_cuenta($_POST['cuenta']);
+                $o->set_numCuenta($_POST['numCuenta']);
                 echo json_encode($o->eliminar());
                 break;
 
