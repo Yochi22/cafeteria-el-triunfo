@@ -32,7 +32,7 @@
                         <span class="d-none d-sm-inline">Agregar Producto</span>
                     </button>
 
-                    <button class="btn btn-crear d-flex align-items-center gap-2" style="background-color: #FF8C00 !important; display:none;" id="btn_regresar_cat" onclick="cargarCategorias()">
+                    <button class="btn btn-crear d-flex align-items-center gap-2" style="background-color: #0d6efd !important; display:none;" id="btn_regresar_cat" onclick="cargarCategorias()">
                         <i class="bi bi-arrow-left-circle fs-5"></i>
                         <span class="d-none d-sm-inline">Regresar</span>
                     </button>

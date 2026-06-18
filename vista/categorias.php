@@ -24,7 +24,7 @@
 
                     <!-- Título -->
                     <div>
-                        <h2 class="text-dashboard mb-1"><i class="bi bi-tags-fill text-primary"></i> Categorías</h2>
+                        <h2 class="text-dashboard mb-1"><i class="bi bi-tags-fill"></i> Categorías</h2>
                         <p class="text-muted mb-0">¡Gestiona las categorías de tus productos fácilmente!</p>
                     </div>
                 </div>
@@ -67,9 +67,7 @@
             <div class="modal-content border-0 rounded-4 shadow-lg">
 
                 <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
-                    <h5 class="modal-title fw-bold text-dashboard" id="modal_categoria_label">
-                        <i class="bi bi-tag-fill text-primary me-2"></i> Datos de la Categoría
-                    </h5>
+                    <h5 class="modal-title fw-bold text-dashboard" id="modal_categoria_label">Datos de la Categoría</h5>
                     <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 

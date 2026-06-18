@@ -121,7 +121,7 @@
                     <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
                         <div class="d-flex justify-content-between align-items-center mb-4">
                             <div>
-                                <h6 class="text-dashboard fw-bold mb-1">Métodos de pago</h6>
+                                <h6 class="text-dashboard fw-bold mb-1">Cuentas</h6>
                                 <p class="text-muted small mb-0">Distribución de ingresos según canal</p>
                             </div>
                             <i class="bi bi-info-circle text-muted" data-bs-toggle="tooltip" title="Porcentaje de uso de cada método de pago habilitado."></i>

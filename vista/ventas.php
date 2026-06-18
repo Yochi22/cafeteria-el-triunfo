@@ -21,7 +21,7 @@
                     </button>
 
                     <div>
-                        <h2 class="text-dashboard mb-1"><i class="bi bi-graph-up-arrow text-success"></i> Historial de Ventas</h2>
+                        <h2 class="text-dashboard mb-1"><i class="bi bi-graph-up-arrow"></i> Historial de Ventas</h2>
                         <p class="text-muted mb-0">Revisa y gestiona todas las ventas concretadas de tu negocio.</p>
                     </div>
                 </div>
@@ -66,20 +66,20 @@
                             <thead class="table-light text-dashboard mb-1">
                                 <tr>
                                     <th class="py-3">N° Orden</th>
-                                    <th class="py-3 text-start">Nombre del Cliente</th>
+                                    <th class="py-3">Nombre del Cliente</th>
                                     <th class="py-3">Cant. Productos</th>
                                     <th class="py-3">Monto Total</th>
-                                    <th class="py-3">Método de Pago</th>
+                                    <th class="py-3">Cuenta</th>
                                     <th class="py-3">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="listaVentas">
                                 <tr>
-                                    <td class="fw-bold text-dashboard mb-1">#001</td>
-                                    <td class="text-start fw-semibold">Luis Alvarado</td>
+                                    <td class="fw-bold">#001</td>
+                                    <td class="fw-semibold">Luis Alvarado</td>
                                     <td>5</td>
                                     <td class="fw-bold text-success">$20.00</td>
-                                    <td><span class="badge bg-info text-dark rounded-pill px-3 py-2"><i class="bi bi-phone"></i> Pago Móvil</span></td>
+                                    <td class="fw-semibold">Corriente</td>
                                     <td>
                                         <button type="button" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1" title="Consultar detalle">
                                             <i class="bi bi-eye-fill"></i> Consultar
@@ -87,11 +87,11 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="fw-bold text-dashboard mb-1">#002</td>
-                                    <td class="text-start fw-semibold">Sofía Vergara</td>
+                                    <td class="fw-bold">#002</td>
+                                    <td class="fw-semibold">Sofía Vergara</td>
                                     <td>2</td>
                                     <td class="fw-bold text-success">$15.50</td>
-                                    <td><span class="badge bg-secondary rounded-pill px-3 py-2"><i class="bi bi-credit-card"></i> Punto de Venta</span></td>
+                                    <td class="fw-semibold">Ahorro</td>
                                     <td>
                                         <button type="button" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1" title="Consultar detalle">
                                             <i class="bi bi-eye-fill"></i> Consultar
@@ -99,11 +99,11 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="fw-bold text-dashboard mb-1">#003</td>
-                                    <td class="text-start fw-semibold">Miguel Sánchez</td>
+                                    <td class="fw-bold">#003</td>
+                                    <td class="fw-semibold">Miguel Sánchez</td>
                                     <td>1</td>
                                     <td class="fw-bold text-success">$8.00</td>
-                                    <td><span class="badge bg-success rounded-pill px-3 py-2"><i class="bi bi-cash"></i> Efectivo</span></td>
+                                    <td class="fw-semibold">Corriente</td>
                                     <td>
                                         <button type="button" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1" title="Consultar detalle">
                                             <i class="bi bi-eye-fill"></i> Consultar

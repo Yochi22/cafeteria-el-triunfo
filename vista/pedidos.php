@@ -24,7 +24,7 @@
 
                     <!-- Título -->
                     <div>
-                        <h2 class="text-dashboard mb-1"><i class="bi bi-journal-check text-primary"></i> Gestión de Pedidos</h2>
+                        <h2 class="text-dashboard mb-1"><i class="bi bi-journal-check"></i> Gestión de Pedidos</h2>
                         <p class="text-muted mb-0">Revisa, edita y administra los pedidos de tus clientes.</p>
                     </div>
                 </div>

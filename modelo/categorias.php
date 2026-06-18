@@ -89,44 +89,43 @@ class categorias extends datos
             $resultado = $co->query("SELECT * FROM categorias");
             $html = '';
 
-            if ($resultado) {
-                foreach ($resultado as $fila) {
-                    $codigoCat = $fila['codigoCat'];
-                    $nombreCat = $fila['nombreCat'];
-                    $descCat = $fila['descCat'];
-                    $fotoCat = $fila['fotoCat'];
+            foreach ($resultado as $fila) {
+                $codigoCat = $fila['codigoCat'];
+                $nombreCat = $fila['nombreCat'];
+                $descCat = $fila['descCat'];
+                $fotoCat = $fila['fotoCat'];
 
-                    $img_render = !empty($fotoCat) ? '<img src="' . $fotoCat . '" class="w-100 h-100 object-fit-cover" alt="' . $nombreCat . '">' : '<i class="bi bi-tags-fill fs-1"></i>';
+                $img_render = !empty($fotoCat) ? '<img src="' . $fotoCat . '" class="w-100 h-100 object-fit-cover" alt="' . $nombreCat . '">' : '<i class="bi bi-tags-fill fs-1"></i>';
 
-                    $html .= '
-                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-4">
-                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
-                            <div class="card-header bg-light text-center border-0 d-flex align-items-center justify-content-center p-0" style="color: #FF8C00; height: 150px; overflow: hidden;">
-                                ' . $img_render . '
-                            </div>
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="text-dashboard fw-bold mb-1">' . $nombreCat . '</h5>
-                                <p class="text-muted small mb-3">' . $descCat . '</p>
-                                
-                                <div class="d-flex justify-content-end gap-2 mt-auto">
-                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="pone(\'' . $codigoCat . '\', \'' . $nombreCat . '\', \'' . $descCat . '\', \'' . $fotoCat . '\')">
-                                        <i class="bi bi-pencil-square"></i> Editar
-                                    </button>
-                                    <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="eliminar(\'' . $codigoCat . '\')">
-                                        <i class="bi bi-trash"></i> Eliminar
-                                    </button>
-                                </div>
+                $html .= '
+                <div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-4">
+                    <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+                        <div class="card-header bg-light text-center border-0 d-flex align-items-center justify-content-center p-0" style="color: #FF8C00; height: 150px; overflow: hidden;">
+                            ' . $img_render . '
+                        </div>
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="text-dashboard fw-bold mb-1">' . $nombreCat . '</h5>
+                            <p class="text-muted small mb-3">' . $descCat . '</p>
+                            
+                            <div class="d-flex justify-content-end gap-2 mt-auto">
+                                <button class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="pone(\'' . $codigoCat . '\', \'' . $nombreCat . '\', \'' . $descCat . '\', \'' . $fotoCat . '\')">
+                                    <i class="bi bi-pencil-square"></i> Editar
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="eliminar(\'' . $codigoCat . '\')">
+                                    <i class="bi bi-trash"></i> Eliminar
+                                </button>
                             </div>
                         </div>
-                    </div>';
-                }
-
-                $r['resultado'] = 'consultar';
-                $r['mensaje'] = $html;
-            } else {
-                $r['resultado'] = 'consultar';
-                $r['mensaje'] = '';
+                    </div>
+                </div>';
             }
+
+            if ($html == "") {
+                $html = '<div class="col-12 text-center text-muted py-5"><span><i class="bi bi-tags-fill fs-1" style="color: #FF8C00"></i></span><h5 class="text-dashboard mt-2">No hay categorías registradas.</h5></div>';
+            }
+
+            $r['resultado'] = 'consultar';
+            $r['mensaje'] = $html;
         } catch (Exception $e) {
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
