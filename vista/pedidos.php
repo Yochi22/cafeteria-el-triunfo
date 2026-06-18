@@ -31,7 +31,7 @@
 
                 <!-- Botón Crear -->
                 <div>
-                    <button type="button" id="incluir" class="btn btn-primary d-flex align-items-center gap-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#modal_cliente">
+                    <button type="button" id="incluir" class="btn btn-crear d-flex align-items-center gap-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#modal_cliente">
                         <i class="bi bi-plus-circle fs-5"></i>
                         <span>Crear Pedido</span>
                     </button>

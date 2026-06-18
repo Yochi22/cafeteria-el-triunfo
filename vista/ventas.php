@@ -27,7 +27,7 @@
                 </div>
 
                 <div>
-                    <button class="btn btn-success d-flex align-items-center gap-2 shadow-sm py-2 px-3" id="incluir">
+                    <button class="btn btn-crear d-flex align-items-center gap-2 shadow-sm py-2 px-3" id="incluir">
                         <i class="bi bi-plus-circle fs-5"></i>
                         <span>Añadir Venta</span>
                     </button>
@@ -58,12 +58,12 @@
 
             <div class="card border-0 shadow-sm rounded-4 mb-4">
                 <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
-                    <h6 class="text-muted fw-bold text-uppercase mb-0" id="fechaVenta"><i class="bi bi-calendar3"></i> Ventas del día: 18 de Junio, 2026</h6>
+                    <h6 class="text-dashboard mb-1 text-uppercase mb-0" id="fechaVenta"><i class="bi bi-calendar3"></i> Ventas del día: 18 de Junio, 2026</h6>
                 </div>
                 <div class="card-body p-0 mt-3">
                     <div class="table-responsive">
                         <table class="table table-hover align-middle mb-0 text-center">
-                            <thead class="table-light text-secondary">
+                            <thead class="table-light text-dashboard mb-1">
                                 <tr>
                                     <th class="py-3">N° Orden</th>
                                     <th class="py-3 text-start">Nombre del Cliente</th>
@@ -75,7 +75,7 @@
                             </thead>
                             <tbody id="listaVentas">
                                 <tr>
-                                    <td class="fw-bold text-secondary">#001</td>
+                                    <td class="fw-bold text-dashboard mb-1">#001</td>
                                     <td class="text-start fw-semibold">Luis Alvarado</td>
                                     <td>5</td>
                                     <td class="fw-bold text-success">$20.00</td>
@@ -87,7 +87,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="fw-bold text-secondary">#002</td>
+                                    <td class="fw-bold text-dashboard mb-1">#002</td>
                                     <td class="text-start fw-semibold">Sofía Vergara</td>
                                     <td>2</td>
                                     <td class="fw-bold text-success">$15.50</td>
@@ -99,7 +99,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="fw-bold text-secondary">#003</td>
+                                    <td class="fw-bold text-dashboard mb-1">#003</td>
                                     <td class="text-start fw-semibold">Miguel Sánchez</td>
                                     <td>1</td>
                                     <td class="fw-bold text-success">$8.00</td>

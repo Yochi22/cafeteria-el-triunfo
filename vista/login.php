@@ -22,7 +22,7 @@
                                 ¡Cédula Válida!
                             </div>
                             <div class="invalid-feedback">
-                                Por Favor, Ingresa Tu Cédula.
+                                Por Favor, Ingresa tu Cédula.
                             </div>
                         </div>
 
@@ -33,7 +33,7 @@
                                 ¡Contraseña Válida!
                             </div>
                             <div class="invalid-feedback">
-                                Por Favor, Ingresa Tu Contraseña.
+                                Por Favor, Ingresa tu Contraseña.
                             </div>
                         </div>
 
