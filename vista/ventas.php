@@ -1,106 +1,124 @@
 <!DOCTYPE html>
 <html lang="es">
 <?php require_once("comunes/encabezado.php"); ?>
+
 <body>
-    <div class="d-flex min-vh-100 position-relative">
+    <div class="d-flex min-vh-100 position-relative bg-light">
         <?php require_once("comunes/sidebar.php"); ?>
 
         <main class="main-content w-100 p-4">
 
-            <div class="row align-items-center mb-4 g-3">
-                <div class="col-9 col-md-5 d-flex align-items-center">
-                    <button class="btn btn-outline-dark d-md-none me-3 border-0"
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-outline-dark d-md-none border-0 p-1"
                         id="btn-toggle-sidebar"
                         data-bs-toggle="collapse"
                         data-bs-target="#sidebarMenu"
                         aria-controls="sidebarMenu"
                         aria-expanded="false"
                         aria-label="Toggle navigation">
-                    <i class="bi bi-list" style="font-size: 2rem;"></i>
+                        <i class="bi bi-list" style="font-size: 2rem;"></i>
                     </button>
+
                     <div>
-                        <h2 class="text-dashboard"><i class="bi bi-graph-up-arrow"></i> Ventas</h2>
-                        <p class="text-muted"> Hola, Esta es tu Seccion de Ventas, aqui se registran todas tus ventas!</p>
+                        <h2 class="text-dashboard mb-1"><i class="bi bi-graph-up-arrow text-success"></i> Historial de Ventas</h2>
+                        <p class="text-muted mb-0">Revisa y gestiona todas las ventas concretadas de tu negocio.</p>
                     </div>
                 </div>
-                <div class="col-3 col-md-7">
-                    <div class="row g-2 justify-content-md-end align-items-center flex-nowrap">
-                        <div class="col-auto">
-                            <button class="btn btn-crear d-flex align-items-center gap-2 py-2" id="incluir">
-                                <i class="bi bi-plus-circle fs-4"></i>
-                                <span class="d-none d-sm-inline"> Añadir Venta</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-            </div>
 
-            <div class="row">
-                <div class="col">
-                    <hr class="border border-secundary">
+                <div>
+                    <button class="btn btn-success d-flex align-items-center gap-2 shadow-sm py-2 px-3" id="incluir">
+                        <i class="bi bi-plus-circle fs-5"></i>
+                        <span>Añadir Venta</span>
+                    </button>
                 </div>
             </div>
 
-            <div class="row mb-4 mt-4 g-3">
-                <div class="col-6 col-md-4">
-                    <div class="input-group bg-white border rounded px-3 py-2">
-                        <span class="input-group-text bg-transparent border-0"><i class="bi bi-search"></i></span>
-                        <input type="text" id="buscarVenta" name="buscarVenta" class="form-control border-0" placeholder="Buscar ventas">
+            <hr class="text-secondary mb-4">
+
+            <div class="row mb-4 g-3">
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="input-group bg-white border rounded-3 align-items-center shadow-sm h-100">
+                        <span class="input-group-text bg-transparent border-0 text-muted">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" id="buscarVenta" name="buscarVenta" class="form-control border-0 py-2 shadow-none" placeholder="Buscar por cliente o N° de orden...">
                     </div>
                 </div>
 
-                <div class="col-5 col-md-3">
-                    <div class="input-group bg-white border rounded px-3 py-2" style="background-color: #FF8C00 !important;">
-                        <span class="input-group-text bg-transparent border-0"></span>
-                        <input type="date" id="buscarFecha" name="buscarFecha" class="form-control border-0 bg-transparent text-white" placeholder="Buscar Por Fecha">
+                <div class="col-12 col-md-4 col-lg-3">
+                    <div class="input-group bg-white border rounded-3 align-items-center shadow-sm h-100">
+                        <span class="input-group-text bg-transparent border-0 text-warning">
+                            <i class="bi bi-calendar-event-fill"></i>
+                        </span>
+                        <input type="date" id="buscarFecha" name="buscarFecha" class="form-control border-0 py-2 shadow-none text-muted">
                     </div>
                 </div>
             </div>
 
-            <div class="table-responsive bg-gray p-5 rounded shadow-sm">
-                <div class="row">
-                    <div class="col">
-                        <p class="text-dashboard" id="fechaVenta">fecha de venta</p>
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-header bg-white border-bottom-0 pt-4 pb-0 px-4">
+                    <h6 class="text-muted fw-bold text-uppercase mb-0" id="fechaVenta"><i class="bi bi-calendar3"></i> Ventas del día: 18 de Junio, 2026</h6>
+                </div>
+                <div class="card-body p-0 mt-3">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0 text-center">
+                            <thead class="table-light text-secondary">
+                                <tr>
+                                    <th class="py-3">N° Orden</th>
+                                    <th class="py-3 text-start">Nombre del Cliente</th>
+                                    <th class="py-3">Cant. Productos</th>
+                                    <th class="py-3">Monto Total</th>
+                                    <th class="py-3">Método de Pago</th>
+                                    <th class="py-3">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listaVentas">
+                                <tr>
+                                    <td class="fw-bold text-secondary">#001</td>
+                                    <td class="text-start fw-semibold">Luis Alvarado</td>
+                                    <td>5</td>
+                                    <td class="fw-bold text-success">$20.00</td>
+                                    <td><span class="badge bg-info text-dark rounded-pill px-3 py-2"><i class="bi bi-phone"></i> Pago Móvil</span></td>
+                                    <td>
+                                        <button type="button" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1" title="Consultar detalle">
+                                            <i class="bi bi-eye-fill"></i> Consultar
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-secondary">#002</td>
+                                    <td class="text-start fw-semibold">Sofía Vergara</td>
+                                    <td>2</td>
+                                    <td class="fw-bold text-success">$15.50</td>
+                                    <td><span class="badge bg-secondary rounded-pill px-3 py-2"><i class="bi bi-credit-card"></i> Punto de Venta</span></td>
+                                    <td>
+                                        <button type="button" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1" title="Consultar detalle">
+                                            <i class="bi bi-eye-fill"></i> Consultar
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-bold text-secondary">#003</td>
+                                    <td class="text-start fw-semibold">Miguel Sánchez</td>
+                                    <td>1</td>
+                                    <td class="fw-bold text-success">$8.00</td>
+                                    <td><span class="badge bg-success rounded-pill px-3 py-2"><i class="bi bi-cash"></i> Efectivo</span></td>
+                                    <td>
+                                        <button type="button" class="btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1" title="Consultar detalle">
+                                            <i class="bi bi-eye-fill"></i> Consultar
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <table class="table table-hover align-items-center text-center">
-                    <thead class="text-dashboard border-bottom">
-                        <tr>
-                            <th>N° Orden</th>
-                            <th>Nombre del Cliente</th>
-                            <th>Cantidad de Productos</th>
-                            <th>Monto de Pago</th>
-                            <th>Metodo de Pago</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="listaVentas" class="text-center">
-                        <tr>
-                            <td> 001 </td>
-                            <td> luis alvarado </td>
-                            <td> 5 </td>
-                            <td> 20 </td>
-                            <td> pago movil </td>
-                            <td> <button type="button" class="btn text-white w-80 small-width m-1" style="background-color: #FF8C00";><i class="bi bi-pencil-square"></i> consultar</button></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="row">
-                <div class="col">
-                    <hr class="border border-secundary">
-                </div>
-            </div>
-
-            <div class="mt-2">
-                <h4 class="text-dashboard">Total Ganancias</h4>
-                <h3 class="text-dashboard" id="totalGanancias"><i class="bi bi-currency-dollar"></i> 0.00</h3>
             </div>
         </main>
     </div>
 
     <script src="js/ventas.js"></script>
 </body>
+
 </html>

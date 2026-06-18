@@ -94,18 +94,15 @@ function validarEnvio() {
     if ($("#btnGuardar").text() == 'modificar') {
         if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{3,50}$/, $("#codigoCat"), $("#scodigoCat"), "Código inválida.") == 0) {
             mostrarMensaje("Código inválido.");
-
             return false;
         }
     }
     if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{3,50}$/, $("#nombreCat"), $("#snombreCat"), "Nombre inválido.") == 0) {
         mostrarMensaje("Nombre inválido.");
-
         return false;
     }
     if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{3,150}$/, $("#descCat"), $("#sdescCat"), "Descripción inválida.") == 0) {
         mostrarMensaje("Descripción inválida.");
-
         return false;
     }
 

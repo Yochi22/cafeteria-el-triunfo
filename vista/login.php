@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <body>
     <?php require_once("comunes/encabezado.php"); ?>
     <div>
@@ -15,13 +16,13 @@
                     <form class="needs-validation small" action="?pagina=principal" method="POST" novalidate style="color: #9E5C31;">
 
                         <div class="mb-4">
-                            <label for="cedula" class="form-label fw-bold text-uppercase"><i class="bi bi-person-vcard"></i> Cedula</label>
+                            <label for="cedula" class="form-label fw-bold text-uppercase"><i class="bi bi-person-vcard"></i> Cédula</label>
                             <input type="text" class="form-control" id="cedula" required>
                             <div class="valid-feedback">
-                                Cedula Valida!
+                                ¡Cédula Válida!
                             </div>
                             <div class="invalid-feedback">
-                                Por Favor, Ingresa Tu Cedula.
+                                Por Favor, Ingresa Tu Cédula.
                             </div>
                         </div>
 
@@ -29,18 +30,18 @@
                             <label for="password" class="form-label fw-bold text-uppercase"><i class="bi bi-key-fill"></i> Contraseña</label>
                             <input type="password" class="form-control" id="password" required>
                             <div class="valid-feedback">
-                            Contrasena Valida!
+                                ¡Contraseña Válida!
                             </div>
                             <div class="invalid-feedback">
                                 Por Favor, Ingresa Tu Contraseña.
                             </div>
                         </div>
-                        
+
                         <div class="d-grid mt-5">
                             <button class="btn btn-crear" type="submit">INGRESAR</button>
                         </div>
                     </form>
-            
+
                     <div class="text-center mt-4">
                         <a class="text-decoration-none text-muted small fw-bold">REGISTRARSE</a>
                     </div>
@@ -50,4 +51,5 @@
         <script src="js/login.js"></script>
     </div>
 </body>
+
 </html>
