@@ -180,7 +180,7 @@ class categorias extends datos
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        if (!$this->existe($this->codigoCat)) {
+        if ($this->existe($this->codigoCat)) {
             try {
                 $e = $co->prepare("DELETE FROM categorias WHERE codigoCat = :codigoCat");
                 $e->bindParam(":codigoCat", $this->codigoCat);
@@ -190,7 +190,7 @@ class categorias extends datos
                 $r['mensaje'] = 'Categoría eliminada.';
             } catch (Exception $e) {
                 $r['resultado'] = 'error';
-                $r['mensaje'] = $e->getMessage();
+                $r['mensaje'] = 'No se puede eliminar esta categoría porque tiene productos asociados.';
             }
         } else {
             $r['resultado'] = 'error';
@@ -203,10 +203,10 @@ class categorias extends datos
     // Función Buscar
     function buscar($valor)
     {
+        $r = array();
+        $busqueda = "%" . trim($valor) . "%";
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $busqueda = "%" . trim($valor) . "%";
-        $r = array();
 
         try {
             $b = $co->prepare("SELECT * FROM categorias WHERE (codigoCat LIKE :busqueda OR nombreCat LIKE :busqueda OR descCat LIKE :busqueda)");

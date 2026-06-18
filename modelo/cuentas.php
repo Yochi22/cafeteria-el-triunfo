@@ -1,7 +1,7 @@
 <?php
 require_once("modelo/datos.php");
 
-class metodos_pago extends datos
+class cuentas extends datos
 {
     //definicion de variables
     private $nombreBanco;
@@ -31,7 +31,7 @@ class metodos_pago extends datos
         $r = array();
         if(!$this->existe($this->numCuenta)){
             try{
-                $inc = $co->prepare("INSERT INTO metodospago(nombreBanco, cedulaTitular, tlfCuenta, tipoCuenta, numCuenta)
+                $inc = $co->prepare("INSERT INTO cuentas(nombreBanco, cedulaTitular, tlfCuenta, tipoCuenta, numCuenta)
                 VALUES (:nombreBanco, :cedulaTitular, :tlfCuenta, :tipoCuenta, :numCuenta)");
 
                 $inc->bindParam(':nombreBanco', $this->nombreBanco);
@@ -42,7 +42,7 @@ class metodos_pago extends datos
                 $inc->execute();
 
                 $r['resultado'] = 'incluir';
-                $r['mensaje'] = 'Metodo de Pago Registrado';
+                $r['mensaje'] = 'Cuenta Registrada';
             } catch(Exception $e){
                 $r['resultado'] = 'error';
                 $r['mensaje'] = $e->getMessage();
@@ -61,8 +61,9 @@ class metodos_pago extends datos
         $r = array();
         if($this->existe($this->numCuenta)){
             try{
-                $mod = $co->prepare("UPDATE metodospago SET nombreBanco = :nombreBanco, cedulaTitular = :cedulaTitular, 
-                tlfCuenta = :tlfCuenta, tipoCuenta = :tipoCuenta, numCuenta = :numCuenta WHERE numCuenta = :numCuenta");
+                $mod = $co->prepare("UPDATE cuentas SET nombreBanco = :nombreBanco, cedulaTitular = :cedulaTitular, 
+                tlfCuenta = :tlfCuenta, tipoCuenta = :tipoCuenta, numCuenta = :numCuenta
+                WHERE numCuenta = :numCuenta");
 
                 $mod->bindParam(':nombreBanco', $this->nombreBanco);
                 $mod->bindParam(':cedulaTitular', $this->cedulaTitular);
@@ -72,7 +73,7 @@ class metodos_pago extends datos
                 $mod->execute();
                 
                 $r['resultado'] = 'modificar';
-                $r['mensaje'] = 'Metodo de Pago Modificado';
+                $r['mensaje'] = 'Cuenta Modificada';
             } catch(Exception $e){
                 $r['resultado'] = 'error';
                 $r['mensaje'] = $e->getMessage();
@@ -91,19 +92,19 @@ class metodos_pago extends datos
         $r = array();
         if ($this->existe($this->numCuenta)) {
             try {
-                $eli = $co->prepare("DELETE FROM metodospago WHERE numCuenta = :numCuenta");
+                $eli = $co->prepare("DELETE FROM cuentas WHERE numCuenta = :numCuenta");
                 $eli->bindParam(':numCuenta', $this->numCuenta);
                 $eli->execute();
                 
                 $r['resultado'] = 'eliminar';
-                $r['mensaje'] = 'Metodo de Pago Eliminado';
+                $r['mensaje'] = 'Cuenta Eliminada';
             } catch(Exception $e) {
                 $r['resultado'] = 'error';
                 $r['mensaje'] = $e->getMessage();
             }
         } else{
             $r['resultado'] = 'eliminar';
-            $r['mensaje'] = 'El Metodo de Pago No Existe';
+            $r['mensaje'] = 'La Cuenta No Existe';
         }
         return $r;
     }
@@ -113,7 +114,7 @@ class metodos_pago extends datos
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $r = array();
         try{
-            $resultado = $co->query("SELECT * FROM metodospago");
+            $resultado = $co->query("SELECT * FROM cuentas");
             if($resultado){
                 $respuesta = '';
                 foreach($resultado as $fila){
@@ -134,7 +135,7 @@ class metodos_pago extends datos
                     $respuesta .= "<tr>";
                     $respuesta .= "<td colspan = '5' class='text-center text-muted py-4>'";
                     $respuesta .= "<span><i class='bi bi-person-fill fs-1' style='color: #FF8C00'></i></span>";
-                    $respuesta .= "<h5 class= 'text-dashboard'> No tienes Metodos de Pago Registrados </h5>";
+                    $respuesta .= "<h5 class= 'text-dashboard'> No tienes Cuentas Registradas </h5>";
                     $respuesta .= "</td>";
                     $respuesta .= "</tr>";
                 }
@@ -157,7 +158,7 @@ class metodos_pago extends datos
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         try{
-            $resultado = $co->prepare("SELECT * FROM metodospago WHERE numCuenta = :numCuenta");
+            $resultado = $co->prepare("SELECT * FROM cuentas WHERE numCuenta = :numCuenta");
             $resultado->bindParam(':numCuenta', $numCuenta);
             $resultado->execute();
             $fila = $resultado->fetchAll(PDO::FETCH_BOTH);
@@ -180,8 +181,8 @@ class metodos_pago extends datos
         $r = array();
         try{
             if($busqueda){
-                $bus = $co->prepare("SELECT nombreBanco, cedulaTitular, tlfCuenta, tipoCuenta, numCuenta 
-                                    FROM metodospago
+                $bus = $co->prepare("SELECT nombreBanco, cedulaTitular, tlfCuenta, tipoCuenta, numCuenta
+                                    FROM cuentas
                                     WHERE (nombreBanco LIKE :busqueda
                                     OR cedulaTitular LIKE :busqueda
                                     OR tlfCuenta LIKE :busqueda

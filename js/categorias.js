@@ -76,7 +76,7 @@ $(document).ready(function () {
     });
 
     $("#btnEliminar").on("click", function () {
-        var codigoEliminado = $("#codigoEliminar").val();
+        var codigoEliminado = $("#eliminar").val();
         var datos = new FormData();
         datos.append('accion', 'eliminar');
         datos.append('codigoCat', codigoEliminado);
@@ -150,7 +150,7 @@ function pone(codigoCat, nombreCat, descCat, fotoCat) {
 }
 
 function eliminar(codigoCat) {
-    $("#codigoEliminar").val(codigoCat);
+    $("#eliminar").val(codigoCat);
     $("#modal_eliminar").modal("show");
 }
 
@@ -220,8 +220,4 @@ function limpia() {
     $("#nombreCat").val("");
     $("#descCat").val("");
     $("#fotoCat").val("");
-    $("#scodigoOriginal").text("");
-    $("#scodigoCat").text("");
-    $("#snombreCat").text("");
-    $("#sdescCat").text("");
 }

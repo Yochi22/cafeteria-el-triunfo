@@ -1,4 +1,4 @@
-// funcion para la lista
+// funcion para consultar
 function consultar(){
     var datos = new FormData();
     datos.append('accion', 'consultar');
@@ -9,7 +9,7 @@ $(document).ready(function(){
 
     consultar();
 
-    //validacion de datos
+    //validacion de keyup y keypress
     //1.1 nombre banco
     $("#nombreBanco").on("keypress", function (e) {
         validarkeypress(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]*$/,e);
@@ -35,15 +35,7 @@ $(document).ready(function(){
         validarkeyup(/^[0-9\-+ ]{10,12}$/,$(this), $("#stlfCuenta"),"Teléfono Invalido - Formato de 11 numeros sin espacios.");
     });
 
-    //1.4 tipo cuenta
-    $("#tipoCuenta").on("keypress", function (e) {
-        validarkeypress(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]*$/,e);
-    });
-    $("#tipoCuenta").on("keyup", function () {
-        validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this),$("#stipoCuenta"),"Tipo de Cuenta Invalido - Solo letras entre 3 y 100 caracteres");
-    });
-
-    //1.5 numero de cuenta
+    //1.4 numero de cuenta
     $("#numCuenta").on("keypress", function (e) {
     validarkeypress(/^[0-9]*$/, e);
     });
@@ -51,6 +43,17 @@ $(document).ready(function(){
     $("#numCuenta").on("keyup", function () {
         validarkeyup(/^[0-9]{20}$/, $(this), $("#snumCuenta"), "Cuenta Inválida - Debe tener exactamente 20 números.");
     });
+
+    //validacion de SELECT
+    //1.5 tipo cuenta
+    $("#tipoCuenta").on("change", function () {
+    validarSelect(
+        $(this), 
+        $("#stipoCuenta"), 
+        "Tipo de Cuenta Inválido - Debe seleccionar una opción"
+    );
+    });
+
 
 
     $("#f").on("submit", function (e) {
@@ -97,7 +100,7 @@ $(document).ready(function(){
         //2.3 eliminar
         if($(this).text() == 'eliminar'){
         if (validarkeyup(/^[0-9]{20}$/, $("#numCuenta"), 
-        $("#scuenta"), "El formato debe ser 20 numeros sin espacios") == 0) {
+        $("#snumCuenta"), "El formato debe ser 20 numeros sin espacios") == 0) {
             mostrarMensaje("Verifique la Cuenta (Debe tener 20 números)");
         } else{
              var datos = new FormData();
@@ -108,9 +111,9 @@ $(document).ready(function(){
         }
     });
 
-    // confirmar eliminacion de metodo de pago - esta conectada a otra funcion mas abajo.
+    // confirmar eliminacion de cuenta - esta conectada a otra funcion mas abajo.
     $("#btnEliminar").on("click", function(){
-        var cuentaEliminada = $("#cuentaEliminar").val();
+        var cuentaEliminada = $("#eliminar").val();
         console.log("Cuenta a eliminar:", cuentaEliminada);
 
         var datos = new FormData();
@@ -123,7 +126,7 @@ $(document).ready(function(){
         limpia();
         $("#numCuenta").prop('readonly', false);
         $("#btnGuardar").text("incluir");
-        $("#modal_metodo").modal("show");
+        $("#modal_cuentas").modal("show");
     });
 
     //boton buscar
@@ -168,16 +171,16 @@ function validarEnvio(){
         mostrarMensaje("Teléfono Invalido <br>" + "Formato de 11 numeros sin espacios.");
         return false;
     }
-    //validacion de envio de tipo cuenta
-    if(validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/,$("#tipoCuenta"),$("#stipoCuenta"),"Tipo de Cuenta Invalido - Solo letras entre 3 y 100 caracteres)")==0){
-        mostrarMensaje("Nombre Invalido <br>" + "Solo letras entre 3 y 100 caracteres)");
-        return false;
-    }
     //validacion de envio de num cuenta
     if(validarkeyup(/^[0-9]{20}$/, $("#numCuenta"), $("#snumCuenta"),"Cuenta Inválida - Debe tener exactamente 20 números.")==0){
         mostrarMensaje("Cuenta Inválida <br>" + "Debe tener exactamente 20 números.");
         return false;
     }
+    //validacion de envio de tipo cuenta
+    if (validarSelect($("#tipoCuenta"), $("#stipoCuenta"), "Tipo de Cuenta Inválido - Debe seleccionar una opción") == 0) {
+        mostrarMensaje("Tipo de Cuenta Inválido <br> Por favor seleccione si es Ahorro o Corriente.");
+        return false;
+    }  
     return true;
 }
 
@@ -210,6 +213,18 @@ function validarkeyup(er,etiqueta,etiquetamensaje,mensaje){
     }
 }
 
+// funcion para VALIDAR LOS SELECT.
+function validarSelect(etiqueta, etiquetamensaje, mensaje) {
+    let valor = etiqueta.val();
+    if (valor === ""|| valor === null) {
+        etiquetamensaje.text(mensaje);
+        return 0;
+    } else {
+        etiquetamensaje.text("");
+        return 1;
+    }
+}
+
 //funcion para llenar el formulario
 function pone(pos){
     linea = $(pos).closest('tr');
@@ -220,7 +235,7 @@ function pone(pos){
     $("#tipoCuenta").val($(linea).find("td:eq(3)").text().trim());
     $("#numCuenta").val($(linea).find("td:eq(4)").text().trim());
     $("#btnGuardar").text('modificar');
-    $("#modal_metodo").modal("show");
+    $("#modal_cuentas").modal("show");
 
     $("#numCuenta").prop('readonly', true);
 }
@@ -228,16 +243,16 @@ function pone(pos){
 //boton conectado a funcion ELIMINAR
 function eliminar(pos){
     var linea = $(pos).closest('tr');
-    var cuenta = $(linea).find("td:eq(3)").text().trim();
+    var cuenta = $(linea).find("td:eq(4)").text().trim();
 
-    $("#cuentaEliminar").val(cuenta);
+    $("#eliminar").val(cuenta);
     $("#modal_eliminar").modal("show");
 }
 
 function enviaAjax(datos){
     $.ajax({
         async: true,
-        url: "index.php?pagina=metodos_pago",
+        url: "index.php?pagina=cuentas",
         type: "POST",
         contentType: false,
         data: datos,
@@ -250,31 +265,31 @@ function enviaAjax(datos){
             try{
                 var lee = JSON.parse(respuesta);
                 if(lee.resultado == 'consultar'){
-                    $("#listaMetodos").html(lee.mensaje);
+                    $("#listaCuentas").html(lee.mensaje);
                 } 
                 else if(lee.resultado == 'incluir'){
                     mostrarMensaje(lee.mensaje);
-                    if(lee.mensaje == 'Metodo de Pago Registrado'){
-                        $("#modal_metodo").modal("hide");
+                    if(lee.mensaje == 'Cuenta Registrada'){
+                        $("#modal_cuentas").modal("hide");
                         consultar();
                     }
                 }
                 else if(lee.resultado == 'modificar'){
                     mostrarMensaje(lee.mensaje);
-                    if(lee.mensaje == 'Metodo de Pago Modificado'){
-                        $("#modal_metodo").modal("hide");
+                    if(lee.mensaje == 'Cuenta Modificada'){
+                        $("#modal_cuentas").modal("hide");
                         consultar();
                     }
                 }
                 else if(lee.resultado == 'eliminar'){
                     mostrarMensaje(lee.mensaje);
-                    if(lee.mensaje == 'Metodo de Pago Eliminado'){
+                    if(lee.mensaje == 'Cuenta Eliminada'){
                         $("#modal_eliminar").modal("hide");
                         consultar();
                     }
                 }
                 else if(lee.resultado == 'buscar'){
-                    $('#listaMetodos').html(lee.mensaje);
+                    $('#listaCuentas').html(lee.mensaje);
                 }
                 else if(lee.resultado == "error"){
                     mostrarMensaje(lee.mensaje);

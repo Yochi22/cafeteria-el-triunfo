@@ -18,8 +18,8 @@
             <a class="nav-link <?= $pagina == 'ventas' ? 'active' : '' ?>" href="?pagina=ventas">
                 <i class="bi bi-graph-up-arrow"></i> Ventas
             </a>
-            <a class="nav-link <?= $pagina == 'metodos_pago' ? 'active' : '' ?>" href="?pagina=metodos_pago">
-                <i class="bi bi-cash-stack"></i> Métodos de pago
+            <a class="nav-link <?= $pagina == 'cuentas' ? 'active' : '' ?>" href="?pagina=cuentas">
+                <i class="bi bi-cash-stack"></i> Cuentas
             </a>
             <a class="nav-link <?= $pagina == 'productos' ? 'active' : '' ?>" href="?pagina=productos">
                 <i class="bi bi-egg-fried"></i> Productos

@@ -24,8 +24,8 @@
 
                     <!--Encabezado del modulo-->
                     <div>
-                        <h2 class="text-dashboard"><i class="bi bi-bank"></i> Métodos de Pago</h2>
-                        <p class="text-muted">Bienvenido a la gestión de Métodos de Pago de la Cafeteria El Triunfo!</p>
+                        <h2 class="text-dashboard"><i class="bi bi-bank"></i> Cuentas</h2>
+                        <p class="text-muted">Bienvenido a la gestión de Cuentas de la Cafeteria El Triunfo!</p>
                     </div>
                 </div>
             </div>
@@ -39,9 +39,9 @@
                 <!--botones-->
 
                 <!--Registro-->
-                <button type="button" id="incluir" class="btn btn-crear" data-bs-toggle="modal" data-bs-target="#modal_metodo">
+                <button type="button" id="incluir" class="btn btn-crear" data-bs-toggle="modal" data-bs-target="#modal_cuentas">
                     <i class="bi bi-plus-circle fs-4"></i>
-                    <span class="d-none d-sm-inline">Agregar Método</span>
+                    <span class="d-none d-sm-inline">Agregar Cuenta</span>
                 </button>
 
 
@@ -69,20 +69,20 @@
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="listaMetodos" class="text-center">
+                    <tbody id="listaCuentas" class="text-center">
 
                     </tbody>
                 </table>
             </div>
     </div>
 
-    <div class="modal fade" id="modal_metodo" tabindex="-1" aria-labelledby="modal_metodo_label" aria-hidden="true">
+    <div class="modal fade" id="modal_cuentas" tabindex="-1" aria-labelledby="modal_cuentas_label" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 rounded-4 shadow">
 
                 <!--Encabezado Modal-->
                 <div class="modal-header border-0 pb-0">
-                    <h5 class="modal-title fw-bold text-dashboard" id="modal_metodo_label">Nuevo Método de Pago</h5>
+                    <h5 class="modal-title fw-bold text-dashboard" id="modal_cuentas_label">Nueva Cuenta</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -117,10 +117,11 @@
                             <div class="col-md-6 mb-3">
                                 <label for="tipoCuenta" class="form-label text-muted small fw-bold">Tipo de Cuenta</label>
                                 <select class="form-select" aria-label="Default select example" name="tipoCuenta" id="tipoCuenta" required>
+                                    <option value="" disabled selected>Seleccione una opción...</option>
                                     <option value="Ahorro">Ahorro</option>
                                     <option value="Corriente">Corriente</option>
-                                    <span id="stipoCuenta" class="small text-danger"></span>
                                 </select>
+                                <span id="stipoCuenta" class="small text-danger"></span>
                             </div>
 
                             <div class="col-md-6 mb-3">
@@ -128,8 +129,8 @@
                                 <input type="text" class="form-control rounded-3" id="numCuenta" name="numCuenta" required>
                                 <span id="snumCuenta" class="small text-danger"></span>
                             </div>
-
                         </div> 
+
                             <div class="d-grid mt-4">
                                 <button type="submit" class="btn btn-crear w-100 mt-3" style="background-color: #FF8C00;" id="btnGuardar">Guardar</button>
                             </div>
@@ -149,7 +150,7 @@
     <?php require_once("comunes/modal.php"); ?>
 
     <!--llamada a java-->
-    <script src="js/metodos_pago.js"></script>
+    <script src="js/cuentas.js"></script>
 
 </body>
 

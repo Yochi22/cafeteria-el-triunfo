@@ -9,7 +9,7 @@ require_once("modelo/" . $pagina . ".php");
 
 if (is_file("vista/" . $pagina . ".php")) {
 
-    $o = new metodos_pago();
+    $o = new cuentas();
 
     if (!empty($_POST)) {
         $accion = $_POST['accion'];

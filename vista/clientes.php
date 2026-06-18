@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="es">
-    <?php require_once("comunes/encabezado.php"); ?>
+<?php require_once("comunes/encabezado.php"); ?>
+
 <body>
     <div class="d-flex min-vh-100 position-relative">
         <?php require_once("comunes/sidebar.php"); ?>
 
         <main class="main-content w-100 p-4">
-            
+
             <div class="d-flex align-items-center">
                 <!-- menu hamburguesa -->
                 <button class="btn btn-outline-dark d-md-none me-3 border-0"
@@ -31,8 +32,8 @@
                     <hr class="border border-secundary">
                 </div>
             </div>
-            
-            
+
+
             <div class="col-12 d-flex justify-content-end mb-3">
 
                 <!-- boton para registrar -->
@@ -41,7 +42,7 @@
                     <span class="d-none d-sm-inline">Agregar Cliente</span>
                 </button>
 
-                <!-- boton de busqueda -->    
+                <!-- boton de busqueda -->
                 <div class="col-md-4 ms-3">
                     <div class="input-group bg-white border rounded-3 px-2 py-2 align-items-center">
                         <button class="btn p-0 border-0 link-secondary" type="button" id="btnBuscar">
@@ -65,7 +66,7 @@
                         </tr>
                     </thead>
                     <tbody id="listaClientes" class="text-center">
-                        
+
                     </tbody>
                 </table>
             </div>
@@ -73,13 +74,13 @@
             <div class="modal fade" id="modal_cliente" tabindex="-1" aria-labelledby="modal_cliente_label" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content border-0 rounded-4 shadow">
-                        
+
                         <!-- Encabezado del modal -->
                         <div class="modal-header border-0 pb-0">
                             <h5 class="modal-title fw-bold text-dashboard" id="modal_cliente_label">Formulario de Cliente</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        
+
                         <!-- Cuerpo del modal -->
                         <div class="modal-body pt-3">
                             <form id="f">
@@ -90,13 +91,13 @@
                                     <input type="text" class="form-control rounded-3" id="cedulaCli" name="cedulaCli" required>
                                     <span id="scedulaCli"></span>
                                 </div>
-                                
+
                                 <div class="mb-3">
                                     <label for="nombreCli" class="form-label text-muted small">Nombre</label>
                                     <input type="text" class="form-control rounded-3" id="nombreCli" name="nombreCli" required>
                                     <span id="snombreCli"></span>
                                 </div>
-                                
+
                                 <div class="mb-3">
                                     <label for="apellidoCli" class="form-label text-muted small">Apellido</label>
                                     <input type="text" class="form-control rounded-3" id="apellidoCli" name="apellidoCli" required>
@@ -108,7 +109,7 @@
                                     <input type="text" class="form-control rounded-3" id="tlfCli" name="tlfCli" required>
                                     <span id="stlfCli"></span>
                                 </div>
-                                
+
                                 <div class="d-grid mt-4">
                                     <button type="button" class="btn btn-crear w-100 mt-3" id="btnGuardar">Guardar Cliente</button>
                                 </div>
@@ -123,9 +124,10 @@
             <?php require_once("comunes/modal_eliminar.php"); ?>
             <!--Llamada a archivo modal.php, dentro de el hay una sección modal-->
             <?php require_once("comunes/modal.php"); ?>
-        </div>
-        <!--Llama del java script-->
-        <script src="js/clientes.js"></script>
+    </div>
+    <!--Llama del java script-->
+    <script src="js/clientes.js"></script>
     </div>
 </body>
+
 </html>
