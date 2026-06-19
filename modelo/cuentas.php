@@ -187,7 +187,7 @@ class cuentas extends datos
                                     OR cedulaTitular LIKE :busqueda
                                     OR tlfCuenta LIKE :busqueda
                                     OR tipoCuenta LIKE :busqueda
-                                    OR numCuenta LIKE :busqueda");
+                                    OR numCuenta LIKE :busqueda)");
                 
                 $bus->bindParam(':busqueda', $busqueda);
                 $bus->execute();
