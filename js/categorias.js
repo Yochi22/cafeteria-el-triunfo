@@ -59,18 +59,6 @@ $(document).ready(function () {
                 enviaAjax(datos);
             }
         }
-        // Botón de Eliminar
-        if ($(this).text() == 'eliminar') {
-            if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{5,50}$/, $("#codigoCat"),
-                $("#scodigoCat"), "Código inválido.") == 0) {
-                mostrarMensaje("Código inválido.");
-            } else {
-                var datos = new FormData();
-                datos.append('accion', 'eliminar');
-                datos.append('codigoCat', $("#codigoCat").val());
-                enviaAjax(datos);
-            }
-        }
     });
 
     // Botón de Buscar

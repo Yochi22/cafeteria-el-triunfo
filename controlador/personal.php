@@ -1,20 +1,22 @@
 <?php
-if (!is_file("modelo/".$pagina.".php")){
-    echo "Falta definir la clase ".$pagina;
+
+if (!is_file("modelo/" . $pagina . ".php")) {
+    echo "Falta definir la clase " . $pagina;
     exit;
 }
-require_once("modelo/".$pagina.".php");
 
-if(is_file("vista/".$pagina.".php")){
+require_once("modelo/" . $pagina . ".php");
+
+if (is_file("vista/" . $pagina . ".php")) {
     $o = new personal();
-    if(!empty($_POST)){
+    if (!empty($_POST)) {
         $accion = $_POST['accion'];
 
-        switch($accion){
+        switch ($accion) {
 
             case 'consultar':
                 echo json_encode($o->consultar());
-              
+
                 break;
 
             case 'eliminar':
@@ -45,10 +47,13 @@ if(is_file("vista/".$pagina.".php")){
                 echo json_encode($o->buscar($valor));
                 break;
         }
+
         exit();
     }
-    require_once("vista/".$pagina.".php"); 
+
+    require_once("vista/" . $pagina . ".php");
 } else {
-    echo "pagina en construccion";
+    echo "PÁGINA EN CONSTRUCCIÓN";
 }
+
 ?>

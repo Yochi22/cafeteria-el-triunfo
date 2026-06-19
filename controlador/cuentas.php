@@ -18,7 +18,7 @@ if (is_file("vista/" . $pagina . ".php")) {
             case 'consultar':
                 echo json_encode($o->consultar());
                 break;
-                
+
             case 'incluir':
                 $o->set_nombreBanco($_POST['nombreBanco']);
                 $o->set_cedulaTitular($_POST['cedulaTitular']);
@@ -27,7 +27,7 @@ if (is_file("vista/" . $pagina . ".php")) {
                 $o->set_numCuenta($_POST['numCuenta']);
                 echo json_encode($o->incluir());
                 break;
-                
+
             case 'modificar':
                 $o->set_nombreBanco($_POST['nombreBanco']);
                 $o->set_cedulaTitular($_POST['cedulaTitular']);
@@ -36,7 +36,7 @@ if (is_file("vista/" . $pagina . ".php")) {
                 $o->set_numCuenta($_POST['numCuenta']);
                 echo json_encode($o->modificar());
                 break;
-                
+
             case 'eliminar':
                 $o->set_numCuenta($_POST['numCuenta']);
                 echo json_encode($o->eliminar());
@@ -47,11 +47,13 @@ if (is_file("vista/" . $pagina . ".php")) {
                 echo json_encode($o->buscar($valor));
                 break;
         }
+        
         exit;
     }
-    
+
     require_once("vista/" . $pagina . ".php");
 } else {
     echo "PÁGINA EN CONSTRUCCIÓN";
 }
+
 ?>

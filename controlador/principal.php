@@ -10,9 +10,10 @@ require_once("modelo/" . $pagina . ".php");
 if (is_file("vista/" . $pagina . ".php")) {
     $o = new principal();
     $metricas = $o->obtenerMetricas();
-    
+
     require_once("vista/" . $pagina . ".php");
 } else {
-    echo "Pagina en construccion";
+    echo "PÁGINA EN CONSTRUCCIÓN";
 }
+
 ?>
