@@ -1,7 +1,7 @@
 <?php
 
 if (!is_file("modelo/" . $pagina . ".php")) {
-    echo "Falta Definir la Clase " . $pagina;
+    echo "Falta definir la clase " . $pagina;
     exit;
 }
 

@@ -1,13 +1,13 @@
 <?php
 
 if (!is_file("modelo/" . $pagina . ".php")) {
-    echo "Falta Definir la Clase " . $pagina;
+    echo "Falta definir la clase " . $pagina;
     exit;
 }
 
 require_once("modelo/" . $pagina . ".php");
-if (is_file("vista/" . $pagina . ".php")) {
 
+if (is_file("vista/" . $pagina . ".php")) {
     $o = new productos();
 
     if (!empty($_POST)) {

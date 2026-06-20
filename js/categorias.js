@@ -132,6 +132,7 @@ function validarkeypress(er, e) {
     key = e.keyCode;
     tecla = String.fromCharCode(key);
     a = er.test(tecla);
+
     if (!a) {
         e.preventDefault();
     }
@@ -140,6 +141,7 @@ function validarkeypress(er, e) {
 // Función para Validar por Keyup
 function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
     a = er.test(etiqueta.val());
+
     if (a) {
         etiquetamensaje.text("");
         return 1;

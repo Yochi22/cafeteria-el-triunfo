@@ -216,6 +216,7 @@ function validarkeypress(er, e) {
     key = e.keyCode || e.which;
     tecla = String.fromCharCode(key);
     a = er.test(tecla);
+
     if (!a && key != 8 && key != 13) {
         e.preventDefault();
     }
@@ -223,6 +224,7 @@ function validarkeypress(er, e) {
 
 function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
     a = er.test(etiqueta.val());
+
     if (a) {
         etiquetamensaje.text("");
         return 1;
