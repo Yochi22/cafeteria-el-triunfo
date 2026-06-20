@@ -44,12 +44,14 @@
                 </div>
             </div>
 
-            <div class="mb-4">
-                <div class="input-group shadow-sm">
-                    <button class="btn input-group-text bg-white border-2" type="button" id="btnBuscar">
-                        <i class="bi bi-search"></i>
-                    </button>
-                    <input type="text" id="valorBusqueda" class="form-control border-0 py-2" placeholder="Buscar productos por nombre o descripción...">
+            <div class="row mb-4">
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="input-group bg-white border rounded-3 align-items-center shadow-sm h-100 px-2 py-1">
+                        <button class="btn p-0 border-0 link-secondary ms-2" type="button" id="btnBuscar">
+                            <i class="bi bi-search"></i>
+                        </button>
+                        <input type="text" id="valorBusqueda" name="valorBusqueda" class="form-control border-0 py-2 shadow-none bg-transparent" placeholder="Buscar producto...">
+                    </div>
                 </div>
             </div>
 
@@ -89,6 +91,7 @@
                             <label for="nombreProd" class="form-label text-muted small">Nombre del producto</label>
                             <input type="text" class="form-control rounded-3" id="nombreProd" name="nombreProd" required>
                             <span id="snombreProd" class="small text-danger"></span>
+
                         </div>
 
                         <div class="mb-3">

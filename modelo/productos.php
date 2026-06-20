@@ -38,9 +38,15 @@ class productos extends datos
             $resultado->bindParam(':codigoProd', $codigoProd);
             $resultado->execute();
 
-            return $resultado->fetch(PDO::FETCH_ASSOC) ? true : false;
+            $fila = $resultado->fetch(PDO::FETCH_ASSOC);
+
+            if ($fila) {
+                return true;
+            } else {
+                return false;
+            }
         } catch (Exception $e) {
-            return false;
+            return $e->getMessage();
         }
     }
 
@@ -62,14 +68,40 @@ class productos extends datos
                 $i->execute();
 
                 $r['resultado'] = 'incluir';
-                $r['mensaje'] = 'Producto Registrado';
+                $r['mensaje'] = 'Producto incluido.';
             } catch (Exception $e) {
                 $r['resultado'] = 'error';
                 $r['mensaje'] = $e->getMessage();
             }
         } else {
             $r['resultado'] = 'error';
-            $r['mensaje'] = 'Ya existe un Producto con ese código.';
+            $r['mensaje'] = 'Ya existe un producto con ese código.';
+        }
+
+        return $r;
+    }
+
+    function consultar()
+    {
+        $r = array();
+        $co = $this->conecta();
+
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try {
+            $stmt = $co->prepare("SELECT * FROM productos WHERE codigoProd = ?");
+            $stmt->execute([$this->codigoProd]);
+            $fila = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($fila) {
+                $r['resultado'] = 'consultar';
+                $r['mensaje'] = $fila;
+            } else {
+                $r['resultado'] = 'error';
+                $r['mensaje'] = 'Producto no encontrado.';
+            }
+        } catch (Exception $e) {
+            $r['resultado'] = 'error';
+            $r['mensaje'] = $e->getMessage();
         }
 
         return $r;
@@ -83,13 +115,13 @@ class productos extends datos
 
         if (!$this->existe($this->codigoOrig)) {
             $r['resultado'] = 'error';
-            $r['mensaje'] = 'El Producto a modificar no existe.';
+            $r['mensaje'] = 'El producto no existe.';
             return $r;
         }
 
         if ($this->codigoProd !== $this->codigoOrig && $this->existe($this->codigoProd)) {
             $r['resultado'] = 'error';
-            $r['mensaje'] = 'Ya existe un Producto con el nuevo código.';
+            $r['mensaje'] = 'Ya existe un producto con ese código.';
             return $r;
         }
 
@@ -105,7 +137,7 @@ class productos extends datos
             $m->execute();
 
             $r['resultado'] = 'modificar';
-            $r['mensaje'] = 'Producto Modificado';
+            $r['mensaje'] = 'Producto modificado.';
         } catch (Exception $e) {
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
@@ -127,41 +159,16 @@ class productos extends datos
                 $e->execute();
 
                 $r['resultado'] = 'eliminar';
-                $r['mensaje'] = 'Producto Eliminado';
+                $r['mensaje'] = 'Producto eliminado.';
             } catch (Exception $e) {
                 $r['resultado'] = 'error';
                 $r['mensaje'] = $e->getMessage();
             }
         } else {
             $r['resultado'] = 'error';
-            $r['mensaje'] = 'El Producto no existe.';
+            $r['mensaje'] = 'El producto no existe.';
         }
 
-        return $r;
-    }
-
-    function consultar()
-    {
-        $r = array();
-        $co = $this->conecta();
-        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        try {
-            $stmt = $co->prepare("SELECT * FROM productos WHERE codigoProd = ?");
-            $stmt->execute([$this->codigoProd]);
-            $fila = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($fila) {
-                $r['resultado'] = 'consultar';
-                $r['mensaje'] = $fila;
-            } else {
-                $r['resultado'] = 'error';
-                $r['mensaje'] = 'Producto no encontrado.';
-            }
-        } catch (Exception $e) {
-            $r['resultado'] = 'error';
-            $r['mensaje'] = $e->getMessage();
-        }
         return $r;
     }
 
@@ -182,7 +189,7 @@ class productos extends datos
 
                     $html .= '
                     <div class="col-6 col-md-4 col-lg-3 mb-4">
-                        <div class="card border-0 rounded-4 shadow-sm text-center h-100 p-2 position-relative dynamic-card" style="cursor:pointer" onclick="verCategoria(' . $c['idCategoria'] . ', \'' . addslashes($c['nombreCat']) . '\')">
+                        <div class="card border-0 rounded-4 shadow-sm text-center h-100 p-2 position-relative dynamic-card" style="cursor:pointer" onclick="verCategoria(' . $c['idCategoria'] . ', \'' . $c['nombreCat'] . '\')">
                             <img src="' . $fotoCat . '" class="card-img-top rounded-4" style="height:140px; object-fit:cover;">
                             <div class="card-body px-1 py-3">
                                 <h6 class="text-dashboard fw-bold mb-0">' . $c['nombreCat'] . '</h6>
@@ -191,6 +198,7 @@ class productos extends datos
                     </div>';
                 }
             } else {
+
                 $html = '<div class="col-12 text-center text-muted py-5"><h5 class="text-dashboard mt-2">No hay categorías registradas.</h5></div>';
             }
 
@@ -200,6 +208,7 @@ class productos extends datos
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }
+
         return $r;
     }
 
@@ -226,18 +235,19 @@ class productos extends datos
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }
+
         return $r;
     }
 
     function buscar($valor)
     {
+        $r = array();
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $busqueda = "%" . trim($valor) . "%";
-        $r = array();
 
         try {
-            $b = $co->prepare("SELECT * FROM productos WHERE (nombreProd LIKE :busqueda OR descProd LIKE :busqueda)");
+            $b = $co->prepare("SELECT * FROM productos WHERE (codigoProd LIKE :busqueda OR nombreProd LIKE :busqueda OR descProd LIKE :busqueda)");
             $b->bindParam(':busqueda', $busqueda);
             $b->execute();
             $prods = $b->fetchAll(PDO::FETCH_ASSOC);
@@ -246,12 +256,12 @@ class productos extends datos
             if ($prods) {
                 foreach ($prods as $p) {
                     $fotoProd = $p['fotoProd'] ? $p['fotoProd'] : 'img/principal.jpg';
-                    $nombreProd_js = addslashes($p['nombreProd']);
-                    $desc_js = addslashes($p['descProd']);
-                    $fotoProd_js = addslashes($p['fotoProd']);
-                    $precioProd_js = $p['precioProd'];
-                    $idCat_js = $p['idCategoria'];
-                    $codigoProd_js = addslashes($p['codigoProd']);
+                    $nombreProd = $p['nombreProd'];
+                    $descProd = $p['descProd'];
+                    $fotoProd = $p['fotoProd'];
+                    $precioProd = $p['precioProd'];
+                    $idCat = $p['idCategoria'];
+                    $codigoProd = $p['codigoProd'];
 
                     $html .= '
                     <div class="col-12 col-md-6 col-lg-4 mb-4">
@@ -267,10 +277,10 @@ class productos extends datos
                                             <p class="text-success fw-bold small mb-2">$' . number_format($p['precioProd'], 2) . '</p>
                                         </div>
                                         <div class="d-flex justify-content-end gap-2">
-                                            <button class="btn btn-sm btn-light rounded-3 text-primary shadow-2-strong" onclick="pone(\'' . $codigoProd_js . '\', \'' . $nombreProd_js . '\', ' . $precioProd_js . ', \'' . $desc_js . '\', \'' . $fotoProd_js . '\', ' . $idCat_js . ')">
+                                            <button class="btn btn-sm btn-light rounded-3 text-primary shadow-2-strong" onclick="pone(\'' . $codigoProd . '\', \'' . $nombreProd . '\', ' . $precioProd . ', \'' . $descProd . '\', \'' . $fotoProd . '\', ' . $idCat . ')">
                                                 <i class="bi bi-pencil-square">Editar</i>
                                             </button>
-                                            <button class="btn btn-sm btn-light rounded-3 text-danger shadow-2-strong" onclick="eliminar(\'' . $codigoProd_js . '\')">
+                                            <button class="btn btn-sm btn-light rounded-3 text-danger shadow-2-strong" onclick="eliminar(\'' . $codigoProd . '\')">
                                                 <i class="bi bi-trash">Eliminar</i>
                                             </button>
                                         </div>
@@ -314,12 +324,12 @@ class productos extends datos
             if ($prods) {
                 foreach ($prods as $p) {
                     $fotoProd = $p['fotoProd'] ? $p['fotoProd'] : 'img/principal.jpg';
-                    $nombreProd_js = addslashes($p['nombreProd']);
-                    $desc_js = addslashes($p['descProd']);
-                    $fotoProd_js = addslashes($p['fotoProd']);
-                    $precioProd_js = $p['precioProd'];
-                    $idCat_js = $p['idCategoria'];
-                    $codigoProd_js = addslashes($p['codigoProd']);
+                    $nombreProd = $p['nombreProd'];
+                    $descProd = $p['descProd'];
+                    $fotoProd = $p['fotoProd'];
+                    $precioProd = $p['precioProd'];
+                    $idCat = $p['idCategoria'];
+                    $codigoProd = $p['codigoProd'];
 
                     $html .= '
                     <div class="col-12 col-md-6 col-lg-4 mb-4">
@@ -335,10 +345,10 @@ class productos extends datos
                                             <p class="text-success fw-bold small mb-2">$' . number_format($p['precioProd'], 2) . '</p>
                                         </div>
                                         <div class="d-flex justify-content-end gap-2">
-                                            <button class="btn btn-sm btn-light rounded-3 text-primary shadow-2-strong" onclick="pone(\'' . $codigoProd_js . '\', \'' . $nombreProd_js . '\', ' . $precioProd_js . ', \'' . $desc_js . '\', \'' . $fotoProd_js . '\', ' . $idCat_js . ')">
+                                            <button class="btn btn-sm btn-light rounded-3 text-primary shadow-2-strong" onclick="pone(\'' . $codigoProd . '\', \'' . $nombreProd . '\', ' . $precioProd . ', \'' . $descProd . '\', \'' . $fotoProd . '\', ' . $idCat . ')">
                                                 <i class="bi bi-pencil-square">Editar</i>
                                             </button>
-                                            <button class="btn btn-sm btn-light rounded-3 text-danger shadow-2-strong" onclick="eliminar(\'' . $codigoProd_js . '\')">
+                                            <button class="btn btn-sm btn-light rounded-3 text-danger shadow-2-strong" onclick="eliminar(\'' . $codigoProd . '\')">
                                                 <i class="bi bi-trash">Eliminar</i>
                                             </button>
                                         </div>
@@ -358,6 +368,7 @@ class productos extends datos
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }
+
         return $r;
     }
 }

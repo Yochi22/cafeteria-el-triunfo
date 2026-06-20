@@ -6,10 +6,10 @@ if (!is_file("modelo/" . $pagina . ".php")) {
 }
 
 require_once("modelo/" . $pagina . ".php");
+if (is_file("vista/" . $pagina . ".php")) {
 
-if (is_file("vista/" . $pagina . ".php")) { 
     $o = new productos();
-    
+
     if (!empty($_POST)) {
         $accion = $_POST['accion'];
 
@@ -29,7 +29,7 @@ if (is_file("vista/" . $pagina . ".php")) {
                 $o->set_precioProd($_POST['precioProd']);
                 $o->set_descProd($_POST['descProd']);
                 $o->set_fotoProd($_POST['fotoProd']);
-                $o->set_idCategoria($_POST['idCategoria']); 
+                $o->set_idCategoria($_POST['idCategoria']);
                 echo json_encode($o->incluir());
                 break;
 
@@ -50,7 +50,7 @@ if (is_file("vista/" . $pagina . ".php")) {
                 break;
 
             case 'eliminar':
-                $o->set_codigoProd($_POST['codigoProd']); 
+                $o->set_codigoProd($_POST['codigoProd']);
                 echo json_encode($o->eliminar());
                 break;
 
@@ -66,7 +66,7 @@ if (is_file("vista/" . $pagina . ".php")) {
 
         exit;
     }
-    
+
     require_once("vista/" . $pagina . ".php");
 } else {
     echo "PÁGINA EN CONSTRUCCIÓN";
