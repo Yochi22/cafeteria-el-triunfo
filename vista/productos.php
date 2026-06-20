@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
 <?php require_once("comunes/encabezado.php"); ?>
+
 <body>
     <div class="d-flex">
         <?php require_once("comunes/sidebar.php"); ?>
-        
+
         <main class="main-content w-100 p-4">
-            
+
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
-                
+
                 <div class="d-flex align-items-center">
                     <button class="btn btn-outline-dark d-md-none me-3 border-0"
                         id="btn-toggle-sidebar"
@@ -30,12 +31,12 @@
                         <i class="bi bi-plus-circle fs-5"></i>
                         <span class="d-none d-sm-inline">Agregar Producto</span>
                     </button>
-                    
+
                     <button class="btn btn-crear d-flex align-items-center gap-2" style="background-color: #0d6efd !important; display:none;" id="btn_regresar_cat" onclick="cargarCategorias()">
                         <i class="bi bi-arrow-left-circle fs-5"></i>
                         <span class="d-none d-sm-inline">Regresar</span>
                     </button>
-                    
+
                     <a href="?pagina=categorias" class="btn btn-crear d-flex align-items-center gap-2" id="btn_gestionar_cat" style="background-color: #198754 !important;">
                         <i class="bi bi-tags fs-5"></i>
                         <span class="d-none d-sm-inline">Gestionar Categorías</span>
@@ -43,15 +44,17 @@
                 </div>
             </div>
 
-            <div class="mb-4">
-                <div class="input-group shadow-sm">
-                    <button class="btn input-group-text bg-white border-2" type="button" id="btnBuscar">
-                        <i class="bi bi-search"></i>
-                    </button>
-                    <input type="text" id="valorBusqueda" class="form-control border-0 py-2" placeholder="Buscar productos por nombre o descripción...">
+               <div class="row mb-4">
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="input-group bg-white border rounded-3 align-items-center shadow-sm h-100 px-2 py-1">
+                        <button class="btn p-0 border-0 link-secondary ms-2" type="button" id="btnBuscar">
+                            <i class="bi bi-search"></i>
+                        </button>
+                        <input type="text" id="valorBusqueda" name="valorBusqueda" class="form-control border-0 py-2 shadow-none bg-transparent" placeholder="Buscar producto...">
+                    </div>
                 </div>
             </div>
-            
+
             <div id="contenedor_secundario" class="mt-4">
                 <h5 class="text-dashboard mb-4" id="subtitulo_seccion">Categorías</h5>
                 <div class="row" id="cuadricula_items">
@@ -72,7 +75,7 @@
                         <input type="hidden" id="idProducto" name="idProducto">
                         <input type="hidden" id="codigoOrig" name="codigoOrig"> 
                         <input type="hidden" id="accion" name="accion">
-                        
+
                         <div class="mb-3">
                             <label for="idCategoria" class="form-label text-muted small">Categoría</label>
                             <select class="form-select rounded-3" id="idCategoria_select" name="idCategoria" required></select>
@@ -88,6 +91,7 @@
                             <label for="nombreProd" class="form-label text-muted small">Nombre del producto</label>
                             <input type="text" class="form-control rounded-3" id="nombreProd" name="nombreProd" required>
                             <span id="snombreProd" class="small text-danger"></span>
+
                         </div>
 
                         <div class="mb-3">
@@ -95,13 +99,13 @@
                             <input type="number" step="0.01" class="form-control rounded-3" id="precioProd" name="precioProd" required>
                             <span id="sprecioProd" class="small text-danger"></span>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="descProd" class="form-label text-muted small">Descripción</label>
                             <textarea class="form-control rounded-3" id="descProd" name="descProd" rows="3" required></textarea>
                             <span id="sdescProd" class="small text-danger"></span>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label for="fotoProd" class="form-label text-muted small">URL de la foto (opcional)</label>
                             <input type="text" class="form-control rounded-3" id="fotoProd" name="fotoProd" placeholder="https://ejemplo.com/imagen.jpg">
@@ -120,4 +124,5 @@
     <?php require_once("comunes/modal_eliminar.php"); ?>
     <script src="js/productos.js"></script>
 </body>
+
 </html>

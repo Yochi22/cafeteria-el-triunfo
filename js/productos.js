@@ -4,7 +4,7 @@ try {
     cargarCategorias();
     llenarSelectCategorias();
 } catch (e) {
-        console.error(e);
+    console.error(e);
 }
 
     $("#codigoProd").on("keypress", function (e) {
@@ -78,9 +78,13 @@ try {
             datos.append('valorBusqueda', valor);
             enviaAjax(datos);
         } else {
-            consultar();
+        if (categoriaActual !== null) {
+            verCategoria(categoriaActual, $("#titulo_seccion").text());
+        } else {
+            cargarCategorias();
         }
     }
+}
 
     $("#valorBusqueda").on("keyup", function () {
         ejecutarBusqueda();
@@ -91,7 +95,7 @@ try {
     });
 
     $("#btnEliminar").on("click", function () {
-        var codigoEliminado = $("#codigoEliminar").val();
+        var codigoEliminado = $("#eliminar").val();
         var datos = new FormData();
         datos.append('accion', 'eliminar');
         datos.append('codigoProd', codigoEliminado); 
@@ -159,7 +163,7 @@ function pone(codigoProd, nombreProd, precioProd, descProd, fotoProd, idCategori
 }
 
 function eliminar(codigoProd) {
-    $("#codigoEliminar").val(codigoProd); 
+    $("#eliminar").val(codigoProd); 
     $("#modal_eliminar").modal("show");
 }
 
@@ -178,7 +182,7 @@ function validarEnvio() {
         mostrarMensaje("Descripción inválida.");
         return false;
     }
-    if (validarkeyup(/^[0-9]{1,8}(\.[0-9]{1,2})?$/, $("#precioProd"), $("#sprecioProd"), "Precio inválido.") == 0) {
+    if (validarkeyup(/^[0-9]{1,8}(\.[0-9]{1,2})?$/, $("#precioProd"), $("#sprecioProd"), "Precio inválido.") !== 0) {
         mostrarMensaje("Precio inválido.");
         return false;
     }
@@ -256,7 +260,7 @@ function enviaAjax(datos) {
                         if (categoriaActual !== null) verCategoria(categoriaActual, $("#titulo_seccion").text());
                         else cargarCategorias();
                     }
-                } 
+                }
                 else if (lee.resultado == 'error') {
                     mostrarMensaje(lee.mensaje);
                 }
@@ -281,9 +285,4 @@ function limpia() {
     $("#precioProd").val("");
     $("#descProd").val("");
     $("#fotoProd").val("");
-    
-    $("#scodigoProd").text("");
-    $("#snombreProd").text("");
-    $("#sprecioProd").text("");
-    $("#sdescProd").text("");
 }

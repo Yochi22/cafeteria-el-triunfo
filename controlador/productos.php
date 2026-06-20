@@ -6,7 +6,6 @@ if (!is_file("modelo/" . $pagina . ".php")) {
 }
 
 require_once("modelo/" . $pagina . ".php");
-
 if (is_file("vista/" . $pagina . ".php")) {
     
     $o = new productos();
@@ -72,4 +71,5 @@ if (is_file("vista/" . $pagina . ".php")) {
 } else {
     echo "PÁGINA EN CONSTRUCCIÓN";
 }
+
 ?>
