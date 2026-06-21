@@ -70,18 +70,6 @@ $(document).ready(function () {
                 enviaAjax(datos);
             }
         }
-        // BOTON ELIMINAR
-        if ($(this).text() == 'eliminar') {
-            if (validarkeyup(/^[0-9\.]{7,12}$/, $("#cedulaCli"),
-                $("#scedulaCli"), "El formato debe ser 9999999") == 0) {
-                mostrarMensaje("Cedula Invalida - El formato debe ser: 99999999");
-            } else {
-                var datos = new FormData();
-                datos.append('accion', 'eliminar');
-                datos.append('cedulaCli', $("#cedulaCli").val());
-                enviaAjax(datos);
-            }
-        }
     });
 
     //BOTON BUSCAR
@@ -202,7 +190,6 @@ function eliminar(pos) {
     $("#eliminar").val(cedula);
     $("#modal_eliminar").modal("show");
 }
-
 
 function enviaAjax(datos) {
     $.ajax({

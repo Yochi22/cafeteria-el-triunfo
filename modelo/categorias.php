@@ -4,7 +4,7 @@ require_once("modelo/datos.php");
 
 class categorias extends datos
 {
-    // Variables
+    // Atributos
     private $codigoOriginal;
     private $codigoCat;
     private $nombreCat;
