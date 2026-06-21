@@ -98,7 +98,7 @@ $(document).ready(function () {
         }
     });
 
-    // confirmar eliminacion de cuenta - esta conectada a otra funcion mas abajo.
+    // 2.3 eliminar
     $("#btnEliminar").on("click", function () {
         var cuentaEliminada = $("#eliminar").val();
         console.log("Cuenta a eliminar:", cuentaEliminada);
@@ -227,7 +227,7 @@ function pone(pos) {
     $("#numCuenta").prop('readonly', true);
 }
 
-//boton conectado a funcion ELIMINAR
+//funcion para ubicar que fila se va a eliminar.
 function eliminar(pos) {
     var linea = $(pos).closest('tr');
     var cuenta = $(linea).find("td:eq(4)").text().trim();

@@ -38,8 +38,9 @@ if (is_file("vista/" . $pagina . ".php")) {
                 $o->set_tlfCli($_POST['tlfCli']);
                 echo json_encode($o->modificar());
                 break;
+
             case 'buscar':
-                $valor = isset($_POST['valorBusqueda']) ? $_POST['valorBusqueda'] : '';
+                $valor = trim($_POST['valorBusqueda'] ?? '');
                 echo json_encode($o->buscar($valor));
                 break;
         }

@@ -13,10 +13,22 @@ if (is_file("vista/" . $pagina . ".php")) {
         $accion = $_POST['accion'];
 
         switch ($accion) {
+            case 'incluir':
+                $o->set_cedulaPer($_POST['cedulaPer']);
+                $o->set_nombrePer($_POST['nombrePer']);
+                $o->set_apellidoPer($_POST['apellidoPer']);
+                echo json_encode($o->incluir());
+                break;
 
             case 'consultar':
                 echo json_encode($o->consultar());
+                break;
 
+            case 'modificar':
+                $o->set_cedulaPer($_POST['cedulaPer']);
+                $o->set_nombrePer($_POST['nombrePer']);
+                $o->set_apellidoPer($_POST['apellidoPer']);
+                echo json_encode($o->modificar());
                 break;
 
             case 'eliminar':
@@ -24,26 +36,8 @@ if (is_file("vista/" . $pagina . ".php")) {
                 echo json_encode($o->eliminar());
                 break;
 
-            case 'incluir':
-                $o->set_cedulaPer($_POST['cedulaPer']);
-                $o->set_nombrePer($_POST['nombrePer']);
-                $o->set_apellidoPer($_POST['apellidoPer']);
-                $o->set_password($_POST['password']);
-                $o->set_rol($_POST['rol']);
-                echo json_encode($o->incluir());
-                break;
-
-            case 'modificar':
-                $o->set_cedulaPer($_POST['cedulaPer']);
-                $o->set_nombrePer($_POST['nombrePer']);
-                $o->set_apellidoPer($_POST['apellidoPer']);
-                $o->set_password($_POST['password']);
-                $o->set_rol($_POST['rol']);
-                echo json_encode($o->modificar());
-                break;
-
             case 'buscar':
-                $valor = isset($_POST['valorBusqueda']) ? $_POST['valorBusqueda'] : '';
+                $valor = trim($_POST['valorBusqueda'] ?? '');
                 echo json_encode($o->buscar($valor));
                 break;
         }
