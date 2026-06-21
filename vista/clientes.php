@@ -3,7 +3,7 @@
 <?php require_once("comunes/encabezado.php"); ?>
 
 <body>
-    <div class="d-flex min-vh-100 position-relative">
+    <div class="d-flex min-vh-100 position-relative bg-light">
         <?php require_once("comunes/sidebar.php"); ?>
 
         <main class="main-content w-100 p-4">
@@ -55,7 +55,7 @@
             </div>
 
             <!-- lista de Clientes -->
-            <div class="table-responsive bg-gray p-5 rounded shadow-sm">
+            <div class="table-responsive rounded-3 shadow-sm">
                 <table class="table table-hover align-items-center text-center">
                     <thead class="text-dashboard border-bottom">
                         <tr>

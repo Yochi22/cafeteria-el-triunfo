@@ -137,7 +137,7 @@ class personal extends datos{
                     $respuesta .= "<tr>";
                     $respuesta .= "<td colspan = '5' class='text-center text-muted py-4>'";
                     $respuesta .= "<span><i class='bi bi-person-fill fs-1' style='color: #FF8C00'></i></span>";
-                    $respuesta .= "<h5 class= 'text-dashboard'> No tienes Cientes Registrados </h5>";
+                    $respuesta .= "<h5 class= 'text-dashboard'> No tienes Personal Registrados </h5>";
                     $respuesta .= "</td>";
                     $respuesta .= "</tr>";
                 }

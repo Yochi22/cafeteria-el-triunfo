@@ -2,7 +2,7 @@
 <html lang="es">
     <?php require_once("comunes/encabezado.php"); ?>
 <body>
-    <div class="d-flex min-vh-100 position-relative">
+    <div class="d-flex min-vh-100 position-relative bg-light">
         <?php require_once("comunes/sidebar.php"); ?>
 
         <main class="main-content w-100 p-4">
@@ -48,20 +48,22 @@
 
             </div>
 
-            <table class="table table-hover align-items-center text-center">
-                <thead class="text-dashboard border-bottom">
-                    <tr>
-                        <th>Cédula</th>
-                        <th>Nombre y Apellido</th>
-                        <th>Contraseña</th>
-                        <th>Rol</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="listaPersonal" class="text-center">
-                    
-                </tbody>
-            </table>
+            <div class="table-responsive rounded-3 shadow-sm">
+                <table class="table table-hover align-items-center text-center">
+                    <thead class="text-dashboard border-bottom">
+                        <tr>
+                            <th>Cédula</th>
+                            <th>Nombre y Apellido</th>
+                            <th>Contraseña</th>
+                            <th>Rol</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listaPersonal" class="text-center">
+                        
+                    </tbody>
+                </table>
+            </div>
 
             <div class="modal fade" id="modal_personal" tabindex="-1" aria-labelledby="modal_personal_label" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
