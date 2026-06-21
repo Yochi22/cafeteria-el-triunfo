@@ -15,9 +15,9 @@ class personal extends datos
     function set_apellidoPer($valor){ $this->apellidoPer = $valor; }
 
     // Getters
-    function get_cedulaPer($valor){ $this->cedulaPer = $valor; }
-    function get_nombrePer($valor){ $this->nombrePer = $valor; }
-    function get_apellidoPer($valor){ $this->apellidoPer = $valor; }
+    function get_cedulaPer(){ return $this->cedulaPer; }
+    function get_nombrePer(){ return $this->nombrePer; }
+    function get_apellidoPer(){ return $this->apellidoPer; }
 
     // Función Existe
     function existe($cedulaPer)
