@@ -133,8 +133,8 @@ class cuentas extends datos
 
                 if($respuesta == ""){
                     $respuesta .= "<tr>";
-                    $respuesta .= "<td colspan = '5' class='text-center text-muted py-4>'";
-                    $respuesta .= "<span><i class='bi bi-person-fill fs-1' style='color: #FF8C00'></i></span>";
+                    $respuesta .= "<td colspan = '6' class='text-center text-muted py-4>'";
+                    $respuesta .= "<span><i class='bi bi-wallet2 fs-1' style='color: #FF8C00'></i></span>";
                     $respuesta .= "<h5 class= 'text-dashboard'> No tienes Cuentas Registradas </h5>";
                     $respuesta .= "</td>";
                     $respuesta .= "</tr>";
@@ -209,8 +209,8 @@ class cuentas extends datos
                 }
                 if($respuesta == ""){
                     $respuesta .= "<tr>";
-                    $respuesta .= "<td colspan = '5' class='text-center text-muted py-4>'";
-                    $respuesta .= "<span><i class='bi bi-person-fill-slash fs-1' style='color : #FF8C00'></i></i></span>";
+                    $respuesta .= "<td colspan = '6' class='text-center text-muted py-4>'";
+                    $respuesta .= "<span><i class='bi bi-question-lg fs-1' style='color : #FF8C00'></i></i></span>";
                     $respuesta .= "<h5 class= 'text-dashboard'> No se Encuentran Registros </h5>";
                     $respuesta .= "<h6 class= 'text-dashboard'> Intenta de Nuevo </h6>";
                     $respuesta .= "</td>";

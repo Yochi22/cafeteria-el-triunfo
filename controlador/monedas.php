@@ -1,22 +1,24 @@
 <?php
 
 if (!is_file("modelo/" . $pagina . ".php")) {
-    echo "Falta definir la clase " . $pagina;
+    echo "Falta Definir la Clase " . $pagina;
     exit;
 }
 
 require_once("modelo/" . $pagina . ".php");
 
 if (is_file("vista/" . $pagina . ".php")) {
-    $o = new personal();
+    $o = new monedas();
+
     if (!empty($_POST)) {
         $accion = $_POST['accion'];
 
         switch ($accion) {
             case 'incluir':
-                $o->set_cedulaPer($_POST['cedulaPer']);
-                $o->set_nombrePer($_POST['nombrePer']);
-                $o->set_apellidoPer($_POST['apellidoPer']);
+                $o->set_codigoMon($_POST['codigoMon']);
+                $o->set_nombreMon($_POST['nombreMon']);
+                $o->set_simboloMon($_POST['simboloMon']);
+                $o->set_tasaMon($_POST['tasaMon']);
                 echo json_encode($o->incluir());
                 break;
 
@@ -25,14 +27,16 @@ if (is_file("vista/" . $pagina . ".php")) {
                 break;
 
             case 'modificar':
-                $o->set_cedulaPer($_POST['cedulaPer']);
-                $o->set_nombrePer($_POST['nombrePer']);
-                $o->set_apellidoPer($_POST['apellidoPer']);
+                $o->set_codigoOriginal($_POST['codigoOriginal']);
+                $o->set_codigoMon($_POST['codigoMon']);
+                $o->set_nombreMon($_POST['nombreMon']);
+                $o->set_simboloMon($_POST['simboloMon']);
+                $o->set_tasaMon($_POST['tasaMon']);
                 echo json_encode($o->modificar());
                 break;
 
             case 'eliminar':
-                $o->set_cedulaPer($_POST['cedulaPer']);
+                $o->set_codigoMon($_POST['codigoMon']);
                 echo json_encode($o->eliminar());
                 break;
 
@@ -42,7 +46,7 @@ if (is_file("vista/" . $pagina . ".php")) {
                 break;
         }
 
-        exit();
+        exit;
     }
 
     require_once("vista/" . $pagina . ".php");
