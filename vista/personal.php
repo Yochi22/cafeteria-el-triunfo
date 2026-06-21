@@ -99,9 +99,10 @@
                     </div>
                 </div>
             </div>
-            <?php require_once("comunes/modal_eliminar.php"); ?>
-            <?php require_once("comunes/modal.php"); ?>
         </main>
+        
+        <?php require_once("comunes/modal_eliminar.php"); ?>
+        <?php require_once("comunes/modal.php"); ?>
         <script src="js/personal.js"></script>
     </div>
 </body>

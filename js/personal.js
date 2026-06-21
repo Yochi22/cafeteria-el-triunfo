@@ -80,8 +80,7 @@ $(document).ready(function () {
 
     // BOTÓN CONFIRMAR ELIMINACIÓN DE PERSONAL
     $("#btnEliminar").on("click", function () {
-        var cedulaEliminada = $("#cedulaEliminar").val();
-
+        var cedulaEliminada = $("#eliminar").val();
         var datos = new FormData();
         datos.append('accion', 'eliminar');
         datos.append('cedulaPer', cedulaEliminada);
@@ -164,7 +163,7 @@ function eliminar(pos) {
     var linea = $(pos).closest('tr');
     var cedula = $(linea).find("td:eq(0)").text();
 
-    $("#cedulaEliminar").val(cedula);
+    $("#eliminar").val(cedula);
     $("#modal_eliminar").modal("show");
 }
 
