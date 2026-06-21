@@ -176,17 +176,15 @@ function eliminar(codigoProd) {
 }
 
 function validarEnvio() {
-    if ($("#btn_guardar_prod").text() == 'modificar') {
-        if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{5,50}$/, $("#codigoProd"), $("#scodigoProd"), "Código inválido.") == 0) {
-            mostrarMensaje("Código inválido.");
-            return false;
-        }
+    if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{5,50}$/, $("#codigoProd"), $("#scodigoProd"), "Código inválido.") == 0) {
+        mostrarMensaje("Código inválido.");
+        return false;
     }
-    if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{3,50}$/, $("#nombreProd"), $("#snombreProd"), "Nombre inválido.") == 0) {
+    else if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{3,50}$/, $("#nombreProd"), $("#snombreProd"), "Nombre inválido.") == 0) {
         mostrarMensaje("Nombre inválido.");
         return false;
     }
-    if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{3,150}$/, $("#descProd"), $("#sdescProd"), "Descripción inválida.") == 0) {
+    else if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{3,150}$/, $("#descProd"), $("#sdescProd"), "Descripción inválida.") == 0) {
         mostrarMensaje("Descripción inválida.");
         return false;
     }
@@ -197,7 +195,7 @@ function validarEnvio() {
         mostrarMensaje("Precio inválido.");
         return false;
     }
-    if (isNaN(precioVal) || precioVal <= 0) {
+    else if (isNaN(precioVal) || precioVal <= 0) {
         $("#sprecioProd").text("El precio debe ser mayor a 0.");
         mostrarMensaje("El precio debe ser mayor a 0.");
         return false;
