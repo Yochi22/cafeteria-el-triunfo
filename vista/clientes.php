@@ -44,7 +44,7 @@
 
                 <!-- boton de busqueda -->
                 <div class="col-md-4 ms-3">
-                    <div class="input-group bg-white border rounded-3 px-2 py-2 align-items-center">
+                    <div class="input-group bg-white border rounded-3 px-2 py-2 align-items-center shadow-sm">
                         <button class="btn p-0 border-0 link-secondary" type="button" id="btnBuscar">
                             <i class="bi bi-search fs-5"></i>
                         </button>
@@ -87,25 +87,27 @@
                                 <input type="hidden" id="accion" name="accion">
                                 <!-- DATOS DEL CLIENTE -->
                                 <div class="mb-3">
-                                    <label for="cedulaCli" class="form-label text-muted small">Cédula</label>
+                                    <label for="cedulaCli" class="form-label text-muted small fw-bold">Cédula</label>
                                     <input type="text" class="form-control rounded-3" id="cedulaCli" name="cedulaCli" required>
                                     <span id="scedulaCli"></span>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label for="nombreCli" class="form-label text-muted small">Nombre</label>
-                                    <input type="text" class="form-control rounded-3" id="nombreCli" name="nombreCli" required>
-                                    <span id="snombreCli"></span>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="nombreCli" class="form-label text-muted small fw-bold">Nombre</label>
+                                        <input type="text" class="form-control rounded-3" id="nombreCli" name="nombreCli" required>
+                                        <span id="snombreCli"></span>
+                                    </div>
+
+                                    <div class="col-md-6 mb-3">
+                                        <label for="apellidoCli" class="form-label text-muted small fw-bold">Apellido</label>
+                                        <input type="text" class="form-control rounded-3" id="apellidoCli" name="apellidoCli" required>
+                                        <span id="sapellidoCli"></span>
+                                    </div>
                                 </div>
 
                                 <div class="mb-3">
-                                    <label for="apellidoCli" class="form-label text-muted small">Apellido</label>
-                                    <input type="text" class="form-control rounded-3" id="apellidoCli" name="apellidoCli" required>
-                                    <span id="sapellidoCli"></span>
-                                </div>
-
-                                <div class="mb-3">
-                                    <label for="tlfCli" class="form-label text-muted small">Teléfono</label>
+                                    <label for="tlfCli" class="form-label text-muted small fw-bold">Teléfono</label>
                                     <input type="text" class="form-control rounded-3" id="tlfCli" name="tlfCli" required>
                                     <span id="stlfCli"></span>
                                 </div>
