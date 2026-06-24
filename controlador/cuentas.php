@@ -1,7 +1,7 @@
 <?php
 
 if (!is_file("modelo/" . $pagina . ".php")) {
-    echo "Falta Definir la Clase " . $pagina;
+    echo "Falta Definir la clase " . $pagina;
     exit;
 }
 
@@ -43,7 +43,7 @@ if (is_file("vista/" . $pagina . ".php")) {
                 break;
 
             case 'buscar':
-                $valor = isset($_POST['valorBusqueda']) ? $_POST['valorBusqueda'] : '';
+                $valor = trim($_POST['valorBusqueda'] ?? '');
                 echo json_encode($o->buscar($valor));
                 break;
         }

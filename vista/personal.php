@@ -21,7 +21,7 @@
 
                 <div>
                     <h2 class="text-dashboard"><i class="bi bi-file-person"></i> Personal</h2>
-                    <p class="text-muted">¡Bienvenido al apartado de personal de la Cafeteria El Triunfo!</p>
+                    <p class="text-muted">¡Bienvenido al apartado de personal de la Cafetería El Triunfo!</p>
                 </div>
             </div>
 
@@ -56,7 +56,6 @@
                         </tr>
                     </thead>
                     <tbody id="listaPersonal" class="text-center">
-
                     </tbody>
                 </table>
             </div>
@@ -100,7 +99,7 @@
                 </div>
             </div>
         </main>
-        
+
         <?php require_once("comunes/modal_eliminar.php"); ?>
         <?php require_once("comunes/modal.php"); ?>
         <script src="js/personal.js"></script>

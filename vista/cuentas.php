@@ -3,7 +3,7 @@
 <?php require_once("comunes/encabezado.php"); ?>
 
 <body>
-    <div class="d-flex min-vh-100 position-relative">
+    <div class="d-flex min-vh-100 position-relative bg-light">
         <?php require_once("comunes/sidebar.php"); ?>
 
         <main class="main-content w-100 p-4">
@@ -57,7 +57,7 @@
             </div>
 
             <!--lista -->
-            <div class="table-responsive bg-gray p-5 rounded shadow-sm">
+            <div class="table-responsive rounded-3 shadow-sm">
                 <table class="table table-hover align-items-center text-center">
                     <thead class="text-dashboard border-bottom">
                         <tr>
@@ -113,7 +113,7 @@
                         </div>
 
                         <div class="row">
-                            
+
                             <div class="col-md-6 mb-3">
                                 <label for="tipoCuenta" class="form-label text-muted small fw-bold">Tipo de Cuenta</label>
                                 <select class="form-select" aria-label="Default select example" name="tipoCuenta" id="tipoCuenta" required>
@@ -129,11 +129,11 @@
                                 <input type="text" class="form-control rounded-3" id="numCuenta" name="numCuenta" required>
                                 <span id="snumCuenta" class="small text-danger"></span>
                             </div>
-                        </div> 
+                        </div>
 
-                            <div class="d-grid mt-4">
-                                <button type="submit" class="btn btn-crear w-100 mt-3" style="background-color: #FF8C00;" id="btnGuardar">Guardar</button>
-                            </div>
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-crear w-100 mt-3" style="background-color: #FF8C00;" id="btnGuardar">Guardar</button>
+                        </div>
                     </form>
                 </div>
 

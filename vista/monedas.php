@@ -4,11 +4,10 @@
 
 <body>
     <div class="d-flex min-vh-100 position-relative">
-
         <?php require_once("comunes/sidebar.php"); ?>
 
         <main class="main-content w-100 p-4">
-
+            
             <div class="row align-items-center mb-4 g-3">
 
                 <div class="col-12 col-md-5 d-flex align-items-center">
@@ -21,6 +20,7 @@
                         aria-label="Toggle navigation">
                         <i class="bi bi-list" style="font-size: 1.8rem;"></i>
                     </button>
+
                     <div>
                         <h2 class="text-dashboard mb-0 fs-3"><i class="bi bi-tags"></i> Monedas</h2>
                         <p class="text-muted mb-0 small d-none d-sm-block">¡Gestiona las Monedas de tus Productos!</p>
