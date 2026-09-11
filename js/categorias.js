@@ -21,7 +21,7 @@ $(document).ready(function () {
         validarkeypress(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]*$/, e);
     });
     $("#nombreCat").on("keyup", function () {
-        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{3,50}$/, $(this), $("#snombreCat"), "Nombre inválido.");
+        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{5,50}$/, $(this), $("#snombreCat"), "Nombre inválido.");
     });
 
     // Validación de Descripción
@@ -29,7 +29,7 @@ $(document).ready(function () {
         validarkeypress(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]*$/, e);
     });
     $("#descCat").on("keyup", function () {
-        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{3,150}$/, $(this), $("#sdescCat"), "Descripción inválida.");
+        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{5,150}$/, $(this), $("#sdescCat"), "Descripción inválida.");
     });
 
     // Control de Botones
