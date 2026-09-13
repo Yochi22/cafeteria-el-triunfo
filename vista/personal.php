@@ -40,7 +40,7 @@
 
                 <div class="col-md-4 ms-3">
                     <div class="input-group bg-white border rounded-3 px-2 py-2 align-items-center">
-                        <input type="text" id="valorBusqueda" name="valorBusqueda" class="form-control border-0 py-0 py-2 shadow-none" placeholder="Buscar empleado...">
+                        <input type="text" id="valorBusqueda" name="valorBusqueda" class="form-control border-0 py-0 py-2 shadow-none" placeholder="Buscar personal...">
                     </div>
                 </div>
 

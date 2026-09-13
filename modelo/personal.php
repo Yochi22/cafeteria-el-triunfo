@@ -10,14 +10,14 @@ class personal extends datos
     private $apellidoPer;
 
     // Setters
-    function set_cedulaPer($valor){ $this->cedulaPer = $valor; }
-    function set_nombrePer($valor){ $this->nombrePer = $valor; }
-    function set_apellidoPer($valor){ $this->apellidoPer = $valor; }
+    function set_cedulaPer($valor) { $this->cedulaPer = $valor; }
+    function set_nombrePer($valor) { $this->nombrePer = $valor; }
+    function set_apellidoPer($valor) { $this->apellidoPer = $valor; }
 
     // Getters
-    function get_cedulaPer(){ return $this->cedulaPer; }
-    function get_nombrePer(){ return $this->nombrePer; }
-    function get_apellidoPer(){ return $this->apellidoPer; }
+    function get_cedulaPer() { return $this->cedulaPer; }
+    function get_nombrePer() { return $this->nombrePer; }
+    function get_apellidoPer() { return $this->apellidoPer; }
 
     // Función Existe
     function existe($cedulaPer)
@@ -99,7 +99,7 @@ class personal extends datos
                     $respuesta .= "<tr>";
                     $respuesta .= "<td colspan = '5' class='text-center text-muted py-4>'";
                     $respuesta .= "<span><i class='bi bi-person-fill fs-1' style='color: #FF8C00'></i></span>";
-                    $respuesta .= "<h5 class= 'text-dashboard'> No tienes empleados registrados.</h5>";
+                    $respuesta .= "<h5 class= 'text-dashboard'> No hay personal registrado.</h5>";
                     $respuesta .= "</td>";
                     $respuesta .= "</tr>";
                 }
@@ -206,7 +206,7 @@ class personal extends datos
                     $respuesta .= "<tr>";
                     $respuesta .= "<td colspan='5' class='text-center text-muted py-4'>";
                     $respuesta .= "<span><i class='bi bi-person-fill-slash fs-1' style='color : #FF8C00'></i></i></span>";
-                    $respuesta .= "<h5 class='text-dashboard'> No se encuentran empleados</h5>";
+                    $respuesta .= "<h5 class='text-dashboard'> No se encuentra personal</h5>";
                     $respuesta .= "<h6 class='text-secondary'> Intenta con otra búsqueda.</h6>";
                     $respuesta .= "</td>";
                     $respuesta .= "</tr>";
@@ -226,5 +226,3 @@ class personal extends datos
         return $r;
     }
 }
-
-?>

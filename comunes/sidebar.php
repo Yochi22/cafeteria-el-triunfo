@@ -6,7 +6,7 @@
         </div>
 
         <nav class="nav flex-column">
-            
+
             <a class="nav-link py-1 <?= $pagina == 'principal' ? 'active' : '' ?>" href="?pagina=principal">
                 <i class="bi bi-house-door"></i> Inicio
             </a>
@@ -15,7 +15,7 @@
             </a>
 
             <span class="text-uppercase text-white-50 fw-bold small mt-2 mb-2 px-3" style="letter-spacing: 1px; font-size: 0.75rem;">
-            Inventario
+                Inventario
             </span>
             <a class="nav-link py-1 <?= $pagina == 'categorias' ? 'active' : '' ?>" href="?pagina=categorias">
                 <i class="bi bi-tags"></i> Categorías
@@ -26,7 +26,7 @@
 
 
             <span class="text-uppercase text-white-50 fw-bold small mt-2 mb-2 px-3" style="letter-spacing: 1px; font-size: 0.75rem;">
-            Gestión
+                Gestión
             </span>
             <a class="nav-link py-1 <?= $pagina == 'ventas' ? 'active' : '' ?>" href="?pagina=ventas">
                 <i class="bi bi-graph-up-arrow"></i> Ventas
@@ -35,22 +35,22 @@
             <a class="nav-link py-1 <?= $pagina == 'reporte' ? 'active' : '' ?>" href="?pagina=reporte">
                 <i class="bi bi-file-earmark-bar-graph"></i> Reporte
             </a>
-            
+
             <span class="text-uppercase text-white-50 fw-bold small mt-2 mb-2 px-3" style="letter-spacing: 1px; font-size: 0.75rem;">
-            Finanzas
+                Finanzas
             </span>
             <a class="nav-link py-1 <?= $pagina == 'cuentas' ? 'active' : '' ?>" href="?pagina=cuentas">
                 <i class="bi bi-cash-stack"></i> Cuentas
             </a>
 
             <span class="text-uppercase text-white-50 fw-bold small mt-2 mb-2 px-3" style="letter-spacing: 1px; font-size: 0.75rem;">
-            Usuarios
+                Usuarios
             </span>
             <a class="nav-link py-1 <?= $pagina == 'clientes' ? 'active' : '' ?>" href="?pagina=clientes">
                 <i class="bi bi-people"></i> Clientes
             </a>
             <a class="nav-link py-1 <?= $pagina == 'personal' ? 'active' : '' ?>" href="?pagina=personal">
-                <i class="bi bi-person-badge"></i> Empleados
+                <i class="bi bi-person-badge"></i> Personal
             </a>
 
             <a class="nav-link py-1 logout-link text-black-50" href="?pagina=login">
