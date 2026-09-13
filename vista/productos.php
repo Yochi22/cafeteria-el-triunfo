@@ -9,7 +9,6 @@
         <main class="main-content w-100 p-4">
 
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
-
                 <div class="d-flex align-items-center">
                     <button class="btn btn-outline-dark d-md-none me-3 border-0"
                         id="btn-toggle-sidebar"

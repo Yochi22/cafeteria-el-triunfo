@@ -14,10 +14,10 @@ $(document).ready(function () {
     });
 
     $("#nombreProd").on("keypress", function (e) {
-        validarkeypress(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]*$/, e);
+        validarkeypress(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]*$/, e);
     });
     $("#nombreProd").on("keyup", function () {
-        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{3,50}$/, $(this), $("#snombreProd"), "Nombre inválido.");
+        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{3,50}$/, $(this), $("#snombreProd"), "Nombre inválido.");
     });
 
     $("#descProd").on("keypress", function (e) {
@@ -180,7 +180,7 @@ function validarEnvio() {
         mostrarMensaje("Código inválido.");
         return false;
     }
-    else if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{3,50}$/, $("#nombreProd"), $("#snombreProd"), "Nombre inválido.") == 0) {
+    else if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{3,50}$/, $("#nombreProd"), $("#snombreProd"), "Nombre inválido.") == 0) {
         mostrarMensaje("Nombre inválido.");
         return false;
     }
