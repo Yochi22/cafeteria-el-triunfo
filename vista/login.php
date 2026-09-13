@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<body>
+<body class="login-bg">
     <?php require_once("comunes/encabezado.php"); ?>
     <div>
         <div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
@@ -43,7 +43,7 @@
                     </form>
 
                     <div class="text-center mt-4">
-                        <a class="text-decoration-none text-muted small fw-bold">REGISTRARSE</a>
+                        <button class="btn btn-decoration-none">REGISTRARSE</button>
                     </div>
                 </div>
             </div>

@@ -54,19 +54,6 @@ $(document).ready(function () {
         );
     });
 
-
-
-    $("#f").on("submit", function (e) {
-        e.preventDefault();
-        let accion = $("#accion").val();
-        if (accion == "incluir" || accion == "modificar") {
-            if (validarEnvio()) {
-                var datos = new FormData(this);
-                enviaAjax(datos);
-            }
-        }
-    });
-
     //Botones
     $("#btnGuardar").on("click", function () {
         // 2.1 Incluir

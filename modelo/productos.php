@@ -81,32 +81,6 @@ class productos extends datos
         return $r;
     }
 
-    function consultar()
-    {
-        $r = array();
-        $co = $this->conecta();
-
-        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        try {
-            $stmt = $co->prepare("SELECT * FROM productos WHERE codigoProd = ?");
-            $stmt->execute([$this->codigoProd]);
-            $fila = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($fila) {
-                $r['resultado'] = 'consultar';
-                $r['mensaje'] = $fila;
-            } else {
-                $r['resultado'] = 'error';
-                $r['mensaje'] = 'Producto no encontrado.';
-            }
-        } catch (Exception $e) {
-            $r['resultado'] = 'error';
-            $r['mensaje'] = $e->getMessage();
-        }
-
-        return $r;
-    }
-
     function modificar()
     {
         $r = array();

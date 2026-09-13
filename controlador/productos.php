@@ -33,11 +33,6 @@ if (is_file("vista/" . $pagina . ".php")) {
                 echo json_encode($o->incluir());
                 break;
 
-            case 'consultar':
-                $o->set_codigoProd($_POST['codigoProd']);
-                echo json_encode($o->consultar());
-                break;
-
             case 'modificar':
                 $o->set_codigoOrig($_POST['codigoOrig']);
                 $o->set_codigoProd($_POST['codigoProd']);

@@ -174,3 +174,13 @@ h3,
     color: #ff7a2f;
     border-bottom-color: #ff7a2f;
 }
+
+
+/* imagen del login */
+.login-bg {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('../img/fondo.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}

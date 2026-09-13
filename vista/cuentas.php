@@ -89,7 +89,7 @@
 
                 <!--Cuerpo Modal-->
                 <div class="modal-body pt-3">
-                    <form id="f">
+                    <form>
                         <input type="hidden" id="accion" name="accion">
                         <!--Campos-->
                         <div class="mb-3">
@@ -132,7 +132,7 @@
                         </div> 
 
                             <div class="d-grid mt-4">
-                                <button type="submit" class="btn btn-crear w-100 mt-3" style="background-color: #FF8C00;" id="btnGuardar">Guardar</button>
+                                <button type="button" class="btn btn-crear w-100 mt-3" style="background-color: #FF8C00;" id="btnGuardar">Guardar</button>
                             </div>
                     </form>
                 </div>
