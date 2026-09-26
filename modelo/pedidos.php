@@ -14,6 +14,7 @@ class pedidos extends datos
         try {
             $co->beginTransaction();
             $precioTotal = 0;
+
             for ($i = 0; $i < count($idProducto); $i++) {
                 $precioTotal += ($cantidad[$i] * $precio[$i]);
             }
@@ -47,57 +48,11 @@ class pedidos extends datos
             if ($co->inTransaction()) {
                 $co->rollBack();
             }
+
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }
-        return $r;
-    }
 
-    function modificar($numPedido, $idCliente, $idProducto, $cantidad, $precio)
-    {
-        $co = $this->conecta();
-        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $r = array();
-
-        try {
-            $co->beginTransaction();
-
-            $precioTotal = 0;
-            for ($i = 0; $i < count($idProducto); $i++) {
-                $precioTotal += ($cantidad[$i] * $precio[$i]);
-            }
-
-            $stmtP = $co->prepare("UPDATE pedidos SET idCliente = :idCliente, precioTotal = :precioTotal WHERE numPedido = :numPedido");
-            $stmtP->execute([
-                ':idCliente' => $idCliente,
-                ':precioTotal' => $precioTotal,
-                ':numPedido' => $numPedido
-            ]);
-
-            $delD = $co->prepare("DELETE FROM pedidosproducto WHERE numPedido = :numPedido");
-            $delD->execute([':numPedido' => $numPedido]);
-
-            $stmtD = $co->prepare("INSERT INTO pedidosproducto (numPedido, idProducto, cantidadProd, subTotal) VALUES (:numPedido, :idProducto, :cantidad, :subTotal)");
-            for ($i = 0; $i < count($idProducto); $i++) {
-                $subT = $cantidad[$i] * $precio[$i];
-                $stmtD->execute([
-                    ':numPedido' => $numPedido,
-                    ':idProducto' => $idProducto[$i],
-                    ':cantidad' => $cantidad[$i],
-                    ':subTotal' => $subT
-                ]);
-            }
-
-            $co->commit();
-            $r['resultado'] = 'modificar';
-            $r['mensaje'] = 'Pedido #' . str_pad($numPedido, 3, '0', STR_PAD_LEFT) . ' actualizado correctamente.';
-        } catch (Exception $e) {
-            if ($co->inTransaction()) {
-                $co->rollBack();
-            }
-            $r['resultado'] = 'error';
-            $r['mensaje'] = $e->getMessage();
-        }
         return $r;
     }
 
@@ -106,6 +61,7 @@ class pedidos extends datos
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $r = array();
+
         try {
             $resultado = $co->query("SELECT p.*, c.nombreCli, c.apellidoCli FROM pedidos p JOIN clientes c ON p.idCliente = c.idCliente ORDER BY p.numPedido DESC");
             $html = '';
@@ -117,9 +73,11 @@ class pedidos extends datos
                     $detalles = $co->prepare("SELECT pp.cantidadProd, pr.nombreProd FROM pedidosproducto pp JOIN productos pr ON pp.idProducto = pr.idProducto WHERE pp.numPedido = :numPedido");
                     $detalles->execute([':numPedido' => $fila['numPedido']]);
                     $listaDetalles = '';
+
                     foreach ($detalles as $det) {
                         $listaDetalles .= $det['cantidadProd'] . 'x ' . $det['nombreProd'] . ', ';
                     }
+
                     $listaDetalles = rtrim($listaDetalles, ', ');
 
                     $html .= '
@@ -162,6 +120,7 @@ class pedidos extends datos
                     </div>';
                 }
             }
+
             if ($html == '') {
                 $html = '<div class="col-12 text-center text-muted py-5"><i class="bi bi-journal-x fs-1 text-warning"></i><h5 class="mt-2 text-dashboard">No hay pedidos registrados.</h5></div>';
             }
@@ -172,6 +131,7 @@ class pedidos extends datos
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }
+
         return $r;
     }
 
@@ -180,6 +140,7 @@ class pedidos extends datos
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $r = array();
+
         try {
             $stmtP = $co->prepare("SELECT p.*, CONCAT(c.cedulaCli, ' - ', c.nombreCli, ' ', c.apellidoCli) as clienteInfo FROM pedidos p JOIN clientes c ON p.idCliente = c.idCliente WHERE p.numPedido = :numPedido");
             $stmtP->execute([':numPedido' => $numPedido]);
@@ -196,6 +157,7 @@ class pedidos extends datos
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }
+
         return $r;
     }
 
@@ -204,10 +166,13 @@ class pedidos extends datos
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $r = array();
+
         try {
             $resultado = $co->query("SELECT * FROM clientes");
+
             if ($resultado) {
                 $html = '';
+
                 foreach ($resultado as $fila) {
                     $html .= "<tr style='cursor:pointer' class='bg-light-hover' onclick='seleccionarCliente(" . $fila['idCliente'] . ", \"" . $fila['cedulaCli'] . "\", \"" . $fila['nombreCli'] . " " . $fila['apellidoCli'] . "\")'>";
                     $html .= "<td>" . $fila['cedulaCli'] . "</td>";
@@ -215,6 +180,7 @@ class pedidos extends datos
                     $html .= "<td>" . $fila['tlfCli'] . "</td>";
                     $html .= "</tr>";
                 }
+
                 $r['resultado'] = 'modalclientes';
                 $r['mensaje'] = $html;
             }
@@ -222,6 +188,7 @@ class pedidos extends datos
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }
+
         return $r;
     }
 
@@ -230,10 +197,13 @@ class pedidos extends datos
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $r = array();
+
         try {
             $resultado = $co->query("SELECT * FROM productos");
+
             if ($resultado) {
                 $html = '';
+
                 foreach ($resultado as $fila) {
                     $html .= "<tr style='cursor:pointer' class='bg-light-hover' onclick='seleccionarProducto(" . $fila['idProducto'] . ", \"" . $fila['codigoProd'] . "\", \"" . $fila['nombreProd'] . "\", " . $fila['precioProd'] . ")'>";
                     $html .= "<td>" . $fila['codigoProd'] . "</td>";
@@ -241,6 +211,7 @@ class pedidos extends datos
                     $html .= "<td class='text-success fw-bold'>$" . number_format($fila['precioProd'], 2) . "</td>";
                     $html .= "</tr>";
                 }
+
                 $r['resultado'] = 'modalproductos';
                 $r['mensaje'] = $html;
             }
@@ -248,6 +219,58 @@ class pedidos extends datos
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }
+
+        return $r;
+    }
+
+    function modificar($numPedido, $idCliente, $idProducto, $cantidad, $precio)
+    {
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $r = array();
+
+        try {
+            $co->beginTransaction();
+
+            $precioTotal = 0;
+            for ($i = 0; $i < count($idProducto); $i++) {
+                $precioTotal += ($cantidad[$i] * $precio[$i]);
+            }
+
+            $stmtP = $co->prepare("UPDATE pedidos SET idCliente = :idCliente, precioTotal = :precioTotal WHERE numPedido = :numPedido");
+            $stmtP->execute([
+                ':idCliente' => $idCliente,
+                ':precioTotal' => $precioTotal,
+                ':numPedido' => $numPedido
+            ]);
+
+            $delD = $co->prepare("DELETE FROM pedidosproducto WHERE numPedido = :numPedido");
+            $delD->execute([':numPedido' => $numPedido]);
+
+            $stmtD = $co->prepare("INSERT INTO pedidosproducto (numPedido, idProducto, cantidadProd, subTotal) VALUES (:numPedido, :idProducto, :cantidad, :subTotal)");
+
+            for ($i = 0; $i < count($idProducto); $i++) {
+                $subT = $cantidad[$i] * $precio[$i];
+                $stmtD->execute([
+                    ':numPedido' => $numPedido,
+                    ':idProducto' => $idProducto[$i],
+                    ':cantidad' => $cantidad[$i],
+                    ':subTotal' => $subT
+                ]);
+            }
+
+            $co->commit();
+            $r['resultado'] = 'modificar';
+            $r['mensaje'] = 'Pedido #' . str_pad($numPedido, 3, '0', STR_PAD_LEFT) . ' actualizado correctamente.';
+        } catch (Exception $e) {
+            if ($co->inTransaction()) {
+                $co->rollBack();
+            }
+
+            $r['resultado'] = 'error';
+            $r['mensaje'] = $e->getMessage();
+        }
+
         return $r;
     }
 
@@ -256,19 +279,29 @@ class pedidos extends datos
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $r = array();
+
         try {
+            $co->beginTransaction();
+
             $delDetalle = $co->prepare("DELETE FROM pedidosproducto WHERE numPedido = :numPedido");
             $delDetalle->execute([':numPedido' => $numPedido]);
 
             $delPedido = $co->prepare("DELETE FROM pedidos WHERE numPedido = :numPedido");
             $delPedido->execute([':numPedido' => $numPedido]);
 
+            $co->commit();
+
             $r['resultado'] = 'eliminar';
             $r['mensaje'] = 'Pedido eliminado correctamente.';
         } catch (Exception $e) {
+            if ($co->inTransaction()) {
+                $co->rollBack();
+            }
+
             $r['resultado'] = 'error';
             $r['mensaje'] = 'No se puede eliminar el pedido, posiblemente esté facturado en Ventas.';
         }
+
         return $r;
     }
 }

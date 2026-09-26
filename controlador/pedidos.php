@@ -14,18 +14,6 @@ if (is_file("vista/" . $pagina . ".php")) {
         $accion = $_POST['accion'];
 
         switch ($accion) {
-            case 'consultar':
-                echo json_encode($o->consultar());
-                break;
-            case 'consultar_uno':
-                echo json_encode($o->consultarUno($_POST['numPedido']));
-                break;
-            case 'modalclientes':
-                echo json_encode($o->listadoDeClientes());
-                break;
-            case 'modalproductos':
-                echo json_encode($o->listadoDeProductos());
-                break;
             case 'incluir':
                 $idCliente = $_POST['idCliente'] ?? '';
                 $idProducto = $_POST['idProducto'] ?? [];
@@ -33,6 +21,23 @@ if (is_file("vista/" . $pagina . ".php")) {
                 $precio = $_POST['precio'] ?? [];
                 echo json_encode($o->incluir($idCliente, $idProducto, $cantidad, $precio));
                 break;
+
+            case 'consultar':
+                echo json_encode($o->consultar());
+                break;
+
+            case 'consultar_uno':
+                echo json_encode($o->consultarUno($_POST['numPedido']));
+                break;
+
+            case 'modalclientes':
+                echo json_encode($o->listadoDeClientes());
+                break;
+
+            case 'modalproductos':
+                echo json_encode($o->listadoDeProductos());
+                break;
+
             case 'modificar':
                 $numPedido = $_POST['numPedido'] ?? '';
                 $idCliente = $_POST['idCliente'] ?? '';
@@ -41,10 +46,12 @@ if (is_file("vista/" . $pagina . ".php")) {
                 $precio = $_POST['precio'] ?? [];
                 echo json_encode($o->modificar($numPedido, $idCliente, $idProducto, $cantidad, $precio));
                 break;
+    
             case 'eliminar':
                 echo json_encode($o->eliminar($_POST['numPedido']));
                 break;
         }
+
         exit;
     }
 

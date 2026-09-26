@@ -78,27 +78,27 @@ function seleccionarProducto(id, codigo, nombre, precio) {
     });
 
     if (!encontro) {
-        var l = `
-        <tr>
-            <td class="align-middle fw-bold">
-                <input type="hidden" name="idProducto[]" value="${id}">
-                ${codigo}
-            </td>
-            <td class="align-middle">${nombre}</td>
-            <td class="align-middle">
-                <input type="hidden" name="precio[]" value="${precio}">
-                $${parseFloat(precio).toFixed(2)}
-            </td>
-            <td class="align-middle" style="width: 120px;">
-                <input type="number" class="form-control form-control-sm text-center" value="1" name="cantidad[]" min="1" onchange="modificasubtotal(this)" onkeyup="modificasubtotal(this)">
-            </td>
-            <td class="align-middle text-success fw-bold subtotal-cell">
-                $${parseFloat(precio).toFixed(2)}
-            </td>
-            <td class="align-middle">
-                <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminalineadetalle(this)"><i class="bi bi-x-lg"></i></button>
-            </td>
-        </tr>`;
+        var l = "<tr>" +
+            "<td class='align-middle fw-bold'>" +
+            "<input type='hidden' name='idProducto[]' value='" + id + "'>" +
+            codigo +
+            "</td>" +
+            "<td class='align-middle'>" + nombre + "</td>" +
+            "<td class='align-middle'>" +
+            "<input type='hidden' name='precio[]' value='" + precio + "'>" +
+            "$" + parseFloat(precio).toFixed(2) +
+            "</td>" +
+            "<td class='align-middle' style='width: 120px;'>" +
+            "<input type='number' class='form-control form-control-sm text-center' value='1' name='cantidad[]' min='1' onchange='modificasubtotal(this)' onkeyup='modificasubtotal(this)'>" +
+            "</td>" +
+            "<td class='align-middle text-success fw-bold subtotal-cell'>" +
+            "$" + parseFloat(precio).toFixed(2) +
+            "</td>" +
+            "<td class='align-middle'>" +
+            "<button type='button' class='btn btn-outline-danger btn-sm' onclick='eliminalineadetalle(this)'><i class='bi bi-x-lg'></i></button>" +
+            "</td>" +
+            "</tr>";
+
         $("#detallesdeventa").append(l);
     }
 
@@ -147,56 +147,7 @@ function pone(numPedido) {
     var datos = new FormData();
     datos.append('accion', 'consultar_uno');
     datos.append('numPedido', numPedido);
-
-    $.ajax({
-        url: "index.php?pagina=pedidos",
-        type: "POST",
-        contentType: false,
-        data: datos,
-        processData: false,
-        success: function (respuesta) {
-            try {
-                var lee = JSON.parse(respuesta);
-                if (lee.resultado == 'consultar_uno') {
-                    var p = lee.pedido;
-                    $("#numPedido").val(p.numPedido);
-                    $("#idCliente").val(p.idCliente);
-                    $("#clienteInfo").val(p.clienteInfo);
-
-                    $.each(lee.detalles, function (i, d) {
-                        var l = `
-                        <tr>
-                            <td class="align-middle fw-bold">
-                                <input type="hidden" name="idProducto[]" value="${d.idProducto}">
-                                ${d.codigoProd}
-                            </td>
-                            <td class="align-middle">${d.nombreProd}</td>
-                            <td class="align-middle">
-                                <input type="hidden" name="precio[]" value="${d.precioProd}">
-                                $${parseFloat(d.precioProd).toFixed(2)}
-                            </td>
-                            <td class="align-middle" style="width: 120px;">
-                                <input type="number" class="form-control form-control-sm text-center" value="${d.cantidadProd}" name="cantidad[]" min="1" onchange="modificasubtotal(this)" onkeyup="modificasubtotal(this)">
-                            </td>
-                            <td class="align-middle text-success fw-bold subtotal-cell">
-                                $${parseFloat(d.subTotal).toFixed(2)}
-                            </td>
-                            <td class="align-middle">
-                                <button type="button" class="btn btn-outline-danger btn-sm" onclick="eliminalineadetalle(this)"><i class="bi bi-x-lg"></i></button>
-                            </td>
-                        </tr>`;
-                        $("#detallesdeventa").append(l);
-                    });
-
-                    calcularTotalGeneral();
-                    $("#btnGuardar").data("accion", "modificar").html('<i class="bi bi-save"></i> Guardar Cambios');
-                    $("#modal_pedido").modal("show");
-                }
-            } catch (e) {
-                mostrarMensaje("Error al consultar el pedido.");
-            }
-        }
-    });
+    enviaAjax(datos);
 }
 
 function enviaAjax(datos) {
@@ -208,9 +159,12 @@ function enviaAjax(datos) {
         data: datos,
         processData: false,
         cache: false,
+
         success: function (respuesta) {
+            console.log(respuesta);
             try {
                 var lee = JSON.parse(respuesta);
+
                 if (lee.resultado == 'consultar') {
                     $("#contenedor_pedidos").html(lee.mensaje);
                 } else if (lee.resultado == 'modalclientes') {
@@ -225,6 +179,24 @@ function enviaAjax(datos) {
                     mostrarMensaje(lee.mensaje);
                     $("#modal_eliminar").modal("hide");
                     consultar();
+                } else if (lee.resultado == 'consultar_uno') {
+                    var p = lee.pedido;
+                    $("#numPedido").val(p.numPedido);
+                    $("#idCliente").val(p.idCliente);
+                    $("#clienteInfo").val(p.clienteInfo);
+
+                    $.each(lee.detalles, function (i, d) {
+                        seleccionarProducto(d.idProducto, d.codigoProd, d.nombreProd, d.precioProd);
+
+                        var ultimaFila = $("#detallesdeventa tr:last");
+                        var inputCant = ultimaFila.find("input[name='cantidad[]']");
+
+                        inputCant.val(d.cantidadProd);
+                        modificasubtotal(inputCant[0]);
+                    });
+
+                    $("#btnGuardar").data("accion", "modificar").html('<i class="bi bi-save"></i> Guardar Cambios');
+                    $("#modal_pedido").modal("show");
                 } else if (lee.resultado == 'error') {
                     mostrarMensaje(lee.mensaje);
                 }
