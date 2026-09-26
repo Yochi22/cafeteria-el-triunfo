@@ -9,7 +9,7 @@
         <main class="main-content w-100 p-4">
 
             <div class="d-flex align-items-center">
-                <!-- menu hamburguesa -->
+                <!-- Menú hamburguesa -->
                 <button class="btn btn-outline-dark d-md-none me-3 border-0"
                     id="btn-toggle-sidebar"
                     data-bs-toggle="collapse"
@@ -23,38 +23,35 @@
                 <!-- Encabezado de bienvenida -->
                 <div>
                     <h2 class="text-dashboard"><i class="bi bi-file-person"></i> Clientes</h2>
-                    <p class="text-muted">¡Bienvenido al apartado de clientes de la Cafeteria El Triunfo!</p>
+                    <p class="text-muted">¡Bienvenido al apartado de clientes de la Cafetería El Triunfo!</p>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col">
-                    <hr class="border border-secundary">
+                    <hr class="border border-secondary">
                 </div>
             </div>
 
-
             <div class="col-12 d-flex justify-content-end mb-3">
-
-                <!-- boton para registrar -->
+                <!-- Botón para registrar -->
                 <button type="button" id="incluir" class="btn btn-crear" data-bs-toggle="modal" data-bs-target="#modal_cliente">
                     <i class="bi bi-plus-circle fs-5"></i>
-                    <span class="d-none d-sm-inline">Agregar Cliente</span>
+                    <span class="d-none d-sm-inline"> Agregar Cliente</span>
                 </button>
 
-                <!-- boton de busqueda -->
+                <!-- Botón de búsqueda -->
                 <div class="col-md-4 ms-3">
                     <div class="input-group bg-white border rounded-3 px-2 py-2 align-items-center shadow-sm">
                         <button class="btn p-0 border-0 link-secondary" type="button" id="btnBuscar">
                             <i class="bi bi-search fs-5"></i>
                         </button>
-                        <input type="text" id="valorBusqueda" name="valorBusqueda" class="form-control border-0 py-0 py-2 shadow-none" placeholder="Buscar Cliente">
+                        <input type="text" id="valorBusqueda" name="valorBusqueda" class="form-control border-0 py-0 py-2 shadow-none" placeholder="Buscar cliente...">
                     </div>
                 </div>
-
             </div>
 
-            <!-- lista de Clientes -->
+            <!-- Lista de Clientes -->
             <div class="table-responsive rounded-3 shadow-sm">
                 <table class="table table-hover align-items-center text-center">
                     <thead class="text-dashboard border-bottom">
@@ -66,11 +63,11 @@
                         </tr>
                     </thead>
                     <tbody id="listaClientes" class="text-center">
-
                     </tbody>
                 </table>
             </div>
-            <!-- seccion del modal -->
+
+            <!-- Sección del modal -->
             <div class="modal fade" id="modal_cliente" tabindex="-1" aria-labelledby="modal_cliente_label" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content border-0 rounded-4 shadow">
@@ -85,31 +82,32 @@
                         <div class="modal-body pt-3">
                             <form id="f">
                                 <input type="hidden" id="accion" name="accion">
+
                                 <!-- DATOS DEL CLIENTE -->
                                 <div class="mb-3">
                                     <label for="cedulaCli" class="form-label text-muted small fw-bold">Cédula</label>
                                     <input type="text" class="form-control rounded-3" id="cedulaCli" name="cedulaCli" required>
-                                    <span id="scedulaCli"></span>
+                                    <span id="scedulaCli" class="text-danger small"></span>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="nombreCli" class="form-label text-muted small fw-bold">Nombre</label>
                                         <input type="text" class="form-control rounded-3" id="nombreCli" name="nombreCli" required>
-                                        <span id="snombreCli"></span>
+                                        <span id="snombreCli" class="text-danger small"></span>
                                     </div>
 
                                     <div class="col-md-6 mb-3">
                                         <label for="apellidoCli" class="form-label text-muted small fw-bold">Apellido</label>
                                         <input type="text" class="form-control rounded-3" id="apellidoCli" name="apellidoCli" required>
-                                        <span id="sapellidoCli"></span>
+                                        <span id="sapellidoCli" class="text-danger small"></span>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
                                     <label for="tlfCli" class="form-label text-muted small fw-bold">Teléfono</label>
                                     <input type="text" class="form-control rounded-3" id="tlfCli" name="tlfCli" required>
-                                    <span id="stlfCli"></span>
+                                    <span id="stlfCli" class="text-danger small"></span>
                                 </div>
 
                                 <div class="d-grid mt-4">
@@ -120,16 +118,18 @@
                     </div>
                 </div>
             </div>
-            <!--fin de seccion modal-->
+            <!-- Fin de sección modal -->
 
-            <!-- Llamada del modal de confirmacion se eliminacion -->
+            <!-- Llamada del modal de confirmación de eliminación -->
             <?php require_once("comunes/modal_eliminar.php"); ?>
-            <!--Llamada a archivo modal.php, dentro de el hay una sección modal-->
+
+            <!-- Llamada a archivo modal.php, dentro de él hay una sección modal -->
             <?php require_once("comunes/modal.php"); ?>
+        </main>
     </div>
-    <!--Llama del java script-->
+
+    <!-- Llamada del archivo JavaScript -->
     <script src="js/clientes.js"></script>
-    </div>
 </body>
 
 </html>

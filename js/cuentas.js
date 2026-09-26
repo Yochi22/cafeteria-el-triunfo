@@ -1,4 +1,4 @@
-// funcion para consultar
+// Función para la lista de cuentas
 function consultar() {
     var datos = new FormData();
     datos.append('accion', 'consultar');
@@ -6,58 +6,56 @@ function consultar() {
 }
 
 $(document).ready(function () {
-
     consultar();
 
-    //validacion de keyup y keypress
-    //1.1 nombre banco
+    // VALIDACIÓN DE DATOS
+    // -- Validación de nombre de banco --
     $("#nombreBanco").on("keypress", function (e) {
         validarkeypress(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]*$/, e);
     });
     $("#nombreBanco").on("keyup", function () {
-        validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this), $("#snombreBanco"), "Nombre Invalido - Solo letras entre 3 y 100 caracteres");
+        validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this), $("#snombreBanco"), "Nombre Inválido - Solo letras (entre 3 y 100 caracteres)");
     });
 
-    //1.2 cedula titular
+    // -- Validación de cédula de titular --
     $("#cedulaTitular").on("keypress", function (e) {
-        validarkeypress(/^[0-9-\.]*$/, e);
+        validarkeypress(/^[0-9\-\.]*$/, e);
     });
     $("#cedulaTitular").on("keyup", function () {
-        validarkeyup(/^[0-9\.]{7,12}$/, $(this), $("#scedulaTitular"), "Cedula Invalida - Escriba de 7 a 8 numeros sin espacios.");
+        validarkeyup(/^[0-9\.]{7,12}$/, $(this), $("#scedulaTitular"), "Cédula Inválida - El formato debe ser: 999999999");
     });
 
-    //1.3 teléfono
+    // -- Validación de teléfono --
     $("#tlfCuenta").on("keypress", function (e) {
         validarkeypress(/^[0-9\-+ ]*$/, e);
     });
-
     $("#tlfCuenta").on("keyup", function () {
-        validarkeyup(/^[0-9\-+ ]{10,12}$/, $(this), $("#stlfCuenta"), "Teléfono Invalido - Formato de 11 numeros sin espacios.");
+        validarkeyup(/^[0-9\-+ ]{11,12}$/, $(this), $("#stlfCuenta"), "Teléfono Inválido - Formato: 0000-0000000");
     });
 
-    //1.4 numero de cuenta
+    // -- Validación de número de cuenta --
     $("#numCuenta").on("keypress", function (e) {
         validarkeypress(/^[0-9]*$/, e);
     });
-
     $("#numCuenta").on("keyup", function () {
         validarkeyup(/^[0-9]{20}$/, $(this), $("#snumCuenta"), "Cuenta Inválida - Debe tener exactamente 20 números.");
     });
 
-    //validacion de SELECT
-    //1.5 tipo cuenta
+    // -- Validación de tipo de cuenta (Select) --
     $("#tipoCuenta").on("change", function () {
-        validarSelect(
-            $(this),
-            $("#stipoCuenta"),
-            "Tipo de Cuenta Inválido - Debe seleccionar una opción"
-        );
+        validarSelect($(this), $("#stipoCuenta"), "Tipo de Cuenta Inválido - Debe seleccionar una opción");
+    });
+    // Fin de Validaciones de datos
+
+    // Evitar que el formulario se envíe con Enter
+    $("#f").on("submit", function (e) {
+        e.preventDefault();
     });
 
-    //Botones
+    // Control de botones
     $("#btnGuardar").on("click", function () {
-        // 2.1 Incluir
-        if ($(this).text() == 'incluir') {
+        // BOTÓN INCLUIR
+        if ($(this).text() === 'incluir') {
             if (validarEnvio()) {
                 var datos = new FormData();
                 datos.append('accion', 'incluir');
@@ -69,9 +67,8 @@ $(document).ready(function () {
                 enviaAjax(datos);
             }
         }
-
-        //2.2 modificar
-        else if ($(this).text() == 'modificar') {
+        // BOTÓN MODIFICAR
+        else if ($(this).text() === 'modificar') {
             if (validarEnvio()) {
                 var datos = new FormData();
                 datos.append('accion', 'modificar');
@@ -85,25 +82,7 @@ $(document).ready(function () {
         }
     });
 
-    // 2.3 eliminar
-    $("#btnEliminar").on("click", function () {
-        var cuentaEliminada = $("#eliminar").val();
-        console.log("Cuenta a eliminar:", cuentaEliminada);
-
-        var datos = new FormData();
-        datos.append('accion', 'eliminar');
-        datos.append('numCuenta', cuentaEliminada);
-        enviaAjax(datos);
-    });
-
-    $("#incluir").on("click", function () {
-        limpia();
-        $("#numCuenta").prop('readonly', false);
-        $("#btnGuardar").text("incluir");
-        $("#modal_cuentas").modal("show");
-    });
-
-    //boton buscar
+    // BOTÓN BUSCAR
     function ejecutarBusqueda() {
         var valor = $("#valorBusqueda").val();
 
@@ -125,47 +104,57 @@ $(document).ready(function () {
         ejecutarBusqueda();
     });
 
-}); //cierre de funciones principales
+    // BOTÓN CONFIRMAR ELIMINACIÓN DE CUENTA
+    $("#btnEliminar").on("click", function () {
+        var cuentaEliminada = $("#eliminar").val();
+        var datos = new FormData();
+        datos.append('accion', 'eliminar');
+        datos.append('numCuenta', cuentaEliminada);
+        enviaAjax(datos);
+    });
 
+    $("#incluir").on("click", function () {
+        limpia();
+        $("#numCuenta").prop('readonly', false);
+        $("#btnGuardar").text("incluir");
+        $("#modal_cuentas").modal("show");
+    });
+});
 
-//validacion de datos para enviar
+// Validación de los datos antes de enviarlos
 function validarEnvio() {
-    // -- validacion de envio de nombre de Banco
-    if (validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#nombreBanco"), $("#snombreBanco"), "Nombre Invalido - Solo letras entre 3 y 100 caracteres)") == 0) {
-        mostrarMensaje("Nombre Invalido <br>" + "Solo letras entre 3 y 100 caracteres)");
+    if (validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#nombreBanco"), $("#snombreBanco"), "Nombre Inválido - Solo letras") === 0) {
+        mostrarMensaje("Nombre de Banco Inválido <br/>(Solo letras entre 3 y 100 caracteres)");
         return false;
     }
-    // validacion de envio de cedula titular
-    else if (validarkeyup(/^[0-9\.]{7,12}$/, $("#cedulaTitular"), $("#scedulaTitular"), "Cedula Invalida - Escriba de 7 a 8 numeros sin espacios.)") == 0) {
-        mostrarMensaje("Cedula Invalida <br>" + "Escriba de 7 a 8 numeros sin espacios.");
+    else if (validarkeyup(/^[0-9\.]{7,11}$/, $("#cedulaTitular"), $("#scedulaTitular"), "Cédula Inválida") === 0) {
+        mostrarMensaje("Cédula Titular Inválida <br/>(El formato debe ser: 99999999)");
         return false;
     }
-    //validacion de envio de teléfono
-    else if (validarkeyup(/^[0-9\-+ ]{10,12}$/, $("#tlfCuenta"), $("#stlfCuenta"), "tlfCuenta Invalido - Formato de 11 numeros sin espacios.") == 0) {
-        mostrarMensaje("Teléfono Invalido <br>" + "Formato de 11 numeros sin espacios.");
+    else if (validarkeyup(/^[0-9\-+ ]{11,12}$/, $("#tlfCuenta"), $("#stlfCuenta"), "Teléfono Inválido") === 0) {
+        mostrarMensaje("Teléfono Inválido <br>(Formato: 0000-0000000)");
         return false;
     }
-    //validacion de envio de num cuenta
-    if (validarkeyup(/^[0-9]{20}$/, $("#numCuenta"), $("#snumCuenta"), "Cuenta Inválida - Debe tener exactamente 20 números.") == 0) {
-        mostrarMensaje("Cuenta Inválida <br>" + "Debe tener exactamente 20 números.");
+    else if (validarSelect($("#tipoCuenta"), $("#stipoCuenta"), "Seleccione una opción") === 0) {
+        mostrarMensaje("Tipo de Cuenta Inválido <br>(Debe seleccionar Ahorro o Corriente)");
         return false;
     }
-    //validacion de envio de tipo cuenta
-    if (validarSelect($("#tipoCuenta"), $("#stipoCuenta"), "Tipo de Cuenta Inválido - Debe seleccionar una opción") == 0) {
-        mostrarMensaje("Tipo de Cuenta Inválido <br> Por favor seleccione si es Ahorro o Corriente.");
+    else if (validarkeyup(/^[0-9]{20}$/, $("#numCuenta"), $("#snumCuenta"), "Cuenta Inválida") === 0) {
+        mostrarMensaje("Número de Cuenta Inválido <br>(Debe tener exactamente 20 números)");
         return false;
     }
+
     return true;
 }
 
-// funcion para mostrar el modal del mensaje
+// Función para mostrar el modal de mensajes
 function mostrarMensaje(mensaje) {
     $("#contenidoModal").html(mensaje);
     $("#mostrarModal").modal("show");
     setTimeout(function () { $("#mostrarModal").modal("hide") }, 5000);
 }
 
-//Función para validar keypresses
+// Función para validar por keypress
 function validarkeypress(er, e) {
     key = e.keyCode;
     tecla = String.fromCharCode(key);
@@ -175,7 +164,7 @@ function validarkeypress(er, e) {
     }
 }
 
-//Función para validar keyups
+// Función para validar por keyup
 function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
     a = er.test(etiqueta.val());
     if (a) {
@@ -187,7 +176,7 @@ function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
     }
 }
 
-// funcion para VALIDAR LOS SELECT.
+// Función para validar select
 function validarSelect(etiqueta, etiquetamensaje, mensaje) {
     let valor = etiqueta.val();
     if (valor === "" || valor === null) {
@@ -199,27 +188,27 @@ function validarSelect(etiqueta, etiquetamensaje, mensaje) {
     }
 }
 
-//funcion para llenar el formulario
+// Función para llenar el formulario con los datos de la cuenta
 function pone(pos) {
-    linea = $(pos).closest('tr');
+    var linea = $(pos).closest('tr');
+    var btn = $(pos);
 
-    $("#nombreBanco").val($(linea).find("td:eq(0)").text().trim());
-    $("#cedulaTitular").val($(linea).find("td:eq(1)").text().trim());
-    $("#tlfCuenta").val($(linea).find("td:eq(2)").text().trim());
-    $("#tipoCuenta").val($(linea).find("td:eq(3)").text().trim());
+    $("#nombreBanco").val(btn.data('banco'));
+    $("#cedulaTitular").val(btn.data('cedula'));
+    $("#tlfCuenta").val(btn.data('telefono'));
+    $("#tipoCuenta").val(btn.data('tipo'));
     $("#numCuenta").val($(linea).find("td:eq(4)").text().trim());
+
     $("#btnGuardar").text('modificar');
     $("#modal_cuentas").modal("show");
-
     $("#numCuenta").prop('readonly', true);
 }
 
-//funcion para ubicar que fila se va a eliminar.
 function eliminar(pos) {
     var linea = $(pos).closest('tr');
-    var cuenta = $(linea).find("td:eq(4)").text().trim();
+    var numCuenta = $(linea).find("td:eq(4)").text().trim();
 
-    $("#eliminar").val(cuenta);
+    $("#eliminar").val(numCuenta);
     $("#modal_eliminar").modal("show");
 }
 
@@ -238,43 +227,44 @@ function enviaAjax(datos) {
             console.log(respuesta);
             try {
                 var lee = JSON.parse(respuesta);
-                if (lee.resultado == 'consultar') {
+
+                if (lee.resultado === 'consultar') {
                     $("#listaCuentas").html(lee.mensaje);
                 }
-                else if (lee.resultado == 'incluir') {
+                else if (lee.resultado === 'incluir') {
                     mostrarMensaje(lee.mensaje);
-                    if (lee.mensaje == 'Cuenta Registrada') {
+                    if (lee.mensaje === 'Cuenta registrada con éxito.') {
                         $("#modal_cuentas").modal("hide");
                         consultar();
                     }
                 }
-                else if (lee.resultado == 'modificar') {
+                else if (lee.resultado === 'modificar') {
                     mostrarMensaje(lee.mensaje);
-                    if (lee.mensaje == 'Cuenta Modificada') {
+                    if (lee.mensaje === 'Cuenta modificada con éxito.') {
                         $("#modal_cuentas").modal("hide");
                         consultar();
                     }
                 }
-                else if (lee.resultado == 'eliminar') {
+                else if (lee.resultado === 'eliminar') {
                     mostrarMensaje(lee.mensaje);
-                    if (lee.mensaje == 'Cuenta Eliminada') {
+                    if (lee.mensaje === 'Cuenta eliminada con éxito.') {
                         $("#modal_eliminar").modal("hide");
                         consultar();
                     }
                 }
-                else if (lee.resultado == 'buscar') {
+                else if (lee.resultado === 'buscar') {
                     $('#listaCuentas').html(lee.mensaje);
                 }
-                else if (lee.resultado == "error") {
+                else if (lee.resultado === "error") {
                     mostrarMensaje(lee.mensaje);
                 }
             } catch (e) {
-                alert("Error en JSON" + e.name);
+                alert("Error en JSON: " + e.name);
             }
         },
         error: function (request, status, err) {
-            if (status == "timeout") {
-                mostrarMensaje("Servidor Ocupado, Intente de Nuevo");
+            if (status === "timeout") {
+                mostrarMensaje("Servidor ocupado, intente de nuevo.");
             } else {
                 mostrarMensaje("ERROR: <br/>" + request + status + err);
             }
@@ -283,11 +273,19 @@ function enviaAjax(datos) {
     });
 }
 
-//LIMPIAR
+// Función para limpiar
 function limpia() {
+    // Vaciar los inputs
     $("#nombreBanco").val("");
     $("#cedulaTitular").val("");
     $("#tlfCuenta").val("");
     $("#tipoCuenta").val("");
     $("#numCuenta").val("");
+
+    // Limpiar los mensajes de validación
+    $("#snombreBanco").text("");
+    $("#scedulaTitular").text("");
+    $("#stlfCuenta").text("");
+    $("#stipoCuenta").text("");
+    $("#snumCuenta").text("");
 }

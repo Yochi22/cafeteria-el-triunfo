@@ -3,7 +3,7 @@
 <?php require_once("comunes/encabezado.php"); ?>
 
 <body>
-    <div class="d-flex min-vh-100 position-relative">
+    <div class="d-flex min-vh-100 position-relative bg-light">
         <?php require_once("comunes/sidebar.php"); ?>
 
         <main class="main-content w-100 p-4">
@@ -33,7 +33,7 @@
                 <div>
                     <button class="btn btn-crear d-flex align-items-center gap-2 shadow-sm py-2 px-3 rounded-3" id="incluir" data-bs-toggle="modal" data-bs-target="#modal_categoria">
                         <i class="bi bi-plus-circle fs-5"></i>
-                        <span>Nueva Categoría</span>
+                        <span class="d-none d-sm-inline"> Nueva Categoría</span>
                     </button>
                 </div>
             </div>
@@ -58,71 +58,74 @@
                 </div>
             </div>
 
+            <!-- Modal Categoría -->
+            <div class="modal fade" id="modal_categoria" tabindex="-1" aria-labelledby="modal_categoria_label" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 rounded-4 shadow-lg">
+
+                        <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
+                            <h5 class="modal-title fw-bold text-dashboard" id="modal_categoria_label">Formulario de Categoría</h5>
+                            <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body p-4">
+                            <form id="f" autocomplete="off">
+                                <input type="hidden" id="codigoOriginal" name="codigoOriginal">
+                                <input type="hidden" id="accion" name="accion">
+
+                                <div class="mb-3">
+                                    <label for="codigoCat" class="form-label text-muted small fw-bold">Código de la Categoría</label>
+                                    <div class="input-group bg-light rounded-3">
+                                        <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-upc-scan"></i></span>
+                                        <input type="text" class="form-control bg-transparent border-0 shadow-none ps-0" id="codigoCat" name="codigoCat" placeholder="Ej. CAT01, CAT02..." required>
+                                    </div>
+                                    <span id="scodigoCat" class="small text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="nombreCat" class="form-label text-muted small fw-bold">Nombre de la Categoría</label>
+                                    <div class="input-group bg-light rounded-3">
+                                        <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-fonts"></i></span>
+                                        <input type="text" class="form-control bg-transparent border-0 shadow-none ps-0" id="nombreCat" name="nombreCat" placeholder="Ej. Bebidas, Postres..." required>
+                                    </div>
+                                    <span id="snombreCat" class="small text-danger"></span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="descCat" class="form-label text-muted small fw-bold">Descripción</label>
+                                    <textarea class="form-control bg-light border-0 shadow-none rounded-3" id="descCat" name="descCat" rows="3" placeholder="Breve descripción..." required></textarea>
+                                    <span id="sdescCat" class="small text-danger"></span>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="fotoCat" class="form-label text-muted small fw-bold">URL de la Foto (Opcional)</label>
+                                    <div class="input-group bg-light rounded-3">
+                                        <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-image"></i></span>
+                                        <input type="text" class="form-control bg-transparent border-0 shadow-none ps-0" id="fotoCat" name="fotoCat" placeholder="https://ejemplo.com/imagen.jpg">
+                                    </div>
+                                </div>
+
+                                <div class="d-grid mt-2">
+                                    <button type="button" class="btn btn-crear py-2 fw-semibold rounded-3 w-150" id="btnGuardar">
+                                        Guardar Categoría
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Fin de sección modal -->
+
+            <!-- Llamada del modal de confirmación de eliminación -->
+            <?php require_once("comunes/modal_eliminar.php"); ?>
+
+            <!-- Llamada a archivo modal.php, dentro de él hay una sección modal -->
+            <?php require_once("comunes/modal.php"); ?>
         </main>
     </div>
 
-    <!-- Modal Categoría -->
-    <div class="modal fade" id="modal_categoria" tabindex="-1" aria-labelledby="modal_categoria_label" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 rounded-4 shadow-lg">
-
-                <div class="modal-header border-bottom-0 pb-0 px-4 pt-4">
-                    <h5 class="modal-title fw-bold text-dashboard" id="modal_categoria_label">Datos de la Categoría</h5>
-                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-
-                <div class="modal-body p-4">
-                    <form id="f" autocomplete="off">
-                        <input type="hidden" id="codigoOriginal" name="codigoOriginal">
-                        <input type="hidden" id="accion" name="accion">
-
-                        <div class="mb-3">
-                            <label for="codigoCat" class="form-label text-muted small fw-bold">Código de la Categoría</label>
-                            <div class="input-group bg-light rounded-3">
-                                <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-upc-scan"></i></span>
-                                <input type="text" class="form-control bg-transparent border-0 shadow-none ps-0" id="codigoCat" name="codigoCat" placeholder="Ej. CAT01, CAT02..." required>
-                            </div>
-                            <span id="scodigoCat" class="small text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="nombreCat" class="form-label text-muted small fw-bold">Nombre de la Categoría</label>
-                            <div class="input-group bg-light rounded-3">
-                                <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-fonts"></i></span>
-                                <input type="text" class="form-control bg-transparent border-0 shadow-none ps-0" id="nombreCat" name="nombreCat" placeholder="Ej. Bebidas, Postres..." required>
-                            </div>
-                            <span id="snombreCat" class="small text-danger"></span>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="descCat" class="form-label text-muted small fw-bold">Descripción</label>
-                            <textarea class="form-control bg-light border-0 shadow-none rounded-3" id="descCat" name="descCat" rows="3" placeholder="Breve descripción de los productos..." required></textarea>
-                            <span id="sdescCat" class="small text-danger"></span>
-                        </div>
-
-                        <div class="mb-4">
-                            <label for="fotoCat" class="form-label text-muted small fw-bold">URL de la Foto (Opcional)</label>
-                            <div class="input-group bg-light rounded-3">
-                                <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-image"></i></span>
-                                <input type="text" class="form-control bg-transparent border-0 shadow-none ps-0" id="fotoCat" name="fotoCat" placeholder="https://ejemplo.com/imagen.jpg">
-                            </div>
-                        </div>
-
-                        <div class="d-grid mt-2">
-                            <button type="button" class="btn btn-crear py-2 fw-semibold rounded-3" id="btnGuardar">
-                                <i class="bi bi-save me-2"></i> Guardar Categoría
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <!-- Archivos PHP y Scripts -->
-    <?php require_once("comunes/modal_eliminar.php"); ?>
-    <?php require_once("comunes/modal.php"); ?>
+    <!-- Llamada del archivo JavaScript -->
     <script src="js/categorias.js"></script>
 </body>
 

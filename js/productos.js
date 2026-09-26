@@ -1,3 +1,5 @@
+var categoriaActual = null;
+
 $(document).ready(function () {
     try {
         cargarCategorias();
@@ -116,7 +118,7 @@ $(document).ready(function () {
 function cargarCategorias() {
     categoriaActual = null;
     $("#titulo_seccion").html('<i class="bi bi-egg-fried"></i> Productos');
-    $("#subtitulo_seccion").text("Todas las categorías:");
+    $("#subtitulo_seccion").text("Categorías:");
     $("#btn_regresar_cat").hide();
     $("#btn_gestionar_cat").show();
 
@@ -244,10 +246,14 @@ function enviaAjax(datos) {
         beforeSend: function () { },
         timeout: 10000,
         success: function (respuesta) {
+            console.log(respuesta);
             try {
                 var lee = JSON.parse(respuesta);
 
-                if (lee.resultado == 'listar_categorias' || lee.resultado == 'listar_productos' || lee.resultado == 'buscar') {
+                if (lee.resultado == 'listar_categorias') {
+                    $("#cuadricula_items").html(lee.mensaje);
+                }
+                else if (lee.resultado == 'listar_productos') {
                     $("#cuadricula_items").html(lee.mensaje);
                 }
                 else if (lee.resultado == 'cargar_select_categorias') {
@@ -257,27 +263,39 @@ function enviaAjax(datos) {
                     mostrarMensaje(lee.mensaje);
                     if (lee.mensaje == 'Producto incluido.') {
                         $("#modal_producto").modal("hide");
-                        if (categoriaActual !== null) verCategoria(categoriaActual, $("#titulo_seccion").text());
-                        else cargarCategorias();
+                        if (categoriaActual !== null) {
+                            verCategoria(categoriaActual, $("#titulo_seccion").text());
+                        } else {
+                            cargarCategorias();
+                        }
                     }
                 }
                 else if (lee.resultado == 'modificar') {
                     mostrarMensaje(lee.mensaje);
                     if (lee.mensaje == 'Producto modificado.') {
                         $("#modal_producto").modal("hide");
-                        if (categoriaActual !== null) verCategoria(categoriaActual, $("#titulo_seccion").text());
-                        else cargarCategorias();
+                        if (categoriaActual !== null) {
+                            verCategoria(categoriaActual, $("#titulo_seccion").text());
+                        } else {
+                            cargarCategorias();
+                        }
                     }
                 }
                 else if (lee.resultado == 'eliminar') {
                     mostrarMensaje(lee.mensaje);
                     if (lee.mensaje == 'Producto eliminado.') {
                         $("#modal_eliminar").modal("hide");
-                        if (categoriaActual !== null) verCategoria(categoriaActual, $("#titulo_seccion").text());
-                        else cargarCategorias();
+                        if (categoriaActual !== null) {
+                            verCategoria(categoriaActual, $("#titulo_seccion").text());
+                        } else {
+                            cargarCategorias();
+                        }
                     }
                 }
-                else if (lee.resultado == 'error') {
+                else if (lee.resultado == 'buscar') {
+                    $('#cuadricula_items').html(lee.mensaje);
+                }
+                else if (lee.resultado == "error") {
                     mostrarMensaje(lee.mensaje);
                 }
             } catch (e) {
@@ -286,7 +304,7 @@ function enviaAjax(datos) {
         },
         error: function (request, status, err) {
             if (status == "timeout") {
-                mostrarMensaje("Servidor Ocupado, Intente de Nuevo");
+                mostrarMensaje("Servidor ocupado, intente de nuevo.");
             } else {
                 mostrarMensaje("ERROR: <br/>" + request + status + err);
             }
@@ -302,4 +320,8 @@ function limpia() {
     $("#precioProd").val("");
     $("#descProd").val("");
     $("#fotoProd").val("");
+    $("#scodigoProd").text("");
+    $("#snombreProd").text("");
+    $("#sprecioProd").text("");
+    $("#sdescProd").text("");
 }

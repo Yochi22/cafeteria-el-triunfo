@@ -1,24 +1,19 @@
 <?php
 
 if (!is_file("modelo/" . $pagina . ".php")) {
-    echo "Falta Definir la clase " . $pagina;
+    echo "Falta definir la clase " . $pagina;
     exit;
 }
 
 require_once("modelo/" . $pagina . ".php");
 
 if (is_file("vista/" . $pagina . ".php")) {
-
     $o = new cuentas();
 
     if (!empty($_POST)) {
         $accion = $_POST['accion'];
 
         switch ($accion) {
-            case 'consultar':
-                echo json_encode($o->consultar());
-                break;
-
             case 'incluir':
                 $o->set_nombreBanco($_POST['nombreBanco']);
                 $o->set_cedulaTitular($_POST['cedulaTitular']);
@@ -26,6 +21,10 @@ if (is_file("vista/" . $pagina . ".php")) {
                 $o->set_tipoCuenta($_POST['tipoCuenta']);
                 $o->set_numCuenta($_POST['numCuenta']);
                 echo json_encode($o->incluir());
+                break;
+
+            case 'consultar':
+                echo json_encode($o->consultar());
                 break;
 
             case 'modificar':
@@ -38,7 +37,7 @@ if (is_file("vista/" . $pagina . ".php")) {
                 break;
 
             case 'eliminar':
-                $o->set_numCuenta($_POST['numCuenta']);
+                $o->set_numCuenta(trim($_POST['numCuenta']));
                 echo json_encode($o->eliminar());
                 break;
 
@@ -47,8 +46,8 @@ if (is_file("vista/" . $pagina . ".php")) {
                 echo json_encode($o->buscar($valor));
                 break;
         }
-        
-        exit;
+
+        exit();
     }
 
     require_once("vista/" . $pagina . ".php");

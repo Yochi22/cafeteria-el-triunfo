@@ -1,36 +1,61 @@
 <?php
-require_once("modelo/datos.php");
+
+require_once('modelo/datos.php');
 
 class cuentas extends datos
 {
-    //definicion de variables
+    // Atributos
     private $nombreBanco;
     private $cedulaTitular;
     private $tlfCuenta;
     private $tipoCuenta;
     private $numCuenta;
 
-    //setters
+    // Funciones SET
     function set_nombreBanco($valor) { $this->nombreBanco = $valor; }
     function set_cedulaTitular($valor) { $this->cedulaTitular = $valor; }
     function set_tlfCuenta($valor) { $this->tlfCuenta = $valor; }
     function set_tipoCuenta($valor) { $this->tipoCuenta = $valor; }
     function set_numCuenta($valor) { $this->numCuenta = $valor; }
 
-    //getters
+    // Funciones GET
     function get_nombreBanco() { return $this->nombreBanco; }
     function get_cedulaTitular() { return $this->cedulaTitular; }
     function get_tlfCuenta() { return $this->tlfCuenta; }
     function get_tipoCuenta() { return $this->tipoCuenta; }
     function get_numCuenta() { return $this->numCuenta; }
 
-    //funcion INCLUIR
-    function incluir(){
+
+    // Función para verificar si la Cuenta ya está registrada
+    function existe($numCuenta)
+    {
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try {
+            $resultado = $co->prepare("SELECT * FROM cuentas WHERE numCuenta = :numCuenta");
+            $resultado->bindParam(':numCuenta', $numCuenta);
+            $resultado->execute();
+            $fila = $resultado->fetchAll(PDO::FETCH_BOTH);
+
+            if ($fila) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    // Función para Registrar Cuenta
+    function incluir()
+    {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $r = array();
-        if(!$this->existe($this->numCuenta)){
-            try{
+
+        if (!$this->existe($this->numCuenta)) {
+            try {
                 $inc = $co->prepare("INSERT INTO cuentas(nombreBanco, cedulaTitular, tlfCuenta, tipoCuenta, numCuenta)
                 VALUES (:nombreBanco, :cedulaTitular, :tlfCuenta, :tipoCuenta, :numCuenta)");
 
@@ -42,100 +67,49 @@ class cuentas extends datos
                 $inc->execute();
 
                 $r['resultado'] = 'incluir';
-                $r['mensaje'] = 'Cuenta Registrada';
-            } catch(Exception $e){
+                $r['mensaje'] = 'Cuenta registrada con éxito.';
+            } catch (Exception $e) {
                 $r['resultado'] = 'error';
                 $r['mensaje'] = $e->getMessage();
             }
-        } else{
+        } else {
             $r['resultado'] = 'incluir';
-            $r['mensaje'] = 'Ya existe el Numero de Cuenta a resgitrar.';
+            $r['mensaje'] = 'Ya existe el número de cuenta a registrar.';
         }
+
         return $r;
     }
 
-    //funcion MODIFICAR
-    function modificar(){
+    // Función para Consultar Cuentas
+    function consultar()
+    {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $r = array();
-        if($this->existe($this->numCuenta)){
-            try{
-                $mod = $co->prepare("UPDATE cuentas SET nombreBanco = :nombreBanco, cedulaTitular = :cedulaTitular, 
-                tlfCuenta = :tlfCuenta, tipoCuenta = :tipoCuenta, numCuenta = :numCuenta
-                WHERE numCuenta = :numCuenta");
 
-                $mod->bindParam(':nombreBanco', $this->nombreBanco);
-                $mod->bindParam(':cedulaTitular', $this->cedulaTitular);
-                $mod->bindParam(':tlfCuenta', $this->tlfCuenta);
-                $mod->bindParam(':tipoCuenta', $this->tipoCuenta);
-                $mod->bindParam(':numCuenta', $this->numCuenta);
-                $mod->execute();
-                
-                $r['resultado'] = 'modificar';
-                $r['mensaje'] = 'Cuenta Modificada';
-            } catch(Exception $e){
-                $r['resultado'] = 'error';
-                $r['mensaje'] = $e->getMessage();
-            }
-        } else{
-            $r['resultado'] = 'modificar';
-            $r['mensaje'] = 'El Numero de Cuenta no Existe';
-        }
-        return $r;
-    }
-
-    //funcion ELIMINAR
-    function eliminar(){
-        $co = $this->conecta();
-        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $r = array();
-        if ($this->existe($this->numCuenta)) {
-            try {
-                $eli = $co->prepare("DELETE FROM cuentas WHERE numCuenta = :numCuenta");
-                $eli->bindParam(':numCuenta', $this->numCuenta);
-                $eli->execute();
-                
-                $r['resultado'] = 'eliminar';
-                $r['mensaje'] = 'Cuenta Eliminada';
-            } catch(Exception $e) {
-                $r['resultado'] = 'error';
-                $r['mensaje'] = $e->getMessage();
-            }
-        } else{
-            $r['resultado'] = 'eliminar';
-            $r['mensaje'] = 'La Cuenta No Existe';
-        }
-        return $r;
-    }
-
-   function consultar(){
-        $co = $this->conecta();
-        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $r = array();
-        try{
+        try {
             $resultado = $co->query("SELECT * FROM cuentas");
-            if($resultado){
+            if ($resultado) {
                 $respuesta = '';
-                foreach($resultado as $fila){
+                foreach ($resultado as $fila) {
                     $respuesta .= "<tr>";
                     $respuesta .= "<td>" . $fila['nombreBanco'] . "</td>";
-                    $respuesta .= "<td>" . $fila['cedulaTitular'] ."</td>";
+                    $respuesta .= "<td>" . $fila['cedulaTitular'] . "</td>";
                     $respuesta .= "<td>" . $fila['tlfCuenta'] . "</td>";
                     $respuesta .= "<td>" . $fila['tipoCuenta'] . "</td>";
                     $respuesta .= "<td>" . $fila['numCuenta'] . "</td>";
-                    $respuesta .= "<td class='text-center'>";
-                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='pone(this)'><i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span></button>";
-                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i><span class='d-none d-sm-inline'> Eliminar</span></button>";
+                    $respuesta .= "<td>";
+                    $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' data-banco='" . $fila['nombreBanco'] . "' data-cedula='" . $fila['cedulaTitular'] . "' data-telefono='" . $fila['tlfCuenta'] . "' data-tipo='" . $fila['tipoCuenta'] . "' onclick='pone(this)'><i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span></button>";
+                    $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i><span class='d-none d-sm-inline'> Eliminar</span></button>";
                     $respuesta .= "</td>";
                     $respuesta .= "</tr>";
                 }
 
-                if($respuesta == ""){
+                if ($respuesta == "") {
                     $respuesta .= "<tr>";
-                    $respuesta .= "<td colspan = '6' class='text-center text-muted py-4>'";
+                    $respuesta .= "<td colspan='6' class='text-center text-muted py-4'>";
                     $respuesta .= "<span><i class='bi bi-wallet2 fs-1' style='color: #FF8C00'></i></span>";
-                    $respuesta .= "<h5 class= 'text-dashboard'> No tienes Cuentas Registradas </h5>";
+                    $respuesta .= "<h5 class='text-dashboard'>No tienes cuentas registradas.</h5>";
                     $respuesta .= "</td>";
                     $respuesta .= "</tr>";
                 }
@@ -146,55 +120,100 @@ class cuentas extends datos
                 $r['resultado'] = 'consultar';
                 $r['mensaje'] = '';
             }
-        } catch(Exception $e){
+        } catch (Exception $e) {
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }
+
         return $r;
     }
 
-//funcion para saber si ya el Metodo de Pago esta resgitrado
-    function existe($numCuenta){
+    // Función para Modificar Cuenta
+    function modificar()
+    {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        try{
-            $resultado = $co->prepare("SELECT * FROM cuentas WHERE numCuenta = :numCuenta");
-            $resultado->bindParam(':numCuenta', $numCuenta);
-            $resultado->execute();
-            $fila = $resultado->fetchAll(PDO::FETCH_BOTH);
-            if($fila){
-                return true;
-            } else{
-                return false;
+        $r = array();
+
+        if ($this->existe($this->numCuenta)) {
+            try {
+                $mod = $co->prepare("UPDATE cuentas
+                    SET nombreBanco = :nombreBanco, cedulaTitular = :cedulaTitular, tlfCuenta = :tlfCuenta, tipoCuenta = :tipoCuenta 
+                    WHERE numCuenta = :numCuenta");
+
+                $mod->bindParam(':numCuenta', $this->numCuenta);
+                $mod->bindParam(':nombreBanco', $this->nombreBanco);
+                $mod->bindParam(':cedulaTitular', $this->cedulaTitular);
+                $mod->bindParam(':tlfCuenta', $this->tlfCuenta);
+                $mod->bindParam(':tipoCuenta', $this->tipoCuenta);
+                $mod->execute();
+
+                $r['resultado'] = 'modificar';
+                $r['mensaje'] = 'Cuenta modificada con éxito.';
+            } catch (Exception $e) {
+                $r['resultado'] = 'error';
+                $r['mensaje'] = $e->getMessage();
             }
-        } catch(Exception $e){
-            return false;
+        } else {
+            $r['resultado'] = 'modificar';
+            $r['mensaje'] = 'El número de cuenta no existe.';
         }
+
+        return $r;
     }
 
-    // funcion para buscar
-    function buscar($valor){
+    // Función para Eliminar Cuenta
+    function eliminar()
+    {
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $r = array();
+
+        if ($this->existe($this->numCuenta)) {
+            try {
+                $eli = $co->prepare("DELETE FROM cuentas WHERE numCuenta = :numCuenta");
+                $eli->bindParam(':numCuenta', $this->numCuenta);
+                $eli->execute();
+
+                $r['resultado'] = 'eliminar';
+                $r['mensaje'] = 'Cuenta eliminada con éxito.';
+            } catch (Exception $e) {
+                $r['resultado'] = 'error';
+                $r['mensaje'] = 'No se puede eliminar la cuenta porque está asociada a un registro.';
+            }
+        } else {
+            $r['resultado'] = 'eliminar';
+            $r['mensaje'] = 'El número de cuenta no existe.';
+        }
+
+        return $r;
+    }
+
+    // Función para Buscar
+    function buscar($valor)
+    {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $valor = trim($valor);
         $busqueda = "%" . $valor . "%";
         $r = array();
-        try{
-            if($busqueda){
-                $bus = $co->prepare("SELECT nombreBanco, cedulaTitular, tlfCuenta, tipoCuenta, numCuenta
+
+        try {
+            if ($busqueda) {
+                $bus = $co->prepare("SELECT nombreBanco, cedulaTitular, tlfCuenta, tipoCuenta, numCuenta 
                                     FROM cuentas
-                                    WHERE (nombreBanco LIKE :busqueda
+                                    WHERE nombreBanco LIKE :busqueda
                                     OR cedulaTitular LIKE :busqueda
                                     OR tlfCuenta LIKE :busqueda
                                     OR tipoCuenta LIKE :busqueda
-                                    OR numCuenta LIKE :busqueda)");
-                
+                                    OR numCuenta LIKE :busqueda");
+
                 $bus->bindParam(':busqueda', $busqueda);
                 $bus->execute();
                 $resultado = $bus->fetchAll();
-                
+
                 $respuesta = "";
-                foreach($resultado as $fila){
+                foreach ($resultado as $fila) {
                     $respuesta .= "<tr>";
                     $respuesta .= "<td>" . $fila['nombreBanco'] . "</td>";
                     $respuesta .= "<td>" . $fila['cedulaTitular'] . "</td>";
@@ -202,17 +221,18 @@ class cuentas extends datos
                     $respuesta .= "<td>" . $fila['tipoCuenta'] . "</td>";
                     $respuesta .= "<td>" . $fila['numCuenta'] . "</td>";
                     $respuesta .= "<td>";
-                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='pone(this)'><i class='bi bi-pencil-square'></i> Modificar</button>";
-                        $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i> Eliminar</button>";
+                    $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' data-banco='" . $fila['nombreBanco'] . "' data-cedula='" . $fila['cedulaTitular'] . "' data-telefono='" . $fila['tlfCuenta'] . "' data-tipo='" . $fila['tipoCuenta'] . "' onclick='pone(this)'><i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span></button>";
+                    $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i> Eliminar</button>";
                     $respuesta .= "</td>";
                     $respuesta .= "</tr>";
                 }
-                if($respuesta == ""){
+
+                if ($respuesta == "") {
                     $respuesta .= "<tr>";
-                    $respuesta .= "<td colspan = '6' class='text-center text-muted py-4>'";
-                    $respuesta .= "<span><i class='bi bi-question-lg fs-1' style='color : #FF8C00'></i></i></span>";
-                    $respuesta .= "<h5 class= 'text-dashboard'> No se Encuentran Registros </h5>";
-                    $respuesta .= "<h6 class= 'text-dashboard'> Intenta de Nuevo </h6>";
+                    $respuesta .= "<td colspan='6' class='text-center text-muted py-4'>";
+                    $respuesta .= "<span><i class='bi bi-person-fill-slash fs-1' style='color: #FF8C00'></i></span>";
+                    $respuesta .= "<h5 class='text-dashboard'>No se encontraron registros</h5>";
+                    $respuesta .= "<h6 class='text-secondary'>Intenta de nuevo.</h6>";
                     $respuesta .= "</td>";
                     $respuesta .= "</tr>";
                 }
@@ -223,12 +243,13 @@ class cuentas extends datos
                 $r['resultado'] = 'consultar';
                 $r['mensaje'] = '';
             }
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }
+
         return $r;
     }
-
 }
+
 ?>

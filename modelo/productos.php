@@ -172,7 +172,6 @@ class productos extends datos
                     </div>';
                 }
             } else {
-
                 $html = '<div class="col-12 text-center text-muted py-5"><h5 class="text-dashboard mt-2">No hay categorías registradas.</h5></div>';
             }
 
@@ -229,10 +228,9 @@ class productos extends datos
 
             if ($prods) {
                 foreach ($prods as $p) {
-                    $fotoProd = $p['fotoProd'] ? $p['fotoProd'] : 'img/principal.jpg';
+                    $fotoProd = !empty($p['fotoProd']) ? $p['fotoProd'] : 'img/principal.jpg';
                     $nombreProd = $p['nombreProd'];
                     $descProd = $p['descProd'];
-                    $fotoProd = $p['fotoProd'];
                     $precioProd = $p['precioProd'];
                     $idCat = $p['idCategoria'];
                     $codigoProd = $p['codigoProd'];
@@ -297,10 +295,9 @@ class productos extends datos
 
             if ($prods) {
                 foreach ($prods as $p) {
-                    $fotoProd = $p['fotoProd'] ? $p['fotoProd'] : 'img/principal.jpg';
+                    $fotoProd = !empty($p['fotoProd']) ? $p['fotoProd'] : 'img/principal.jpg';
                     $nombreProd = $p['nombreProd'];
                     $descProd = $p['descProd'];
-                    $fotoProd = $p['fotoProd'];
                     $precioProd = $p['precioProd'];
                     $idCat = $p['idCategoria'];
                     $codigoProd = $p['codigoProd'];

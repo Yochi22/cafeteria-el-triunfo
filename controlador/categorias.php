@@ -36,7 +36,7 @@ if (is_file("vista/" . $pagina . ".php")) {
                 break;
 
             case 'eliminar':
-                $o->set_codigoCat($_POST['codigoCat']);
+                $o->set_codigoCat(trim($_POST['codigoCat']));
                 echo json_encode($o->eliminar());
                 break;
 
@@ -46,7 +46,7 @@ if (is_file("vista/" . $pagina . ".php")) {
                 break;
         }
 
-        exit;
+        exit();
     }
 
     require_once("vista/" . $pagina . ".php");

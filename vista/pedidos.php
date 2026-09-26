@@ -7,31 +7,16 @@
         <?php require_once("comunes/sidebar.php"); ?>
 
         <main class="main-content w-100 p-4">
-
-            <!-- Encabezado principal -->
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
                 <div class="d-flex align-items-center gap-3">
-                    <!-- Menú hamburguesa -->
-                    <button class="btn btn-outline-dark d-md-none border-0 p-1"
-                        id="btn-toggle-sidebar"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#sidebarMenu"
-                        aria-controls="sidebarMenu"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation">
-                        <i class="bi bi-list" style="font-size: 2rem;"></i>
-                    </button>
-
-                    <!-- Título -->
+                    <button class="btn btn-outline-dark d-md-none border-0 p-1" id="btn-toggle-sidebar" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-expanded="false"><i class="bi bi-list" style="font-size: 2rem;"></i></button>
                     <div>
                         <h2 class="text-dashboard mb-1"><i class="bi bi-journal-check"></i> Gestión de Pedidos</h2>
-                        <p class="text-muted mb-0">Revisa, edita y administra los pedidos de tus clientes.</p>
+                        <p class="text-muted mb-0">Revisa, registra y modifica los pedidos de tus clientes.</p>
                     </div>
                 </div>
-
-                <!-- Botón Crear -->
                 <div>
-                    <button type="button" id="incluir" class="btn btn-crear d-flex align-items-center gap-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#modal_cliente">
+                    <button type="button" id="incluir" class="btn btn-crear d-flex align-items-center gap-2 shadow-sm">
                         <i class="bi bi-plus-circle fs-5"></i>
                         <span>Crear Pedido</span>
                     </button>
@@ -40,128 +25,121 @@
 
             <hr class="text-secondary mb-4">
 
-            <!-- Barra de búsqueda y filtros -->
-            <div class="row mb-4">
-                <div class="col-12 col-md-6 col-lg-4">
-                    <div class="input-group bg-white border rounded-3 align-items-center shadow-sm">
-                        <span class="input-group-text bg-transparent border-0 text-muted">
-                            <i class="bi bi-search"></i>
-                        </span>
-                        <input type="text" id="valorBusqueda" name="valorBusqueda" class="form-control border-0 py-2 shadow-none" placeholder="Buscar por cliente o N° de orden...">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Lista de Pedidos -->
-            <div class="d-flex flex-column gap-3">
-
-                <!-- Tarjeta de Pedido 1 -->
-                <div class="card border-0 shadow-sm rounded-4">
-                    <div class="card-body p-4">
-                        <div class="row align-items-center">
-                            <!-- Información del pedido -->
-                            <div class="col-12 col-xl-7 mb-3 mb-xl-0">
-                                <div class="d-flex align-items-center gap-3 mb-2">
-                                    <h5 class="card-title text-dashboard fw-bold mb-0">Orden #001</h5>
-                                    <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">En Preparación</span>
-                                    <small class="text-muted"><i class="bi bi-clock"></i> Hace 15 min</small>
-                                </div>
-                                <hr class="text-light-subtle my-2">
-                                <div class="row mt-3">
-                                    <div class="col-sm-5 mb-2 mb-sm-0">
-                                        <p class="mb-1 text-muted small">Cliente</p>
-                                        <p class="fw-semibold mb-0"><i class="bi bi-person-fill text-secondary"></i> Carlos Mendoza</p>
-                                    </div>
-                                    <div class="col-sm-7">
-                                        <p class="mb-1 text-muted small">Detalle del pedido</p>
-                                        <p class="mb-0 text-truncate" title="2x Hamburguesa Clásica, 1x Ración de Papas Fritas, 2x Refresco Cola">
-                                            2x Hamburguesa Clásica, 1x Ración de Papas...
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Acciones y Precio -->
-                            <div class="col-12 col-xl-5 d-flex flex-column flex-sm-row justify-content-xl-end justify-content-between align-items-center gap-3 border-start-xl ps-xl-4">
-                                <div class="text-center text-sm-start text-xl-end mb-3 mb-sm-0">
-                                    <p class="text-muted small mb-0">Total</p>
-                                    <h4 class="text-success fw-bold mb-0">$24.50</h4>
-                                </div>
-
-                                <div class="d-flex gap-2 flex-wrap justify-content-center">
-                                    <button type="button" class="btn btn-outline-info btn-sm d-flex align-items-center gap-2" title="Ver detalle">
-                                        <i class="bi bi-eye-fill"></i> <span class="d-none d-md-inline">Ver</span>
-                                    </button>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2" title="Editar">
-                                        <i class="bi bi-pencil-square"></i> <span class="d-none d-md-inline">Editar</span>
-                                    </button>
-                                    <button type="button" class="btn btn-outline-success btn-sm d-flex align-items-center gap-2" title="Finalizar">
-                                        <i class="bi bi-check-circle-fill"></i> <span class="d-none d-md-inline">Finalizar</span>
-                                    </button>
-                                    <button type="button" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-2" title="Eliminar">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tarjeta de Pedido 2 -->
-                <div class="card border-0 shadow-sm rounded-4">
-                    <div class="card-body p-4">
-                        <div class="row align-items-center">
-                            <!-- Información del pedido -->
-                            <div class="col-12 col-xl-7 mb-3 mb-xl-0">
-                                <div class="d-flex align-items-center gap-3 mb-2">
-                                    <h5 class="card-title text-dashboard fw-bold mb-0">Orden #002</h5>
-                                    <span class="badge bg-danger px-3 py-2 rounded-pill">Pendiente</span>
-                                    <small class="text-muted"><i class="bi bi-clock"></i> Hace 2 min</small>
-                                </div>
-                                <hr class="text-light-subtle my-2">
-                                <div class="row mt-3">
-                                    <div class="col-sm-5 mb-2 mb-sm-0">
-                                        <p class="mb-1 text-muted small">Cliente</p>
-                                        <p class="fw-semibold mb-0"><i class="bi bi-person-fill text-secondary"></i> Ana López</p>
-                                    </div>
-                                    <div class="col-sm-7">
-                                        <p class="mb-1 text-muted small">Detalle del pedido</p>
-                                        <p class="mb-0 text-truncate" title="1x Pizza Margarita Familiar, 1x Cerveza Artesanal">
-                                            1x Pizza Margarita Familiar, 1x Cerveza Ar...
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Acciones y Precio -->
-                            <div class="col-12 col-xl-5 d-flex flex-column flex-sm-row justify-content-xl-end justify-content-between align-items-center gap-3 border-start-xl ps-xl-4">
-                                <div class="text-center text-sm-start text-xl-end mb-3 mb-sm-0">
-                                    <p class="text-muted small mb-0">Total</p>
-                                    <h4 class="text-success fw-bold mb-0">$18.00</h4>
-                                </div>
-
-                                <div class="d-flex gap-2 flex-wrap justify-content-center">
-                                    <button type="button" class="btn btn-outline-info btn-sm d-flex align-items-center gap-2" title="Ver detalle">
-                                        <i class="bi bi-eye-fill"></i> <span class="d-none d-md-inline">Ver</span>
-                                    </button>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2" title="Editar">
-                                        <i class="bi bi-pencil-square"></i> <span class="d-none d-md-inline">Editar</span>
-                                    </button>
-                                    <button type="button" class="btn btn-outline-success btn-sm d-flex align-items-center gap-2" title="Finalizar">
-                                        <i class="bi bi-check-circle-fill"></i> <span class="d-none d-md-inline">Finalizar</span>
-                                    </button>
-                                    <button type="button" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-2" title="Eliminar">
-                                        <i class="bi bi-trash-fill"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+            <div class="d-flex flex-column gap-3" id="contenedor_pedidos">
             </div>
         </main>
     </div>
+
+    <div class="modal fade" id="modal_pedido" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 rounded-4 shadow">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-dashboard">Formulario de Pedido</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body pt-3">
+                    <form id="f">
+                        <input type="hidden" id="numPedido" name="numPedido">
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label class="form-label text-muted small fw-bold">Cliente</label>
+                                <div class="input-group">
+                                    <input type="hidden" id="idCliente" name="idCliente">
+                                    <input type="text" class="form-control rounded-start-3 bg-light border-secondary-subtle" id="clienteInfo" placeholder="Seleccione un cliente..." readonly required>
+                                    <button class="btn btn-primary text-white" type="button" id="btnBuscarCliente" style="background-color: #FF8C00; border-color: #FF8C00;"><i class="bi bi-search"></i> Buscar</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6 d-flex align-items-end">
+                                <button class="btn btn-success w-100 py-2" type="button" id="btnBuscarProducto"><i class="bi bi-cart-plus"></i> Añadir Producto al Pedido</button>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive border rounded-3 mb-3 shadow-sm">
+                            <table class="table table-hover mb-0 text-center align-middle">
+                                <thead class="table-light text-dashboard">
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Producto</th>
+                                        <th>Precio</th>
+                                        <th>Cantidad</th>
+                                        <th>SubTotal</th>
+                                        <th>Quitar</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detallesdeventa">
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="d-flex justify-content-end mb-3">
+                            <h4 class="text-dashboard fw-bold mb-0">Total: <span id="totalGeneral" class="text-success">$0.00</span></h4>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button type="button" class="btn btn-crear py-2 fw-semibold" id="btnGuardar" data-accion="incluir">
+                                <i class="bi bi-check-circle"></i> Procesar Pedido
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_clientes" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-dashboard">Listado de Clientes</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive rounded-3 border">
+                        <table class="table table-hover text-center align-middle mb-0">
+                            <thead class="table-light text-dashboard">
+                                <tr>
+                                    <th>Cédula</th>
+                                    <th>Nombre y Apellido</th>
+                                    <th>Teléfono</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listaClientesModal"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_productos" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-dashboard">Catálogo de Productos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive rounded-3 border">
+                        <table class="table table-hover text-center align-middle mb-0">
+                            <thead class="table-light text-dashboard">
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Producto</th>
+                                    <th>Precio</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listaProductosModal"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <?php require_once("comunes/modal_eliminar.php"); ?>
+    <?php require_once("comunes/modal.php"); ?>
+    <script src="js/pedidos.js"></script>
 </body>
 
 </html>

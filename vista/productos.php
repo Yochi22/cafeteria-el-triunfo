@@ -90,7 +90,6 @@
                             <label for="nombreProd" class="form-label text-muted small">Nombre del producto</label>
                             <input type="text" class="form-control rounded-3" id="nombreProd" name="nombreProd" required>
                             <span id="snombreProd" class="small text-danger"></span>
-
                         </div>
 
                         <div class="mb-3">
