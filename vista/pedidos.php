@@ -39,7 +39,7 @@
                 </div>
                 <div class="modal-body pt-3">
                     <form id="f">
-                        <input type="hidden" id="numPedido" name="numPedido">
+                        <input type="hidden" id="idPedido" name="idPedido">
 
                         <div class="row mb-4">
                             <div class="col-md-6 mb-3 mb-md-0">

@@ -1,6 +1,19 @@
+function consultar() {
+    var datos = new FormData();
+    datos.append('accion', 'consultar');
+    enviaAjax(datos);
+}
+
 $(document).ready(function () {
     consultar();
-    cargarModales();
+
+    var datosCli = new FormData();
+    datosCli.append('accion', 'modalclientes');
+    enviaAjax(datosCli);
+
+    var datosProd = new FormData();
+    datosProd.append('accion', 'modalproductos');
+    enviaAjax(datosProd);
 
     $("#btnGuardar").on("click", function () {
         if ($("#idCliente").val() == "") {
@@ -30,10 +43,10 @@ $(document).ready(function () {
     });
 
     $("#btnEliminar").on("click", function () {
-        var numPedido = $("#eliminar").val();
+        var idPedido = $("#eliminar").val();
         var datos = new FormData();
         datos.append('accion', 'eliminar');
-        datos.append('numPedido', numPedido);
+        datos.append('idPedido', idPedido);
         enviaAjax(datos);
     });
 
@@ -42,22 +55,6 @@ $(document).ready(function () {
         $("#modal_pedido").modal("show");
     });
 });
-
-function consultar() {
-    var datos = new FormData();
-    datos.append('accion', 'consultar');
-    enviaAjax(datos);
-}
-
-function cargarModales() {
-    var datosCli = new FormData();
-    datosCli.append('accion', 'modalclientes');
-    enviaAjax(datosCli);
-
-    var datosProd = new FormData();
-    datosProd.append('accion', 'modalproductos');
-    enviaAjax(datosProd);
-}
 
 function seleccionarCliente(id, cedula, nombre) {
     $("#idCliente").val(id);
@@ -137,17 +134,23 @@ function calcularTotalGeneral() {
     $("#totalGeneral").text("$" + total.toFixed(2));
 }
 
-function eliminar(numPedido) {
-    $("#eliminar").val(numPedido);
+function eliminar(idPedido) {
+    $("#eliminar").val(idPedido);
     $("#modal_eliminar").modal("show");
 }
 
-function pone(numPedido) {
+function pone(idPedido) {
     limpia();
     var datos = new FormData();
     datos.append('accion', 'consultar_uno');
-    datos.append('numPedido', numPedido);
+    datos.append('idPedido', idPedido);
     enviaAjax(datos);
+}
+
+function mostrarMensaje(mensaje) {
+    $("#contenidoModal").html(mensaje);
+    $("#mostrarModal").modal("show");
+    setTimeout(function () { $("#mostrarModal").modal("hide") }, 3000);
 }
 
 function enviaAjax(datos) {
@@ -159,9 +162,9 @@ function enviaAjax(datos) {
         data: datos,
         processData: false,
         cache: false,
-
+        beforeSend: function () { },
+        timeout: 10000,
         success: function (respuesta) {
-            console.log(respuesta);
             try {
                 var lee = JSON.parse(respuesta);
 
@@ -180,20 +183,13 @@ function enviaAjax(datos) {
                     $("#modal_eliminar").modal("hide");
                     consultar();
                 } else if (lee.resultado == 'consultar_uno') {
-                    var p = lee.pedido;
-                    $("#numPedido").val(p.numPedido);
-                    $("#idCliente").val(p.idCliente);
-                    $("#clienteInfo").val(p.clienteInfo);
+                    $("#idPedido").val(lee.idPedido);
+                    $("#idCliente").val(lee.idCliente);
+                    $("#clienteInfo").val(lee.clienteInfo);
 
-                    $.each(lee.detalles, function (i, d) {
-                        seleccionarProducto(d.idProducto, d.codigoProd, d.nombreProd, d.precioProd);
+                    $("#detallesdeventa").html(lee.detalleHtml);
 
-                        var ultimaFila = $("#detallesdeventa tr:last");
-                        var inputCant = ultimaFila.find("input[name='cantidad[]']");
-
-                        inputCant.val(d.cantidadProd);
-                        modificasubtotal(inputCant[0]);
-                    });
+                    calcularTotalGeneral();
 
                     $("#btnGuardar").data("accion", "modificar").html('<i class="bi bi-save"></i> Guardar Cambios');
                     $("#modal_pedido").modal("show");
@@ -201,26 +197,25 @@ function enviaAjax(datos) {
                     mostrarMensaje(lee.mensaje);
                 }
             } catch (e) {
-                mostrarMensaje("Error al procesar la respuesta del servidor.");
+                alert("Error en JSON " + e.name);
             }
         },
-        error: function () {
-            mostrarMensaje("Error de comunicación.");
-        }
+        error: function (request, status, err) {
+            if (status == "timeout") {
+                mostrarMensaje("Servidor ocupado, intente de nuevo");
+            } else {
+                mostrarMensaje("ERROR: <br/>" + request + status + err);
+            }
+        },
+        complete: function () { }
     });
 }
 
 function limpia() {
-    $("#numPedido").val("");
+    $("#idPedido").val("");
     $("#idCliente").val("");
     $("#clienteInfo").val("");
     $("#detallesdeventa").html("");
     $("#totalGeneral").text("$0.00");
     $("#btnGuardar").data("accion", "incluir").html('<i class="bi bi-check-circle"></i> Procesar Pedido');
-}
-
-function mostrarMensaje(mensaje) {
-    $("#contenidoModal").html(mensaje);
-    $("#mostrarModal").modal("show");
-    setTimeout(function () { $("#mostrarModal").modal("hide") }, 3000);
 }

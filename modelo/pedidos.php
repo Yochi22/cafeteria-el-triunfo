@@ -4,7 +4,6 @@ require_once("modelo/datos.php");
 
 class pedidos extends datos
 {
-
     function incluir($idCliente, $idProducto, $cantidad, $precio)
     {
         $co = $this->conecta();
@@ -26,15 +25,15 @@ class pedidos extends datos
                 ':precioTotal' => $precioTotal
             ]);
 
-            $numPedido = $co->lastInsertId();
+            $idPedido = $co->lastInsertId();
 
-            $sqlDetalle = "INSERT INTO pedidosproducto (numPedido, idProducto, cantidadProd, subTotal) VALUES (:numPedido, :idProducto, :cantidad, :subTotal)";
+            $sqlDetalle = "INSERT INTO pedidosproducto (idPedido, idProducto, cantidadProd, subTotal) VALUES (:idPedido, :idProducto, :cantidad, :subTotal)";
             $stmtDetalle = $co->prepare($sqlDetalle);
 
             for ($i = 0; $i < count($idProducto); $i++) {
                 $subT = $cantidad[$i] * $precio[$i];
                 $stmtDetalle->execute([
-                    ':numPedido' => $numPedido,
+                    ':idPedido' => $idPedido,
                     ':idProducto' => $idProducto[$i],
                     ':cantidad' => $cantidad[$i],
                     ':subTotal' => $subT
@@ -43,7 +42,7 @@ class pedidos extends datos
 
             $co->commit();
             $r['resultado'] = 'incluir';
-            $r['mensaje'] = 'Pedido #' . str_pad($numPedido, 3, '0', STR_PAD_LEFT) . ' registrado con éxito.';
+            $r['mensaje'] = 'Pedido registrado con éxito.';
         } catch (Exception $e) {
             if ($co->inTransaction()) {
                 $co->rollBack();
@@ -63,15 +62,15 @@ class pedidos extends datos
         $r = array();
 
         try {
-            $resultado = $co->query("SELECT p.*, c.nombreCli, c.apellidoCli FROM pedidos p JOIN clientes c ON p.idCliente = c.idCliente ORDER BY p.numPedido DESC");
+            $resultado = $co->query("SELECT p.*, c.nombreCli, c.apellidoCli FROM pedidos p JOIN clientes c ON p.idCliente = c.idCliente ORDER BY p.idPedido DESC");
             $html = '';
 
             if ($resultado) {
                 foreach ($resultado as $fila) {
                     $estadoClase = $fila['estadoPedido'] == 'En Proceso' ? 'bg-warning text-dark' : ($fila['estadoPedido'] == 'Cancelado' ? 'bg-danger' : 'bg-success');
 
-                    $detalles = $co->prepare("SELECT pp.cantidadProd, pr.nombreProd FROM pedidosproducto pp JOIN productos pr ON pp.idProducto = pr.idProducto WHERE pp.numPedido = :numPedido");
-                    $detalles->execute([':numPedido' => $fila['numPedido']]);
+                    $detalles = $co->prepare("SELECT pp.cantidadProd, pr.nombreProd FROM pedidosproducto pp JOIN productos pr ON pp.idProducto = pr.idProducto WHERE pp.idPedido = :idPedido");
+                    $detalles->execute([':idPedido' => $fila['idPedido']]);
                     $listaDetalles = '';
 
                     foreach ($detalles as $det) {
@@ -86,7 +85,7 @@ class pedidos extends datos
                             <div class="row align-items-center">
                                 <div class="col-12 col-xl-7 mb-3 mb-xl-0">
                                     <div class="d-flex align-items-center gap-3 mb-2">
-                                        <h5 class="card-title text-dashboard fw-bold mb-0">Orden #' . str_pad($fila['numPedido'], 3, '0', STR_PAD_LEFT) . '</h5>
+                                        <h5 class="card-title text-dashboard fw-bold mb-0">Orden #' . str_pad($fila['idPedido'], 3, '0', STR_PAD_LEFT) . '</h5>
                                         <span class="badge ' . $estadoClase . ' px-3 py-2 rounded-pill">' . $fila['estadoPedido'] . '</span>
                                     </div>
                                     <hr class="text-light-subtle my-2">
@@ -107,10 +106,10 @@ class pedidos extends datos
                                         <h4 class="text-success fw-bold mb-0">$' . number_format($fila['precioTotal'], 2) . '</h4>
                                     </div>
                                     <div>
-                                        <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2 mb-2 w-100" onclick="pone(' . $fila['numPedido'] . ')" title="Editar">
+                                        <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2 mb-2 w-100" onclick="pone(' . $fila['idPedido'] . ')" title="Editar">
                                             <i class="bi bi-pencil-square"></i> Editar
                                         </button>
-                                        <button type="button" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-2 w-100" onclick="eliminar(' . $fila['numPedido'] . ')" title="Eliminar">
+                                        <button type="button" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-2 w-100" onclick="eliminar(' . $fila['idPedido'] . ')" title="Eliminar">
                                             <i class="bi bi-trash-fill"></i> Eliminar
                                         </button>
                                     </div>
@@ -135,30 +134,42 @@ class pedidos extends datos
         return $r;
     }
 
-    function consultarUno($numPedido)
+    public function consultarUno($idPedido)
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $r = array();
 
         try {
-            $stmtP = $co->prepare("SELECT p.*, CONCAT(c.cedulaCli, ' - ', c.nombreCli, ' ', c.apellidoCli) as clienteInfo FROM pedidos p JOIN clientes c ON p.idCliente = c.idCliente WHERE p.numPedido = :numPedido");
-            $stmtP->execute([':numPedido' => $numPedido]);
-            $pedido = $stmtP->fetch(PDO::FETCH_ASSOC);
+            $stmt = $co->prepare("SELECT p.idPedido, p.idCliente, c.cedulaCli, c.nombreCli, c.apellidoCli FROM pedidos p INNER JOIN clientes c ON p.idCliente = c.idCliente WHERE p.idPedido = :idPedido");
+            $stmt->execute([':idPedido' => $idPedido]);
+            $datosPedido = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            $stmtD = $co->prepare("SELECT pp.*, pr.codigoProd, pr.nombreProd, pr.precioProd FROM pedidosproducto pp JOIN productos pr ON pp.idProducto = pr.idProducto WHERE pp.numPedido = :numPedido");
-            $stmtD->execute([':numPedido' => $numPedido]);
-            $detalles = $stmtD->fetchAll(PDO::FETCH_ASSOC);
+            $stmt2 = $co->prepare("SELECT pp.idProducto, pr.codigoProd, pr.nombreProd, pr.precioProd, pp.cantidadProd FROM pedidosproducto pp INNER JOIN productos pr ON pp.idProducto = pr.idProducto WHERE pp.idPedido = :idPedido");
+            $stmt2->execute([':idPedido' => $idPedido]);
+            $resultadosProductos = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
-            $r['resultado'] = 'consultar_uno';
-            $r['pedido'] = $pedido;
-            $r['detalles'] = $detalles;
+            $detalleHtml = "";
+            foreach ($resultadosProductos as $fila) {
+                $detalleHtml .= "<tr>";
+                $detalleHtml .= "<td class='align-middle fw-bold'><input type='hidden' name='idProducto[]' value='" . $fila['idProducto'] . "'>" . $fila['codigoProd'] . "</td>";
+                $detalleHtml .= "<td class='align-middle'>" . $fila['nombreProd'] . "</td>";
+                $detalleHtml .= "<td class='align-middle'><input type='hidden' name='precio[]' value='" . $fila['precioProd'] . "'>$" . $fila['precioProd'] . "</td>";
+                $detalleHtml .= "<td class='align-middle' style='width: 120px;'><input type='number' class='form-control form-control-sm text-center' value='" . $fila['cantidadProd'] . "' name='cantidad[]' min='1' onchange='modificasubtotal(this)' onkeyup='modificasubtotal(this)'></td>";
+                $detalleHtml .= "<td class='align-middle text-success fw-bold subtotal-cell'>$" . ($fila['cantidadProd'] * $fila['precioProd']) . "</td>";
+                $detalleHtml .= "<td class='align-middle'><button type='button' class='btn btn-outline-danger btn-sm' onclick='eliminalineadetalle(this)'><i class='bi bi-x-lg'></i></button></td>";
+                $detalleHtml .= "</tr>";
+            }
+
+            return array(
+                "resultado" => "consultar_uno",
+                "idPedido" => $datosPedido['idPedido'],
+                "idCliente" => $datosPedido['idCliente'],
+                "clienteInfo" => $datosPedido['cedulaCli'] . " - " . $datosPedido['nombreCli'] . " " . $datosPedido['apellidoCli'],
+                "detalleHtml" => $detalleHtml
+            );
         } catch (Exception $e) {
-            $r['resultado'] = 'error';
-            $r['mensaje'] = $e->getMessage();
+            return array("resultado" => "error", "mensaje" => $e->getMessage());
         }
-
-        return $r;
     }
 
     function listadoDeClientes()
@@ -223,7 +234,7 @@ class pedidos extends datos
         return $r;
     }
 
-    function modificar($numPedido, $idCliente, $idProducto, $cantidad, $precio)
+    function modificar($idPedido, $idCliente, $idProducto, $cantidad, $precio)
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -237,22 +248,22 @@ class pedidos extends datos
                 $precioTotal += ($cantidad[$i] * $precio[$i]);
             }
 
-            $stmtP = $co->prepare("UPDATE pedidos SET idCliente = :idCliente, precioTotal = :precioTotal WHERE numPedido = :numPedido");
+            $stmtP = $co->prepare("UPDATE pedidos SET idCliente = :idCliente, precioTotal = :precioTotal WHERE idPedido = :idPedido");
             $stmtP->execute([
                 ':idCliente' => $idCliente,
                 ':precioTotal' => $precioTotal,
-                ':numPedido' => $numPedido
+                ':idPedido' => $idPedido
             ]);
 
-            $delD = $co->prepare("DELETE FROM pedidosproducto WHERE numPedido = :numPedido");
-            $delD->execute([':numPedido' => $numPedido]);
+            $delD = $co->prepare("DELETE FROM pedidosproducto WHERE idPedido = :idPedido");
+            $delD->execute([':idPedido' => $idPedido]);
 
-            $stmtD = $co->prepare("INSERT INTO pedidosproducto (numPedido, idProducto, cantidadProd, subTotal) VALUES (:numPedido, :idProducto, :cantidad, :subTotal)");
+            $stmtD = $co->prepare("INSERT INTO pedidosproducto (idPedido, idProducto, cantidadProd, subTotal) VALUES (:idPedido, :idProducto, :cantidad, :subTotal)");
 
             for ($i = 0; $i < count($idProducto); $i++) {
                 $subT = $cantidad[$i] * $precio[$i];
                 $stmtD->execute([
-                    ':numPedido' => $numPedido,
+                    ':idPedido' => $idPedido,
                     ':idProducto' => $idProducto[$i],
                     ':cantidad' => $cantidad[$i],
                     ':subTotal' => $subT
@@ -261,7 +272,7 @@ class pedidos extends datos
 
             $co->commit();
             $r['resultado'] = 'modificar';
-            $r['mensaje'] = 'Pedido #' . str_pad($numPedido, 3, '0', STR_PAD_LEFT) . ' actualizado correctamente.';
+            $r['mensaje'] = 'Pedido modificado correctamente.';
         } catch (Exception $e) {
             if ($co->inTransaction()) {
                 $co->rollBack();
@@ -274,7 +285,7 @@ class pedidos extends datos
         return $r;
     }
 
-    function eliminar($numPedido)
+    function eliminar($idPedido)
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -283,11 +294,11 @@ class pedidos extends datos
         try {
             $co->beginTransaction();
 
-            $delDetalle = $co->prepare("DELETE FROM pedidosproducto WHERE numPedido = :numPedido");
-            $delDetalle->execute([':numPedido' => $numPedido]);
+            $delDetalle = $co->prepare("DELETE FROM pedidosproducto WHERE idPedido = :idPedido");
+            $delDetalle->execute([':idPedido' => $idPedido]);
 
-            $delPedido = $co->prepare("DELETE FROM pedidos WHERE numPedido = :numPedido");
-            $delPedido->execute([':numPedido' => $numPedido]);
+            $delPedido = $co->prepare("DELETE FROM pedidos WHERE idPedido = :idPedido");
+            $delPedido->execute([':idPedido' => $idPedido]);
 
             $co->commit();
 
