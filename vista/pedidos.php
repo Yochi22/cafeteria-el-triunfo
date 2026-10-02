@@ -41,7 +41,7 @@
                     <form id="f">
                         <input type="hidden" id="idPedido" name="idPedido">
 
-                        <div class="row mb-4">
+                        <div class="row mb-3">
                             <div class="col-md-6 mb-3 mb-md-0">
                                 <label class="form-label text-muted small fw-bold">Cliente</label>
                                 <div class="input-group">
@@ -50,7 +50,27 @@
                                     <button class="btn btn-primary text-white" type="button" id="btnBuscarCliente" style="background-color: #FF8C00; border-color: #FF8C00;"><i class="bi bi-search"></i> Buscar</button>
                                 </div>
                             </div>
-                            <div class="col-md-6 d-flex align-items-end">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label class="form-label text-muted small fw-bold">Cuenta Bancaria (Opcional)</label>
+                                <div class="input-group">
+                                    <input type="hidden" id="idCuenta" name="idCuenta">
+                                    <input type="text" class="form-control rounded-start-3 bg-light border-secondary-subtle" id="cuentaInfo" placeholder="Sin cuenta asignada..." readonly>
+                                    <button class="btn btn-outline-danger" type="button" onclick="$('#idCuenta').val(''); $('#cuentaInfo').val('');" title="Quitar cuenta"><i class="bi bi-x-lg"></i></button>
+                                    <button class="btn btn-primary text-white" type="button" id="btnBuscarCuenta" style="background-color: #FF8C00; border-color: #FF8C00;"><i class="bi bi-search"></i> Buscar</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6 mb-3 mb-md-0" id="divEstadoPedido" style="display: none;">
+                                <label class="form-label text-muted small fw-bold">Estado del Pedido</label>
+                                <select class="form-select rounded-3 bg-light border-secondary-subtle" id="estadoPedido" name="estadoPedido">
+                                    <option value="En Proceso">En Proceso</option>
+                                    <option value="Finalizado">Finalizado</option>
+                                    <option value="Cancelado">Cancelado</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 d-flex align-items-end ms-auto">
                                 <button class="btn btn-success w-100 py-2" type="button" id="btnBuscarProducto"><i class="bi bi-cart-plus"></i> Añadir Producto al Pedido</button>
                             </div>
                         </div>
@@ -105,6 +125,31 @@
                                 </tr>
                             </thead>
                             <tbody id="listaClientesModal"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_cuentas" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content rounded-4 shadow">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-dashboard">Listado de Cuentas Bancarias</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive rounded-3 border">
+                        <table class="table table-hover text-center align-middle mb-0">
+                            <thead class="table-light text-dashboard">
+                                <tr>
+                                    <th>Banco</th>
+                                    <th>Número de Cuenta</th>
+                                    <th>Tipo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listaCuentasModal"></tbody>
                         </table>
                     </div>
                 </div>

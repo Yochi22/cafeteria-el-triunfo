@@ -11,6 +11,10 @@ $(document).ready(function () {
     datosCli.append('accion', 'modalclientes');
     enviaAjax(datosCli);
 
+    var datosCue = new FormData();
+    datosCue.append('accion', 'modalcuentas');
+    enviaAjax(datosCue);
+
     var datosProd = new FormData();
     datosProd.append('accion', 'modalproductos');
     enviaAjax(datosProd);
@@ -38,6 +42,10 @@ $(document).ready(function () {
         $("#modal_clientes").modal("show");
     });
 
+    $("#btnBuscarCuenta").on("click", function () {
+        $("#modal_cuentas").modal("show");
+    });
+
     $("#btnBuscarProducto").on("click", function () {
         $("#modal_productos").modal("show");
     });
@@ -60,6 +68,12 @@ function seleccionarCliente(id, cedula, nombre) {
     $("#idCliente").val(id);
     $("#clienteInfo").val(cedula + " - " + nombre);
     $("#modal_clientes").modal("hide");
+}
+
+function seleccionarCuenta(id, banco, numero) {
+    $("#idCuenta").val(id);
+    $("#cuentaInfo").val(banco + " - " + numero);
+    $("#modal_cuentas").modal("hide");
 }
 
 function seleccionarProducto(id, codigo, nombre, precio) {
@@ -172,6 +186,8 @@ function enviaAjax(datos) {
                     $("#contenedor_pedidos").html(lee.mensaje);
                 } else if (lee.resultado == 'modalclientes') {
                     $("#listaClientesModal").html(lee.mensaje);
+                } else if (lee.resultado == 'modalcuentas') {
+                    $("#listaCuentasModal").html(lee.mensaje);
                 } else if (lee.resultado == 'modalproductos') {
                     $("#listaProductosModal").html(lee.mensaje);
                 } else if (lee.resultado == 'incluir' || lee.resultado == 'modificar') {
@@ -186,9 +202,13 @@ function enviaAjax(datos) {
                     $("#idPedido").val(lee.idPedido);
                     $("#idCliente").val(lee.idCliente);
                     $("#clienteInfo").val(lee.clienteInfo);
+                    $("#idCuenta").val(lee.idCuenta);
+                    $("#cuentaInfo").val(lee.cuentaInfo);
+                    $("#estadoPedido").val(lee.estadoPedido);
+
+                    $("#divEstadoPedido").show();
 
                     $("#detallesdeventa").html(lee.detalleHtml);
-
                     calcularTotalGeneral();
 
                     $("#btnGuardar").data("accion", "modificar").html('<i class="bi bi-save"></i> Guardar Cambios');
@@ -215,6 +235,10 @@ function limpia() {
     $("#idPedido").val("");
     $("#idCliente").val("");
     $("#clienteInfo").val("");
+    $("#idCuenta").val("");
+    $("#cuentaInfo").val("");
+    $("#estadoPedido").val("En Proceso");
+    $("#divEstadoPedido").hide();
     $("#detallesdeventa").html("");
     $("#totalGeneral").text("$0.00");
     $("#btnGuardar").data("accion", "incluir").html('<i class="bi bi-check-circle"></i> Procesar Pedido');

@@ -4,7 +4,7 @@ require_once("modelo/datos.php");
 
 class pedidos extends datos
 {
-    function incluir($idCliente, $idProducto, $cantidad, $precio)
+    function incluir($idCliente, $idCuenta, $idProducto, $cantidad, $precio)
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -18,10 +18,11 @@ class pedidos extends datos
                 $precioTotal += ($cantidad[$i] * $precio[$i]);
             }
 
-            $sqlPedido = "INSERT INTO pedidos (idCliente, precioTotal, estadoPedido) VALUES (:idCliente, :precioTotal, 'En Proceso')";
+            $sqlPedido = "INSERT INTO pedidos (idCliente, idCuenta, precioTotal, estadoPedido) VALUES (:idCliente, :idCuenta, :precioTotal, 'En Proceso')";
             $stmt = $co->prepare($sqlPedido);
             $stmt->execute([
                 ':idCliente' => $idCliente,
+                ':idCuenta' => empty($idCuenta) ? null : $idCuenta,
                 ':precioTotal' => $precioTotal
             ]);
 
@@ -62,7 +63,7 @@ class pedidos extends datos
         $r = array();
 
         try {
-            $resultado = $co->query("SELECT p.*, c.nombreCli, c.apellidoCli FROM pedidos p JOIN clientes c ON p.idCliente = c.idCliente ORDER BY p.idPedido DESC");
+            $resultado = $co->query("SELECT p.*, c.nombreCli, c.apellidoCli, cu.nombreBanco, cu.numCuenta FROM pedidos p JOIN clientes c ON p.idCliente = c.idCliente LEFT JOIN cuentas cu ON p.idCuenta = cu.idCuenta ORDER BY p.idPedido DESC");
             $html = '';
 
             if ($resultado) {
@@ -78,6 +79,7 @@ class pedidos extends datos
                     }
 
                     $listaDetalles = rtrim($listaDetalles, ', ');
+                    $bancoTexto = $fila['idCuenta'] ? $fila['nombreBanco'] . ' - ' . substr($fila['numCuenta'], -4) : 'Sin cuenta asignada';
 
                     $html .= '
                     <div class="card border-0 shadow-sm rounded-4 mb-2">
@@ -90,11 +92,15 @@ class pedidos extends datos
                                     </div>
                                     <hr class="text-light-subtle my-2">
                                     <div class="row mt-3">
-                                        <div class="col-sm-5 mb-2 mb-sm-0">
+                                        <div class="col-sm-4 mb-2 mb-sm-0">
                                             <p class="mb-1 text-muted small">Cliente</p>
                                             <p class="fw-semibold mb-0"><i class="bi bi-person-fill text-secondary"></i> ' . $fila['nombreCli'] . ' ' . $fila['apellidoCli'] . '</p>
                                         </div>
-                                        <div class="col-sm-7">
+                                        <div class="col-sm-4 mb-2 mb-sm-0">
+                                            <p class="mb-1 text-muted small">Cuenta</p>
+                                            <p class="fw-semibold mb-0"><i class="bi bi-bank text-secondary"></i> ' . $bancoTexto . '</p>
+                                        </div>
+                                        <div class="col-sm-4">
                                             <p class="mb-1 text-muted small">Detalle del pedido</p>
                                             <p class="mb-0 text-truncate" title="' . $listaDetalles . '">' . $listaDetalles . '</p>
                                         </div>
@@ -140,7 +146,7 @@ class pedidos extends datos
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         try {
-            $stmt = $co->prepare("SELECT p.idPedido, p.idCliente, c.cedulaCli, c.nombreCli, c.apellidoCli FROM pedidos p INNER JOIN clientes c ON p.idCliente = c.idCliente WHERE p.idPedido = :idPedido");
+            $stmt = $co->prepare("SELECT p.idPedido, p.idCliente, p.idCuenta, p.estadoPedido, c.cedulaCli, c.nombreCli, c.apellidoCli, cu.nombreBanco, cu.numCuenta FROM pedidos p INNER JOIN clientes c ON p.idCliente = c.idCliente LEFT JOIN cuentas cu ON p.idCuenta = cu.idCuenta WHERE p.idPedido = :idPedido");
             $stmt->execute([':idPedido' => $idPedido]);
             $datosPedido = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -160,11 +166,19 @@ class pedidos extends datos
                 $detalleHtml .= "</tr>";
             }
 
+            $cuentaInfo = "";
+            if ($datosPedido['idCuenta']) {
+                $cuentaInfo = $datosPedido['nombreBanco'] . " - " . $datosPedido['numCuenta'];
+            }
+
             return array(
                 "resultado" => "consultar_uno",
                 "idPedido" => $datosPedido['idPedido'],
                 "idCliente" => $datosPedido['idCliente'],
                 "clienteInfo" => $datosPedido['cedulaCli'] . " - " . $datosPedido['nombreCli'] . " " . $datosPedido['apellidoCli'],
+                "idCuenta" => $datosPedido['idCuenta'],
+                "cuentaInfo" => $cuentaInfo,
+                "estadoPedido" => $datosPedido['estadoPedido'],
                 "detalleHtml" => $detalleHtml
             );
         } catch (Exception $e) {
@@ -193,6 +207,37 @@ class pedidos extends datos
                 }
 
                 $r['resultado'] = 'modalclientes';
+                $r['mensaje'] = $html;
+            }
+        } catch (Exception $e) {
+            $r['resultado'] = 'error';
+            $r['mensaje'] = $e->getMessage();
+        }
+
+        return $r;
+    }
+
+    function listadoDeCuentas()
+    {
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $r = array();
+
+        try {
+            $resultado = $co->query("SELECT * FROM cuentas");
+
+            if ($resultado) {
+                $html = '';
+
+                foreach ($resultado as $fila) {
+                    $html .= "<tr style='cursor:pointer' class='bg-light-hover' onclick='seleccionarCuenta(" . $fila['idCuenta'] . ", \"" . $fila['nombreBanco'] . "\", \"" . $fila['numCuenta'] . "\")'>";
+                    $html .= "<td>" . $fila['nombreBanco'] . "</td>";
+                    $html .= "<td>" . $fila['numCuenta'] . "</td>";
+                    $html .= "<td>" . $fila['tipoCuenta'] . "</td>";
+                    $html .= "</tr>";
+                }
+
+                $r['resultado'] = 'modalcuentas';
                 $r['mensaje'] = $html;
             }
         } catch (Exception $e) {
@@ -234,7 +279,7 @@ class pedidos extends datos
         return $r;
     }
 
-    function modificar($idPedido, $idCliente, $idProducto, $cantidad, $precio)
+    function modificar($idPedido, $idCliente, $idCuenta, $estadoPedido, $idProducto, $cantidad, $precio)
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -248,10 +293,12 @@ class pedidos extends datos
                 $precioTotal += ($cantidad[$i] * $precio[$i]);
             }
 
-            $stmtP = $co->prepare("UPDATE pedidos SET idCliente = :idCliente, precioTotal = :precioTotal WHERE idPedido = :idPedido");
+            $stmtP = $co->prepare("UPDATE pedidos SET idCliente = :idCliente, idCuenta = :idCuenta, precioTotal = :precioTotal, estadoPedido = :estadoPedido WHERE idPedido = :idPedido");
             $stmtP->execute([
                 ':idCliente' => $idCliente,
+                ':idCuenta' => empty($idCuenta) ? null : $idCuenta,
                 ':precioTotal' => $precioTotal,
+                ':estadoPedido' => $estadoPedido,
                 ':idPedido' => $idPedido
             ]);
 
