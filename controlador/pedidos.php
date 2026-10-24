@@ -15,7 +15,8 @@ if (is_file("vista/" . $pagina . ".php")) {
                 echo json_encode($o->incluir($_POST['idCliente'], $_POST['idCuenta'], $_POST['idProducto'], $_POST['cantidad'], $_POST['precio']));
                 break;
             case 'consultar':
-                echo json_encode($o->consultar());
+                $estadoFiltro = isset($_POST['estadoFiltro']) ? $_POST['estadoFiltro'] : 'Todos';
+                echo json_encode($o->consultar($estadoFiltro));
                 break;
             case 'consultar_uno':
                 echo json_encode($o->consultarUno($_POST['idPedido']));

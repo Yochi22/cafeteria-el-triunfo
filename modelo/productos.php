@@ -128,6 +128,31 @@ class productos extends datos
 
         if ($this->existe($this->codigoProd)) {
             try {
+                $stmtId = $co->prepare("SELECT idProducto FROM productos WHERE codigoProd = :codigoProd");
+                $stmtId->execute([':codigoProd' => $this->codigoProd]);
+                $prod = $stmtId->fetch(PDO::FETCH_ASSOC);
+
+                if (!$prod) {
+                    $r['resultado'] = 'error';
+                    $r['mensaje'] = 'El producto no existe.';
+                    return $r;
+                }
+
+                $idProducto = $prod['idProducto'];
+
+                $stmtCheck = $co->prepare("SELECT COUNT(*) as total FROM pedidosproducto pp INNER JOIN pedidos p ON pp.idPedido = p.idPedido WHERE pp.idProducto = :idProducto AND p.estadoPedido = 'En Proceso'");
+                $stmtCheck->execute([':idProducto' => $idProducto]);
+                $row = $stmtCheck->fetch(PDO::FETCH_ASSOC);
+
+                if ($row['total'] > 0) {
+                    $r['resultado'] = 'error';
+                    $r['mensaje'] = 'Este producto está asociado a un pedido en proceso.';
+                    return $r;
+                }
+
+                $stmtDelDetalles = $co->prepare("DELETE pp FROM pedidosproducto pp INNER JOIN pedidos p ON pp.idPedido = p.idPedido WHERE pp.idProducto = :idProducto AND p.estadoPedido IN ('Finalizado', 'Cancelado')");
+                $stmtDelDetalles->execute([':idProducto' => $idProducto]);
+
                 $e = $co->prepare("DELETE FROM productos WHERE codigoProd = :codigoProd");
                 $e->bindParam(":codigoProd", $this->codigoProd);
                 $e->execute();

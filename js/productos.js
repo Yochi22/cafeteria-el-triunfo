@@ -12,21 +12,36 @@ $(document).ready(function () {
         validarkeypress(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]*$/, e);
     });
     $("#codigoProd").on("keyup", function () {
-        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{5,50}$/, $(this), $("#scodigoProd"), "Código inválido.");
+        validarkeyup(
+            /^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{5,50}$/,
+            $(this),
+            $("#scodigoProd"),
+            "Código inválido.",
+        );
     });
 
     $("#nombreProd").on("keypress", function (e) {
         validarkeypress(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]*$/, e);
     });
     $("#nombreProd").on("keyup", function () {
-        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{3,50}$/, $(this), $("#snombreProd"), "Nombre inválido.");
+        validarkeyup(
+            /^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{3,50}$/,
+            $(this),
+            $("#snombreProd"),
+            "Nombre inválido.",
+        );
     });
 
     $("#descProd").on("keypress", function (e) {
         validarkeypress(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]*$/, e);
     });
     $("#descProd").on("keyup", function () {
-        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{3,150}$/, $(this), $("#sdescProd"), "Descripción inválida.");
+        validarkeyup(
+            /^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{3,150}$/,
+            $(this),
+            $("#sdescProd"),
+            "Descripción inválida.",
+        );
     });
 
     $("#precioProd").on("keypress", function (e) {
@@ -35,7 +50,12 @@ $(document).ready(function () {
 
     $("#precioProd").on("keyup", function () {
         var valor = parseFloat($(this).val());
-        var esValidoRegEx = validarkeyup(/^[0-9]{1,8}(\.[0-9]{1,2})?$/, $(this), $("#sprecioProd"), "Precio inválido.");
+        var esValidoRegEx = validarkeyup(
+            /^[0-9]{1,8}(\.[0-9]{1,2})?$/,
+            $(this),
+            $("#sprecioProd"),
+            "Precio inválido.",
+        );
 
         if (esValidoRegEx == 1) {
             if (isNaN(valor) || valor <= 0) {
@@ -48,30 +68,29 @@ $(document).ready(function () {
 
     $("#btn_guardar_prod").on("click", function (e) {
         e.preventDefault();
-        if ($(this).text() == 'incluir') {
+        if ($(this).text() == "incluir") {
             if (validarEnvio()) {
                 var datos = new FormData();
-                datos.append('accion', 'incluir');
-                datos.append('codigoProd', $("#codigoProd").val());
-                datos.append('nombreProd', $("#nombreProd").val());
-                datos.append('descProd', $("#descProd").val());
-                datos.append('precioProd', $("#precioProd").val());
-                datos.append('fotoProd', $("#fotoProd").val());
-                datos.append('idCategoria', $("#idCategoria_select").val());
+                datos.append("accion", "incluir");
+                datos.append("codigoProd", $("#codigoProd").val());
+                datos.append("nombreProd", $("#nombreProd").val());
+                datos.append("descProd", $("#descProd").val());
+                datos.append("precioProd", $("#precioProd").val());
+                datos.append("fotoProd", $("#fotoProd").val());
+                datos.append("idCategoria", $("#idCategoria_select").val());
                 enviaAjax(datos);
             }
-        }
-        else if ($(this).text() == 'modificar') {
+        } else if ($(this).text() == "modificar") {
             if (validarEnvio()) {
                 var datos = new FormData();
-                datos.append('accion', 'modificar');
-                datos.append('codigoOrig', $("#codigoOrig").val());
-                datos.append('codigoProd', $("#codigoProd").val());
-                datos.append('nombreProd', $("#nombreProd").val());
-                datos.append('descProd', $("#descProd").val());
-                datos.append('precioProd', $("#precioProd").val());
-                datos.append('fotoProd', $("#fotoProd").val());
-                datos.append('idCategoria', $("#idCategoria_select").val());
+                datos.append("accion", "modificar");
+                datos.append("codigoOrig", $("#codigoOrig").val());
+                datos.append("codigoProd", $("#codigoProd").val());
+                datos.append("nombreProd", $("#nombreProd").val());
+                datos.append("descProd", $("#descProd").val());
+                datos.append("precioProd", $("#precioProd").val());
+                datos.append("fotoProd", $("#fotoProd").val());
+                datos.append("idCategoria", $("#idCategoria_select").val());
                 enviaAjax(datos);
             }
         }
@@ -82,8 +101,8 @@ $(document).ready(function () {
 
         if (valor && valor.trim().length > 0) {
             var datos = new FormData();
-            datos.append('accion', 'buscar');
-            datos.append('valorBusqueda', valor);
+            datos.append("accion", "buscar");
+            datos.append("valorBusqueda", valor);
             enviaAjax(datos);
         } else {
             if (categoriaActual !== null) {
@@ -105,8 +124,8 @@ $(document).ready(function () {
     $("#btnEliminar").on("click", function () {
         var codigoEliminado = $("#eliminar").val();
         var datos = new FormData();
-        datos.append('accion', 'eliminar');
-        datos.append('codigoProd', codigoEliminado);
+        datos.append("accion", "eliminar");
+        datos.append("codigoProd", codigoEliminado);
         enviaAjax(datos);
     });
 
@@ -123,7 +142,7 @@ function cargarCategorias() {
     $("#btn_gestionar_cat").show();
 
     let datos = new FormData();
-    datos.append('accion', 'listar_categorias');
+    datos.append("accion", "listar_categorias");
     enviaAjax(datos);
 }
 
@@ -135,14 +154,14 @@ function verCategoria(id, nombre) {
     $("#btn_gestionar_cat").hide();
 
     let datos = new FormData();
-    datos.append('accion', 'listar_productos');
-    datos.append('idCategoria', id);
+    datos.append("accion", "listar_productos");
+    datos.append("idCategoria", id);
     enviaAjax(datos);
 }
 
 function llenarSelectCategorias() {
     let datos = new FormData();
-    datos.append('accion', 'cargar_select_categorias');
+    datos.append("accion", "cargar_select_categorias");
     enviaAjax(datos);
 }
 
@@ -158,7 +177,14 @@ function nuevoProducto() {
     $("#modal_producto").modal("show");
 }
 
-function pone(codigoProd, nombreProd, precioProd, descProd, fotoProd, idCategoria) {
+function pone(
+    codigoProd,
+    nombreProd,
+    precioProd,
+    descProd,
+    fotoProd,
+    idCategoria,
+) {
     $("#codigoOrig").val(codigoProd);
     $("#codigoProd").val(codigoProd);
     $("#nombreProd").val(nombreProd);
@@ -168,7 +194,7 @@ function pone(codigoProd, nombreProd, precioProd, descProd, fotoProd, idCategori
     $("#idCategoria_select").val(idCategoria);
 
     $("#modal_producto_label").text("Modificar Producto");
-    $("#btn_guardar_prod").text('modificar');
+    $("#btn_guardar_prod").text("modificar");
     $("#modal_producto").modal("show");
 }
 
@@ -178,26 +204,51 @@ function eliminar(codigoProd) {
 }
 
 function validarEnvio() {
-    if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{5,50}$/, $("#codigoProd"), $("#scodigoProd"), "Código inválido.") == 0) {
+    if (
+        validarkeyup(
+            /^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{5,50}$/,
+            $("#codigoProd"),
+            $("#scodigoProd"),
+            "Código inválido.",
+        ) == 0
+    ) {
         mostrarMensaje("Código inválido.");
         return false;
-    }
-    else if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{3,50}$/, $("#nombreProd"), $("#snombreProd"), "Nombre inválido.") == 0) {
+    } else if (
+        validarkeyup(
+            /^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{3,50}$/,
+            $("#nombreProd"),
+            $("#snombreProd"),
+            "Nombre inválido.",
+        ) == 0
+    ) {
         mostrarMensaje("Nombre inválido.");
         return false;
-    }
-    else if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{3,150}$/, $("#descProd"), $("#sdescProd"), "Descripción inválida.") == 0) {
+    } else if (
+        validarkeyup(
+            /^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{3,150}$/,
+            $("#descProd"),
+            $("#sdescProd"),
+            "Descripción inválida.",
+        ) == 0
+    ) {
         mostrarMensaje("Descripción inválida.");
         return false;
     }
 
     var precioVal = parseFloat($("#precioProd").val());
 
-    if (validarkeyup(/^[0-9]{1,8}(\.[0-9]{1,2})?$/, $("#precioProd"), $("#sprecioProd"), "Precio inválido.") == 0) {
+    if (
+        validarkeyup(
+            /^[0-9]{1,8}(\.[0-9]{1,2})?$/,
+            $("#precioProd"),
+            $("#sprecioProd"),
+            "Precio inválido.",
+        ) == 0
+    ) {
         mostrarMensaje("Precio inválido.");
         return false;
-    }
-    else if (isNaN(precioVal) || precioVal <= 0) {
+    } else if (isNaN(precioVal) || precioVal <= 0) {
         $("#sprecioProd").text("El precio debe ser mayor a 0.");
         mostrarMensaje("El precio debe ser mayor a 0.");
         return false;
@@ -207,9 +258,13 @@ function validarEnvio() {
 }
 
 function mostrarMensaje(mensaje) {
+    $(".modal").modal("hide");
+
     $("#contenidoModal").html(mensaje);
-    $("#mostrarModal").modal("show");
-    setTimeout(function () { $("#mostrarModal").modal("hide") }, 3000);
+
+    setTimeout(function () {
+        $("#mostrarModal").modal("show");
+    }, 200);
 }
 
 function validarkeypress(er, e) {
@@ -243,59 +298,60 @@ function enviaAjax(datos) {
         data: datos,
         processData: false,
         cache: false,
-        beforeSend: function () { },
+        beforeSend: function () {},
         timeout: 10000,
         success: function (respuesta) {
             console.log(respuesta);
             try {
                 var lee = JSON.parse(respuesta);
 
-                if (lee.resultado == 'listar_categorias') {
+                if (lee.resultado == "listar_categorias") {
                     $("#cuadricula_items").html(lee.mensaje);
-                }
-                else if (lee.resultado == 'listar_productos') {
+                } else if (lee.resultado == "listar_productos") {
                     $("#cuadricula_items").html(lee.mensaje);
-                }
-                else if (lee.resultado == 'cargar_select_categorias') {
+                } else if (lee.resultado == "cargar_select_categorias") {
                     $("#idCategoria_select").html(lee.mensaje);
-                }
-                else if (lee.resultado == 'incluir') {
+                } else if (lee.resultado == "incluir") {
                     mostrarMensaje(lee.mensaje);
-                    if (lee.mensaje == 'Producto incluido.') {
+                    if (lee.mensaje == "Producto incluido.") {
                         $("#modal_producto").modal("hide");
                         if (categoriaActual !== null) {
-                            verCategoria(categoriaActual, $("#titulo_seccion").text());
+                            verCategoria(
+                                categoriaActual,
+                                $("#titulo_seccion").text(),
+                            );
                         } else {
                             cargarCategorias();
                         }
                     }
-                }
-                else if (lee.resultado == 'modificar') {
+                } else if (lee.resultado == "modificar") {
                     mostrarMensaje(lee.mensaje);
-                    if (lee.mensaje == 'Producto modificado.') {
+                    if (lee.mensaje == "Producto modificado.") {
                         $("#modal_producto").modal("hide");
                         if (categoriaActual !== null) {
-                            verCategoria(categoriaActual, $("#titulo_seccion").text());
+                            verCategoria(
+                                categoriaActual,
+                                $("#titulo_seccion").text(),
+                            );
                         } else {
                             cargarCategorias();
                         }
                     }
-                }
-                else if (lee.resultado == 'eliminar') {
+                } else if (lee.resultado == "eliminar") {
                     mostrarMensaje(lee.mensaje);
-                    if (lee.mensaje == 'Producto eliminado.') {
-                        $("#modal_eliminar").modal("hide");
+                    if (lee.mensaje == "Producto eliminado.") {
                         if (categoriaActual !== null) {
-                            verCategoria(categoriaActual, $("#titulo_seccion").text());
+                            verCategoria(
+                                categoriaActual,
+                                $("#titulo_seccion").text(),
+                            );
                         } else {
                             cargarCategorias();
                         }
                     }
-                }
-                else if (lee.resultado == 'buscar') {
-                    $('#cuadricula_items').html(lee.mensaje);
-                }
-                else if (lee.resultado == "error") {
+                } else if (lee.resultado == "buscar") {
+                    $("#cuadricula_items").html(lee.mensaje);
+                } else if (lee.resultado == "error") {
                     mostrarMensaje(lee.mensaje);
                 }
             } catch (e) {
@@ -309,7 +365,7 @@ function enviaAjax(datos) {
                 mostrarMensaje("ERROR: <br/>" + request + status + err);
             }
         },
-        complete: function () { },
+        complete: function () {},
     });
 }
 

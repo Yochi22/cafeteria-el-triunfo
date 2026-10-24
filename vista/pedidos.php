@@ -15,7 +15,14 @@
                         <p class="text-muted mb-0">Revisa, registra y modifica los pedidos de tus clientes.</p>
                     </div>
                 </div>
-                <div>
+                <div class="d-flex align-items-center gap-2">
+                    <label class="form-label mb-0 text-muted small fw-bold">Filtrar:</label>
+                    <select class="form-select form-select-sm w-auto bg-light border-secondary-subtle" id="filtroEstado">
+                        <option value="Todos">Todos</option>
+                        <option value="En Proceso">En Proceso</option>
+                        <option value="Finalizado">Finalizado</option>
+                        <option value="Cancelado">Cancelado</option>
+                    </select>
                     <button type="button" id="incluir" class="btn btn-crear d-flex align-items-center gap-2 shadow-sm">
                         <i class="bi bi-plus-circle fs-5"></i>
                         <span>Crear Pedido</span>
