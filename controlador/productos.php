@@ -14,8 +14,8 @@ if (is_file("vista/" . $pagina . ".php")) {
         $accion = $_POST['accion'];
 
         switch ($accion) {
-            case 'listar_categorias':
-                echo json_encode($o->listar_categorias());
+            case 'obtener_datos_categorias':
+                echo json_encode($o->obtener_datos_categorias());
                 break;
 
             case 'listar_productos':
@@ -47,10 +47,6 @@ if (is_file("vista/" . $pagina . ".php")) {
             case 'eliminar':
                 $o->set_codigoProd($_POST['codigoProd']);
                 echo json_encode($o->eliminar());
-                break;
-
-            case 'cargar_select_categorias':
-                echo json_encode($o->cargar_select_categorias());
                 break;
 
             case 'buscar':

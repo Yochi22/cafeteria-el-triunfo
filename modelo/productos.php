@@ -171,7 +171,7 @@ class productos extends datos
         return $r;
     }
 
-    function listar_categorias()
+    function obtener_datos_categorias()
     {
         $r = array();
         $co = $this->conecta();
@@ -180,13 +180,16 @@ class productos extends datos
         try {
             $stmt = $co->query("SELECT * FROM categorias");
             $cats = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $html = '';
+
+            $htmlCards = '';
+            $htmlSelect = '';
 
             if ($cats) {
                 foreach ($cats as $c) {
-                    $fotoCat = !empty($c['fotoCat']) ? $c['fotoCat'] : 'img/principal.jpg';
+                    $htmlSelect .= '<option value="' . $c['idCategoria'] . '">' . $c['nombreCat'] . '</option>';
 
-                    $html .= '
+                    $fotoCat = !empty($c['fotoCat']) ? $c['fotoCat'] : 'img/principal.jpg';
+                    $htmlCards .= '
                     <div class="col-6 col-md-4 col-lg-3 mb-4">
                         <div class="card border-0 rounded-4 shadow-sm text-center h-100 p-2 position-relative dynamic-card" style="cursor:pointer" onclick="verCategoria(' . $c['idCategoria'] . ', \'' . $c['nombreCat'] . '\')">
                             <img src="' . $fotoCat . '" class="card-img-top rounded-4" style="height:140px; object-fit:cover;">
@@ -197,11 +200,15 @@ class productos extends datos
                     </div>';
                 }
             } else {
-                $html = '<div class="col-12 text-center text-muted py-5"><h5 class="text-dashboard mt-2">No hay categorías registradas.</h5></div>';
+                $htmlCards = '<div class="col-12 text-center text-muted py-5"><h5 class="text-dashboard mt-2">No hay categorías registradas.</h5></div>';
             }
 
-            $r['resultado'] = 'listar_categorias';
-            $r['mensaje'] = $html;
+            $btnGestionar = '<a href="?pagina=categorias" class="btn btn-crear d-flex align-items-center gap-2" style="background-color: #198754 !important;"><i class="bi bi-tags fs-5"></i><span class="d-none d-sm-inline">Gestionar Categorías</span></a>';
+
+            $r['resultado'] = 'categorias_completas';
+            $r['cards'] = $htmlCards;
+            $r['select'] = $htmlSelect;
+            $r['boton'] = $btnGestionar;
         } catch (Exception $e) {
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
@@ -210,25 +217,69 @@ class productos extends datos
         return $r;
     }
 
-    function cargar_select_categorias()
+    function listar_productos()
     {
         $r = array();
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+
+
         try {
-            $stmt = $co->query("SELECT * FROM categorias");
-            $cats = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stmt = $co->prepare("SELECT * FROM productos WHERE idCategoria = ?");
+            $stmt->execute([$this->idCategoria]);
+            $prods = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $html = '';
 
-            if ($cats) {
-                foreach ($cats as $c) {
-                    $html .= '<option value="' . $c['idCategoria'] . '">' . $c['nombreCat'] . '</option>';
+            if ($prods) {
+                foreach ($prods as $p) {
+                    $fotoProd = !empty($p['fotoProd']) ? $p['fotoProd'] : 'img/principal.jpg';
+                    $nombreProd = $p['nombreProd'];
+                    $descProd = $p['descProd'];
+                    $precioProd = $p['precioProd'];
+                    $idCat = $p['idCategoria'];
+                    $codigoProd = $p['codigoProd'];
+
+                    $html .= '
+                    <div class="col-12 col-md-6 col-lg-4 mb-4">
+                        <div class="card border-0 rounded-4 shadow-sm h-100 dynamic-card">
+                            <div class="row g-0 h-100 align-items-center">
+                                <div class="col-4 p-2 text-center">
+                                    <img src="' . $fotoProd . '" class="img-fluid rounded-3" style="height:90px; width:90px; object-fit:cover;">
+                                </div>
+                                <div class="col-8">
+                                    <div class="card-body py-3 pe-3 ps-2 d-flex flex-column justify-content-between h-100">
+                                        <div>
+                                            <h6 class="text-dashboard fw-bold mb-1 text-truncate">' . $p['nombreProd'] . '</h6>
+                                            <p class="text-success fw-bold small mb-2">$' . number_format($p['precioProd'], 2) . '</p>
+                                        </div>
+                                        <div class="d-flex justify-content-end gap-2">
+                                            <button class="btn btn-sm btn-light rounded-3 text-primary shadow-2-strong" onclick="pone(\'' . $codigoProd . '\', \'' . $nombreProd . '\', ' . $precioProd . ', \'' . $descProd . '\', \'' . $fotoProd . '\', ' . $idCat . ')">
+                                                <i class="bi bi-pencil-square">Editar</i>
+                                            </button>
+                                            <button class="btn btn-sm btn-light rounded-3 text-danger shadow-2-strong" onclick="eliminar(\'' . $codigoProd . '\')">
+                                                <i class="bi bi-trash">Eliminar</i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>';
                 }
+            } else {
+                $html = '<div class="col-12 text-center text-muted py-5"><h5 class="text-dashboard mt-2">No hay productos en esta categoría.</h5></div>';
             }
 
-            $r['resultado'] = 'cargar_select_categorias';
+            $btnRegresar = '
+            <button class="btn btn-crear d-flex align-items-center gap-2" style="background-color: #0d6efd !important;" onclick="cargarDatosCategorias()">
+                <i class="bi bi-arrow-left-circle fs-5"></i>
+                <span class="d-none d-sm-inline">Regresar</span>
+            </button>';
+
+            $r['resultado'] = 'listar_productos';
             $r['mensaje'] = $html;
+            $r['boton'] = $btnRegresar;
         } catch (Exception $e) {
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
@@ -297,68 +348,6 @@ class productos extends datos
             }
 
             $r['resultado'] = 'buscar';
-            $r['mensaje'] = $html;
-        } catch (Exception $e) {
-            $r['resultado'] = 'error';
-            $r['mensaje'] = $e->getMessage();
-        }
-
-        return $r;
-    }
-
-    function listar_productos()
-    {
-        $r = array();
-        $co = $this->conecta();
-        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        try {
-            $stmt = $co->prepare("SELECT * FROM productos WHERE idCategoria = ?");
-            $stmt->execute([$this->idCategoria]);
-            $prods = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $html = '';
-
-            if ($prods) {
-                foreach ($prods as $p) {
-                    $fotoProd = !empty($p['fotoProd']) ? $p['fotoProd'] : 'img/principal.jpg';
-                    $nombreProd = $p['nombreProd'];
-                    $descProd = $p['descProd'];
-                    $precioProd = $p['precioProd'];
-                    $idCat = $p['idCategoria'];
-                    $codigoProd = $p['codigoProd'];
-
-                    $html .= '
-                    <div class="col-12 col-md-6 col-lg-4 mb-4">
-                        <div class="card border-0 rounded-4 shadow-sm h-100 dynamic-card">
-                            <div class="row g-0 h-100 align-items-center">
-                                <div class="col-4 p-2 text-center">
-                                    <img src="' . $fotoProd . '" class="img-fluid rounded-3" style="height:90px; width:90px; object-fit:cover;">
-                                </div>
-                                <div class="col-8">
-                                    <div class="card-body py-3 pe-3 ps-2 d-flex flex-column justify-content-between h-100">
-                                        <div>
-                                            <h6 class="text-dashboard fw-bold mb-1 text-truncate">' . $p['nombreProd'] . '</h6>
-                                            <p class="text-success fw-bold small mb-2">$' . number_format($p['precioProd'], 2) . '</p>
-                                        </div>
-                                        <div class="d-flex justify-content-end gap-2">
-                                            <button class="btn btn-sm btn-light rounded-3 text-primary shadow-2-strong" onclick="pone(\'' . $codigoProd . '\', \'' . $nombreProd . '\', ' . $precioProd . ', \'' . $descProd . '\', \'' . $fotoProd . '\', ' . $idCat . ')">
-                                                <i class="bi bi-pencil-square">Editar</i>
-                                            </button>
-                                            <button class="btn btn-sm btn-light rounded-3 text-danger shadow-2-strong" onclick="eliminar(\'' . $codigoProd . '\')">
-                                                <i class="bi bi-trash">Eliminar</i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>';
-                }
-            } else {
-                $html = '<div class="col-12 text-center text-muted py-5"><h5 class="text-dashboard mt-2">No hay productos en esta categoría.</h5></div>';
-            }
-
-            $r['resultado'] = 'listar_productos';
             $r['mensaje'] = $html;
         } catch (Exception $e) {
             $r['resultado'] = 'error';

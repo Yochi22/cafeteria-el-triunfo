@@ -63,7 +63,7 @@ class pedidos extends datos
         $r = array();
 
         try {
-            $sql = "SELECT p.*, c.nombreCli, c.apellidoCli, cu.nombreBanco, cu.numCuenta 
+            $sql = "SELECT p.*, c.nombreCli, c.apellidoCli, c.cedulaCli, c.tlfCli, cu.nombreBanco, cu.numCuenta, cu.tipoCuenta 
                     FROM pedidos p 
                     JOIN clientes c ON p.idCliente = c.idCliente 
                     LEFT JOIN cuentas cu ON p.idCuenta = cu.idCuenta";
@@ -107,40 +107,46 @@ class pedidos extends datos
                 $bancoTexto = $fila['idCuenta'] ? $fila['nombreBanco'] . ' - ' . substr($fila['numCuenta'], -4) : 'Sin cuenta asignada';
 
                 $html .= '
-                <div class="card border-0 shadow-sm rounded-4 mb-2">
+                <div class="card border-0 shadow-sm rounded-4 mb-3">
                     <div class="card-body p-4">
                         <div class="row align-items-center">
-                            <div class="col-12 col-xl-7 mb-3 mb-xl-0">
+                            <div class="col-12 col-xl-8 mb-3 mb-xl-0">
                                 <div class="d-flex align-items-center gap-3 mb-2">
                                     <h5 class="card-title text-dashboard fw-bold mb-0">Orden #' . str_pad($fila['idPedido'], 3, '0', STR_PAD_LEFT) . '</h5>
                                     <span class="badge ' . $estadoClase . ' px-3 py-2 rounded-pill">' . $fila['estadoPedido'] . '</span>
                                 </div>
                                 <hr class="text-light-subtle my-2">
                                 <div class="row mt-3">
-                                    <div class="col-sm-4 mb-2 mb-sm-0">
-                                        <p class="mb-1 text-muted small">Cliente</p>
-                                        <p class="fw-semibold mb-0"><i class="bi bi-person-fill text-secondary"></i> ' . $fila['nombreCli'] . ' ' . $fila['apellidoCli'] . '</p>
+                                    <div class="col-sm-4 col-md-3 mb-2 mb-sm-0">
+                                        <p class="mb-1 text-muted small fw-bold">Cliente</p>
+                                        <p class="mb-1 fw-semibold"><i class="bi bi-person-fill text-secondary"></i> ' . $fila['nombreCli'] . ' ' . $fila['apellidoCli'] . '</p>
+                                        <p class="mb-1 small text-muted"><i class="bi bi-card-text text-secondary"></i> Cédula: ' . $fila['cedulaCli'] . '</p>
+                                        <p class="mb-0 small text-muted"><i class="bi bi-telephone-fill text-secondary"></i> Tel: ' . $fila['tlfCli'] . '</p>
                                     </div>
-                                    <div class="col-sm-4 mb-2 mb-sm-0">
-                                        <p class="mb-1 text-muted small">Cuenta</p>
-                                        <p class="fw-semibold mb-0"><i class="bi bi-bank text-secondary"></i> ' . $bancoTexto . '</p>
+                                    <div class="col-sm-4 col-md-3 mb-2 mb-sm-0">
+                                        <p class="mb-1 text-muted small fw-bold">Cuenta</p>
+                                        <p class="mb-1 fw-semibold"><i class="bi bi-bank text-secondary"></i> ' . $bancoTexto . '</p>';
+                if ($fila['idCuenta']) {
+                    $html .= '<p class="mb-0 small text-muted"><i class="bi bi-tag text-secondary"></i> ' . $fila['tipoCuenta'] . '</p>';
+                }
+                $html .= '
                                     </div>
-                                    <div class="col-sm-4">
-                                        <p class="mb-1 text-muted small">Detalle del pedido</p>
-                                        <p class="mb-0 text-truncate" title="' . $listaDetallesPlain . '">' . $listaDetallesHtml . '</p>
+                                    <div class="col-sm-4 col-md-6">
+                                        <p class="mb-1 text-muted small fw-bold">Detalle del pedido</p>
+                                        <p class="mb-0 small text-muted" title="' . $listaDetallesPlain . '">' . $listaDetallesHtml . '</p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-xl-5 d-flex justify-content-xl-end justify-content-between align-items-center gap-3 border-start-xl ps-xl-4">
+                            <div class="col-12 col-xl-4 d-flex justify-content-xl-end justify-content-between align-items-center gap-3 border-start-xl ps-xl-4">
                                 <div class="text-start text-xl-end mb-sm-0">
                                     <p class="text-muted small mb-0">Total</p>
                                     <h4 class="text-success fw-bold mb-0">$' . number_format($fila['precioTotal'], 2) . '</h4>
                                 </div>
-                                <div>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2 mb-2 w-100" onclick="pone(' . $fila['idPedido'] . ')" title="Editar">
+                                <div style="width: 120px;">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center gap-2 mb-2 w-100" onclick="pone(' . $fila['idPedido'] . ')" title="Editar">
                                         <i class="bi bi-pencil-square"></i> Editar
                                     </button>
-                                    <button type="button" class="btn btn-outline-danger btn-sm d-flex align-items-center gap-2 w-100" onclick="eliminar(' . $fila['idPedido'] . ')" title="Eliminar">
+                                    <button type="button" class="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center gap-2 w-100" onclick="eliminar(' . $fila['idPedido'] . ')" title="Eliminar">
                                         <i class="bi bi-trash-fill"></i> Eliminar
                                     </button>
                                 </div>

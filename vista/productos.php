@@ -24,22 +24,12 @@
                         <p class="text-muted mb-0">¡Hola, esta es la sección de Productos!</p>
                     </div>
                 </div>
-
                 <div class="d-flex flex-wrap gap-2 justify-content-md-end">
                     <button class="btn btn-crear d-flex align-items-center gap-2" onclick="nuevoProducto()" id="btn_agregar_prod">
                         <i class="bi bi-plus-circle fs-5"></i>
                         <span class="d-none d-sm-inline">Agregar Producto</span>
                     </button>
-
-                    <button class="btn btn-crear d-flex align-items-center gap-2" style="background-color: #0d6efd !important; display:none;" id="btn_regresar_cat" onclick="cargarCategorias()">
-                        <i class="bi bi-arrow-left-circle fs-5"></i>
-                        <span class="d-none d-sm-inline">Regresar</span>
-                    </button>
-
-                    <a href="?pagina=categorias" class="btn btn-crear d-flex align-items-center gap-2" id="btn_gestionar_cat" style="background-color: #198754 !important;">
-                        <i class="bi bi-tags fs-5"></i>
-                        <span class="d-none d-sm-inline">Gestionar Categorías</span>
-                    </a>
+                    <div id="contenedor_botones_header" class="d-flex"></div>
                 </div>
             </div>
 

@@ -2,8 +2,7 @@ var categoriaActual = null;
 
 $(document).ready(function () {
     try {
-        cargarCategorias();
-        llenarSelectCategorias();
+        cargarDatosCategorias();
     } catch (e) {
         console.error(e);
     }
@@ -134,15 +133,13 @@ $(document).ready(function () {
     });
 });
 
-function cargarCategorias() {
+function cargarDatosCategorias() {
     categoriaActual = null;
     $("#titulo_seccion").html('<i class="bi bi-egg-fried"></i> Productos');
     $("#subtitulo_seccion").text("Categorías:");
-    $("#btn_regresar_cat").hide();
-    $("#btn_gestionar_cat").show();
 
     let datos = new FormData();
-    datos.append("accion", "listar_categorias");
+    datos.append("accion", "obtener_datos_categorias");
     enviaAjax(datos);
 }
 
@@ -150,18 +147,10 @@ function verCategoria(id, nombre) {
     categoriaActual = id;
     $("#titulo_seccion").text(nombre);
     $("#subtitulo_seccion").text("Productos de esta categoría:");
-    $("#btn_regresar_cat").show();
-    $("#btn_gestionar_cat").hide();
 
     let datos = new FormData();
     datos.append("accion", "listar_productos");
     datos.append("idCategoria", id);
-    enviaAjax(datos);
-}
-
-function llenarSelectCategorias() {
-    let datos = new FormData();
-    datos.append("accion", "cargar_select_categorias");
     enviaAjax(datos);
 }
 
@@ -177,14 +166,7 @@ function nuevoProducto() {
     $("#modal_producto").modal("show");
 }
 
-function pone(
-    codigoProd,
-    nombreProd,
-    precioProd,
-    descProd,
-    fotoProd,
-    idCategoria,
-) {
+function pone(codigoProd, nombreProd, precioProd, descProd, fotoProd, idCategoria) {
     $("#codigoOrig").val(codigoProd);
     $("#codigoProd").val(codigoProd);
     $("#nombreProd").val(nombreProd);
@@ -194,7 +176,7 @@ function pone(
     $("#idCategoria_select").val(idCategoria);
 
     $("#modal_producto_label").text("Modificar Producto");
-    $("#btn_guardar_prod").text("modificar");
+    $("#btn_guardar_prod").text('modificar');
     $("#modal_producto").modal("show");
 }
 
@@ -298,19 +280,20 @@ function enviaAjax(datos) {
         data: datos,
         processData: false,
         cache: false,
-        beforeSend: function () {},
+        beforeSend: function () { },
         timeout: 10000,
         success: function (respuesta) {
             console.log(respuesta);
             try {
                 var lee = JSON.parse(respuesta);
 
-                if (lee.resultado == "listar_categorias") {
-                    $("#cuadricula_items").html(lee.mensaje);
+                if (lee.resultado == "categorias_completas") {
+                    $("#cuadricula_items").html(lee.cards);
+                    $("#idCategoria_select").html(lee.select);
+                    $("#contenedor_botones_header").html(lee.boton);
                 } else if (lee.resultado == "listar_productos") {
                     $("#cuadricula_items").html(lee.mensaje);
-                } else if (lee.resultado == "cargar_select_categorias") {
-                    $("#idCategoria_select").html(lee.mensaje);
+                    $("#contenedor_botones_header").html(lee.boton);
                 } else if (lee.resultado == "incluir") {
                     mostrarMensaje(lee.mensaje);
                     if (lee.mensaje == "Producto incluido.") {
@@ -321,7 +304,7 @@ function enviaAjax(datos) {
                                 $("#titulo_seccion").text(),
                             );
                         } else {
-                            cargarCategorias();
+                            cargarDatosCategorias();
                         }
                     }
                 } else if (lee.resultado == "modificar") {
@@ -334,19 +317,20 @@ function enviaAjax(datos) {
                                 $("#titulo_seccion").text(),
                             );
                         } else {
-                            cargarCategorias();
+                            cargarDatosCategorias();
                         }
                     }
                 } else if (lee.resultado == "eliminar") {
                     mostrarMensaje(lee.mensaje);
                     if (lee.mensaje == "Producto eliminado.") {
+                        $("#modal_eliminar").modal("hide");
                         if (categoriaActual !== null) {
                             verCategoria(
                                 categoriaActual,
                                 $("#titulo_seccion").text(),
                             );
                         } else {
-                            cargarCategorias();
+                            cargarDatosCategorias();
                         }
                     }
                 } else if (lee.resultado == "buscar") {
@@ -365,7 +349,7 @@ function enviaAjax(datos) {
                 mostrarMensaje("ERROR: <br/>" + request + status + err);
             }
         },
-        complete: function () {},
+        complete: function () { },
     });
 }
 

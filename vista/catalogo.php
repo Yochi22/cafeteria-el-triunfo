@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<?php require_once("comunes/encabezado.php"); ?>
+<?php require_once("comunes/menu_usuario.php"); ?>
+
+<body>
+    <main>
+        <div class="container-fluid p-0 px-md-5 mb-5">
+            <div class="row g-0 mb-4">
+                <div class="col-12">
+                    <div class="hero-banner-single rounded-4 overflow-hidden position-relative shadow-sm" style="background-color: #FF8C00;">
+                        <img src="img/imagen.jpeg" class="hero-img img-fluid w-100 rounded-4" style="height: 320px; object-fit: cover; object-position: center bottom;" alt="Banner principal">
+                    </div>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-12 col-lg-3">
+                    <div class="sticky-top" style="top: 20px;">
+
+                        <div class="card border-0 shadow-sm rounded-4 p-3 mb-4 bg-white">
+                            <h5 class="fw-bold mb-3 px-2 text-dark">Categorías</h5>
+                            <div class="list-group list-group-flush gap-1" id="contenedor_categorias">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="col-12 col-lg-9">
+
+                    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3 bg-white p-3 rounded-4 shadow-sm">
+                        <div>
+                            <h3 id="titulo_categoria_activo" class="fw-bold text-dark mb-1">Todos los productos</h3>
+                        </div>
+
+                        <div class="input-group bg-light border rounded-3 px-2 py-1 align-items-center w-auto shadow-none" style="max-width: 280px;">
+                            <button class="btn p-0 border-0 link-secondary me-2" type="button" id="btnBuscar">
+                                <i class="bi bi-search"></i>
+                            </button>
+                            <input type="text" id="valorBusqueda" name="valorBusqueda" class="form-control border-0 shadow-none bg-transparent form-control-sm" placeholder="Buscar platillo...">
+                        </div>
+                    </div>
+                    <div id="cuadricula_items" class="d-flex flex-column gap-3">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Modal para anadir a carrito -->
+    <div class="modal fade" id="modalDetalleProducto" tabindex="-1" aria-labelledby="modalDetalleLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-dashboard" id="modalDetalleLabel">Detalle del Producto</h5>
+                    <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 pt-2">
+                    <input type="hidden" id="modal-id-producto">
+                    <div class="row g-4 align-items-center">
+                        <div class="col-md-6 text-center">
+                            <img id="modal-img" src="" class="img-fluid rounded-4 shadow-sm w-100 object-fit-cover" style="max-height: 280px;" alt="Producto">
+                        </div>
+                        <div class="col-md-6">
+                            <h3 id="modal-titulo" class="fw-bold text-dark mb-2">Nombre del Producto</h3>
+                            <p id="modal-descripcion" class="text-muted small mb-4">Descripción detallada...</p>
+
+                            <div class="mb-4">
+                                <span class="fs-4 fw-bold text-success" id="modal-precio">$0.00</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-3 mb-4">
+                                <span class="fw-semibold text-secondary small">Cantidad:</span>
+                                <div class="d-flex align-items-center border rounded-pill px-3 py-1 bg-light" style="border-color: #FF8C00 !important;">
+                                    <button type="button" class="btn btn-sm p-0 border-0 text-dark" onclick="cambiarCantidadModal(-1)">
+                                        <i class="bi bi-dash fs-5" style="color: #FF8C00;"></i>
+                                    </button>
+                                    <span id="modal-cantidad" class="fw-bold mx-3 fs-5" style="color: #FF8C00;">1</span>
+                                    <button type="button" class="btn btn-sm p-0 border-0 text-dark" onclick="cambiarCantidadModal(1)">
+                                        <i class="bi bi-plus fs-5" style="color: #FF8C00;"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn w-100 rounded-pill py-2 fw-bold shadow-sm text-white" style="background-color: #FF8C00 !important; border-color: #FF8C00 !important;" id="modal-btn-agregar">
+                                <i class="bi bi-cart-plus me-2"></i> Agregar al carrito
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALES DE CARRITO Y PAGO -->
+    <!-- Carrito -->
+    <div class="modal fade" id="carritoModal" tabindex="-1" aria-labelledby="carritoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content border-0 rounded-4 shadow-lg">
+
+                <!-- Encabezado modal -->
+                <div class="modal-header border-bottom px-4 py-3">
+                    <h5 class="modal-title fw-bold" id="carritoModalLabel">
+                        <i class="bi bi-cart-fill me-2 text-orange"></i>Tu Carrito de Compras
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Cuerpo del Modal -->
+                <div class="modal-body p-4 bg-light">
+                    <div class="row g-4">
+
+                        <!-- Aquí van los productos -->
+                        <div class="col-lg-8">
+                            <div class="row g-3" id="contenedorCarrito">
+                            </div>
+                        </div>
+
+                        <!-- Aquí va el precio y detalles del pedido -->
+                        <div class="col-lg-4">
+                            <div class="card border-0 rounded-4 shadow-sm p-4 bg-white sticky-lg-top" style="top: 20px;">
+                                <h5 class="fw-bold mb-4">Resumen del Pedido</h5>
+
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="text-muted fw-semibold">Subtotal</span>
+                                    <span class="fw-bold text-dark" id="subtotalCompra">$0.00</span>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-3">
+                                    <span class="text-muted fw-semibold">Costo de Envío (Delivery)</span>
+                                    <span class="fw-bold text-dark">$0.00</span>
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mb-4">
+                                    <span class="fw-bold fs-5 text-brown">Costo Total</span>
+                                    <span class="fw-bold fs-5 text-dark" id="costoTotal">$0.00</span>
+                                </div>
+
+                                <!-- Botón para pasar al siguiente modal -->
+                                <button class="btn btn-warning text-white btn-lg w-100 rounded-3 fw-bold shadow-sm" style="background-color: #ff8c00; border: none;" data-bs-toggle="modal" data-bs-target="#pagoModal">
+                                    Procesar Pago
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Pago -->
+    <div class="modal fade" id="pagoModal" tabindex="-1" aria-labelledby="pagoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content border-0 rounded-4 shadow-lg">
+
+                <!-- Encabezado modal -->
+                <div class="modal-header border-bottom px-4 py-3">
+                    <h5 class="modal-title fw-bold" id="pagoModalLabel">
+                        <i class="bi bi-cart-fill me-2 text-orange"></i>Procesar Compra
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Cuerpo modal -->
+                <div class="modal-body px-4 px-md-5 pt-2 pb-4">
+                    <p class="small mb-4" style="opacity: 0.5;">Introduzca sus datos. Este es un registro único, te recordaremos en tu próxima compra. :)</p>
+                    <div class="row g-3"></div>
+                    <form id="f">
+                        <input type="hidden" id="accion" name="accion">
+
+                        <!-- Datos de cliente -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="nombreCli" class="form-label text-muted small fw-bold">Nombre</label>
+                                <input type="text" class="form-control rounded-3" id="nombreCli" name="nombreCli" required>
+                                <span id="snombreCli" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="apellidoCli" class="form-label text-muted small fw-bold">Apellido</label>
+                                <input type="text" class="form-control rounded-3" id="apellidoCli" name="apellidoCli" required>
+                                <span id="sapellidoCli" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="cedulaCli" class="form-label text-muted small fw-bold">Cédula</label>
+                                <input type="text" class="form-control rounded-3" id="cedulaCli" name="cedulaCli" required>
+                                <span id="scedulaCli" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="tlfCli" class="form-label text-muted small fw-bold">Teléfono</label>
+                                <input type="text" class="form-control rounded-3" id="tlfCli" name="tlfCli" required>
+                                <span id="stlfCli" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <!-- Datos del pago móvil -->
+                        <hr>
+                        <p class="small mb-4" style="opacity: 0.5;">Seleccione una cuenta, realice el pago móvil / transferencia e introduzca la referencia.</p>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="cuentaDestino" class="form-label">Cuenta destino</label>
+                                <select class="form-select" id="cuentaDestino" name="cuentaDestino">
+                                    <option value="">Seleccione...</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="refPago" class="form-label text-muted small fw-bold">Últimos 4 digitos de la referencia</label>
+                                <input type="text" class="form-control rounded-3" id="refPago" name="refPago" required>
+                                <span id="srefPago" class="text-danger small"></span>
+                            </div>
+
+                            <div class="d-grid mt-4">
+                                <button type="button" class="btn btn-crear w-100 mt-3" id="btnGuardar">Hacer Pedido!</button>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal con info de cuenta -->
+    <div class="modal fade" id="modalCuentaCli" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content border-0 rounded-4 shadow text-center p-3">
+                <i class="bi bi-bank fs-1" style="color: #ff8c00;"></i>
+                <h6 class="fw-bold text-dashboard mt-2">Datos de la Cuenta</h6>
+                <div class="modal-body text-start" id="modalCuentaCliCont"> </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Llamada del modal de confirmación de eliminación -->
+    <?php require_once("comunes/modal_eliminar.php"); ?>
+
+    <!-- Llamada a archivo modal.php, dentro de él hay una sección modal -->
+    <?php require_once("comunes/modal.php"); ?>
+
+    <script src="js/catalogo.js"></script>
+</body>
+
+</html>
