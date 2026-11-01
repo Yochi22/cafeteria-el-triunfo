@@ -80,7 +80,7 @@ class menu extends datos
                             </div>
                             <div class="col-12 col-md-3 text-end mt-3 mt-md-0">
                                 <button class="btn btn-sm rounded-pill px-3 py-2 fw-bold w-100 shadow-sm" style="color: #FF8C00; border: 1px solid #FF8C00;" onclick="abrirModalDetalle(\'' . $codigoProd . '\', \'' . $nombreProd . '\', \'' . $descProd . '\', ' . $precioProd . ', \'' . $fotoProd . '\')">
-                                    <i class="bi bi-eye me-1"></i> Agregar al carrito
+                                    <i class="bi bi-cart2"></i> Agregar al carrito
                                 </button>
                             </div>
                         </div>
@@ -275,7 +275,10 @@ class menu extends datos
             $r['subtotal'] = number_format($subtotalGeneral, 2, '.', '');
         } else {
             $r['resultado'] = 'cargarCarrito';
-            $r['mensaje']  = '<div class="col-12 text-center py-4 text-muted"><p>Tu carrito está vacío.</p></div>';
+            $r['mensaje']  = '<div class="col-12 text-center py-4 text-dashboard">
+                                <i class="bi bi-cart-x fs-1 mb-2" style="color: #FF8C00;"></i>
+                                <p class="mb-0 fw-semibold">Tu carrito está vacío.</p>
+                            </div>';
             $r['subtotal'] = '0.00';
         }
 

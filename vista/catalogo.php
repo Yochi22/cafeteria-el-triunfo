@@ -4,12 +4,12 @@
 <?php require_once("comunes/menu_usuario.php"); ?>
 
 <body>
-    <main>
+    <main class="bg-light">
         <div class="container-fluid p-0 px-md-5 mb-5">
             <div class="row g-0 mb-4">
                 <div class="col-12">
                     <div class="hero-banner-single rounded-4 overflow-hidden position-relative shadow-sm" style="background-color: #FF8C00;">
-                        <img src="img/imagen.jpeg" class="hero-img img-fluid w-100 rounded-4" style="height: 320px; object-fit: cover; object-position: center bottom;" alt="Banner principal">
+                        <img src="img/imagen1.jpg" class="hero-img img-fluid w-100 rounded-4" style="height: 320px; object-fit: cover; object-position: center bottom;" alt="Banner principal">
                     </div>
                 </div>
             </div>
@@ -17,9 +17,19 @@
                 <div class="col-12 col-lg-3">
                     <div class="sticky-top" style="top: 20px;">
 
-                        <div class="card border-0 shadow-sm rounded-4 p-3 mb-4 bg-white">
-                            <h5 class="fw-bold mb-3 px-2 text-dark">Categorías</h5>
-                            <div class="list-group list-group-flush gap-1" id="contenedor_categorias">
+                        <div class="d-lg-none mb-3">
+                            <button class="btn w-100 d-flex justify-content-between align-items-center rounded-3 py-2 px-3 shadow-sm bg-white"
+                                type="button" data-bs-toggle="collapse" data-bs-target="#menuRes" aria-expanded="false" aria-controls="menuRes">
+                                <span class="fw-bold text-dashboard"><i class="bi bi-list me-2 fs-5"></i> Categorías</span>
+                            </button>
+                        </div>
+
+                        <div class="collapse d-lg-block" id="menuRes">
+                            <div class="card border-0 shadow-sm rounded-4 p-3 mb-4 bg-white">
+                                <h5 class="fw-bold mb-3 px-2 text-dashboard d-none d-lg-block">Categorías</h5>
+                                <div class="list-group list-group-flush gap-1" id="contenedor_categorias">
+
+                                </div>
                             </div>
                         </div>
 

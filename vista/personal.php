@@ -8,42 +8,42 @@
 
         <main class="main-content w-100 p-4">
 
-            <div class="d-flex align-items-center">
-                <button class="btn btn-outline-dark d-md-none me-3 border-0"
-                    id="btn-toggle-sidebar"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#sidebarMenu"
-                    aria-controls="sidebarMenu"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation">
-                    <i class="bi bi-list" style="font-size: 2rem;"></i>
-                </button>
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-outline-dark d-md-none me-3 border-0"
+                        id="btn-toggle-sidebar"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#sidebarMenu"
+                        aria-controls="sidebarMenu"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+                        <i class="bi bi-list" style="font-size: 2rem;"></i>
+                    </button>
 
-                <div>
-                    <h2 class="text-dashboard"><i class="bi bi-file-person"></i> Personal</h2>
-                    <p class="text-muted">¡Bienvenido al apartado de personal de la Cafetería El Triunfo!</p>
+                    <div>
+                        <h2 class="text-dashboard"><i class="bi bi-file-person"></i> Personal</h2>
+                        <p class="text-muted">¡Bienvenido al apartado de personal de la Cafetería El Triunfo!</p>
+                    </div>
                 </div>
-            </div>
-
-            <div class="row">
-                <div class="col">
-                    <hr class="border border-secundary">
-                </div>
-            </div>
-
-
-            <div class="col-12 d-flex justify-content-end mb-3">
 
                 <button type="button" id="incluir" class="btn btn-crear" data-bs-toggle="modal" data-bs-target="#modal_personal">
                     <i class="bi bi-plus-circle fs-5"></i> Agregar Personal
                 </button>
+            </div>
 
+            <hr class="text-secondary mb-4">
+
+
+            <div class="col-12 d-flex justify-content mb-3">
+                <!-- Botón de búsqueda -->
                 <div class="col-md-4 ms-3">
-                    <div class="input-group bg-white border rounded-3 px-2 py-2 align-items-center">
-                        <input type="text" id="valorBusqueda" name="valorBusqueda" class="form-control border-0 py-0 py-2 shadow-none" placeholder="Buscar personal...">
+                    <div class="input-group bg-white border rounded-3 align-items-center shadow-sm h-100 px-2 py-1">
+                        <button class="btn p-0 border-0 link-secondary" type="button" id="btnBuscar">
+                            <i class="bi bi-search"></i>
+                        </button>
+                        <input type="text" id="valorBusqueda" name="valorBusqueda" class="form-control border-0 py-0 py-2 shadow-none" placeholder="Buscar cliente...">
                     </div>
                 </div>
-
             </div>
 
             <div class="table-responsive rounded-3 shadow-sm">
