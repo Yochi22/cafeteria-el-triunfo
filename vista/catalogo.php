@@ -78,8 +78,10 @@
                             <p id="modal-descripcion" class="text-muted small mb-4">Descripción detallada...</p>
 
                             <div class="mb-4">
-                                <span class="fs-4 fw-bold text-success" id="modal-precio">$0.00</span>
+                                <span class="fs-4 fw-bold text-success" id="modal-precioBs">Bs. 0,00</span>
+                                <span class="small text-muted fw-bold ms-2" id="modal-precio">($0.00)</span>
                             </div>
+                            
                             <div class="d-flex align-items-center gap-3 mb-4">
                                 <span class="fw-semibold text-secondary small">Cantidad:</span>
                                 <div class="d-flex align-items-center border rounded-pill px-3 py-1 bg-light" style="border-color: #FF8C00 !important;">
@@ -134,7 +136,10 @@
 
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <span class="text-muted fw-semibold">Subtotal</span>
-                                    <span class="fw-bold text-dark" id="subtotalCompra">$0.00</span>
+                                        <div class="text-end">
+                                            <span class="fw-bold text-dark fw-bold" id="subtotalCompraBs">Bs. 0,00</span>
+                                            <div class="small text-muted fw-bold" id="subtotalCompra">$0.00</div>
+                                        </div>
                                 </div>
 
                                 <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-3">
@@ -144,7 +149,10 @@
 
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <span class="fw-bold fs-5 text-brown">Costo Total</span>
-                                    <span class="fw-bold fs-5 text-dark" id="costoTotal">$0.00</span>
+                                        <div class="text-end">
+                                            <span class="fw-bold text-dark fw-bold" id="montoTotalBs">Bs. 0,00</span>
+                                            <div class="small text-muted fw-bold" id="montoTotal">$0.00</div>
+                                        </div>
                                 </div>
 
                                 <!-- Botón para pasar al siguiente modal -->
