@@ -12,7 +12,7 @@ if (is_file("vista/" . $pagina . ".php")) {
         $accion = $_POST['accion'];
         switch ($accion) {
             case 'incluir':
-                echo json_encode($o->incluir($_POST['idCliente'], $_POST['idCuenta'], $_POST['idProducto'], $_POST['cantidad'], $_POST['precio']));
+                echo json_encode($o->incluir($_POST['idCliente'], $_POST['idCuenta'], $_POST['idProducto'], $_POST['cantidad'], $_POST['precio'], $_POST['numComprobante']));
                 break;
             case 'consultar':
                 $estadoFiltro = isset($_POST['estadoFiltro']) ? $_POST['estadoFiltro'] : 'Todos';
@@ -31,7 +31,7 @@ if (is_file("vista/" . $pagina . ".php")) {
                 echo json_encode($o->listadoDeProductos());
                 break;
             case 'modificar':
-                echo json_encode($o->modificar($_POST['idPedido'], $_POST['idCliente'], $_POST['idCuenta'], $_POST['estadoPedido'], $_POST['idProducto'], $_POST['cantidad'], $_POST['precio']));
+                echo json_encode($o->modificar($_POST['idPedido'], $_POST['idCliente'], $_POST['idCuenta'], $_POST['estadoPedido'], $_POST['idProducto'], $_POST['cantidad'], $_POST['precio'], $_POST['numComprobante']));
                 break;
             case 'eliminar':
                 echo json_encode($o->eliminar($_POST['idPedido']));

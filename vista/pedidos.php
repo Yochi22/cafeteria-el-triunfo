@@ -68,7 +68,11 @@
                             </div>
                         </div>
 
-                        <div class="row mb-4">
+                        <div class="row mb-3">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label class="form-label text-muted small fw-bold">Número de Comprobante / Referencia (Opcional)</label>
+                                <input type="text" class="form-control rounded-3 bg-light border-secondary-subtle" id="numComprobante" name="numComprobante" placeholder="Ej: 12345678">
+                            </div>
                             <div class="col-md-6 mb-3 mb-md-0" id="divEstadoPedido" style="display: none;">
                                 <label class="form-label text-muted small fw-bold">Estado del Pedido</label>
                                 <select class="form-select rounded-3 bg-light border-secondary-subtle" id="estadoPedido" name="estadoPedido">
@@ -77,8 +81,11 @@
                                     <option value="Cancelado">Cancelado</option>
                                 </select>
                             </div>
-                            <div class="col-md-6 d-flex align-items-end ms-auto">
-                                <button class="btn btn-success w-100 py-2" type="button" id="btnBuscarProducto"><i class="bi bi-cart-plus"></i> Añadir Producto al Pedido</button>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-12 d-flex justify-content-end">
+                                <button class="btn btn-success py-2" type="button" id="btnBuscarProducto"><i class="bi bi-cart-plus"></i> Añadir Producto al Pedido</button>
                             </div>
                         </div>
 

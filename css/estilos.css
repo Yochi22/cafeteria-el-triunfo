@@ -1,12 +1,12 @@
 :root {
-    --sidebar-bg: #FF8C00;
-    --card-brown: #9E5C31;
-    --text-brown: #7A3E1A;
+    --sidebar-bg: #ff8c00;
+    --card-brown: #9e5c31;
+    --text-brown: #7a3e1a;
 }
 
 body {
     background-color: #ffffff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 @media (min-width: 768px) {
@@ -133,7 +133,7 @@ h3,
 }
 
 .btn-crear {
-    background-color: #FF8C00;
+    background-color: #ff8c00;
     color: white;
     border: none;
     padding: 8px 30px;
@@ -148,13 +148,13 @@ h3,
 }
 
 .btn-crear:active {
-    background-color: #CC6F00 !important;
-    color: white !important; 
+    background-color: #cc6f00 !important;
+    color: white !important;
     outline: none !important;
 }
 
 .order-item {
-    background-color: #FFF9F5;
+    background-color: #fff9f5;
     border-radius: 8px;
     padding: 20px;
     margin-bottom: 20px;
@@ -175,10 +175,11 @@ h3,
     border-bottom-color: #ff7a2f;
 }
 
-
 /* imagen del login */
 .login-bg {
-    background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('../img/fondo.jpg');
+    background-image:
+        linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+        url("../img/fondo.jpg");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;

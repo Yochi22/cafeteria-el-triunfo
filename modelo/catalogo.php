@@ -79,8 +79,8 @@ class menu extends datos
                                 </div>
                             </div>
                             <div class="col-12 col-md-3 text-end mt-3 mt-md-0">
-                                <button class="btn btn-sm rounded-pill px-3 py-2 fw-bold w-100 shadow-sm" style="color: #FF8C00; border: 1px solid #FF8C00;" onclick="abrirModalDetalle(\'' . $codigoProd . '\', \'' . $nombreProd . '\', \'' . $descProd . '\', ' . $precioProd . ', \'' . $fotoProd . '\')">
-                                    <i class="bi bi-eye me-1"></i> Agregar al carrito
+                                <button class="btn btn-sm rounded-pill px-3 py-2 fw-bold w-100 shadow-sm" id="btnAbrirModalDetalle" style="color: #FF8C00; border: 1px solid #FF8C00;" onclick="abrirModalDetalle(\'' . $codigoProd . '\', \'' . $nombreProd . '\', \'' . $descProd . '\', ' . $precioProd . ', \'' . $fotoProd . '\')">
+                                    <i class="bi bi-cart2"></i> Agregar al carrito
                                 </button>
                             </div>
                         </div>
@@ -239,20 +239,21 @@ class menu extends datos
 
         if (!empty($carrito)) {
             foreach ($carrito as $index => $p) {
-                $subtotalItem = $p['precioProd'] * $p['cantidad'];
-                $subtotalGeneral += $subtotalItem;
+                $subtotalProd = $p['precioProd'] * $p['cantidad'];
+                $subtotalGeneral += $subtotalProd;
 
-                $html .= '
-                <div class="col-12 col-md-6">
-                    <div class="card border-0 rounded-4 shadow-sm h-100">
-                        <div class="card-body d-flex align-items-center p-3">
+                    $html .= '
+                    <div class="col-12 col-md-6 carritoContenido" data-precio="' . $p['precioProd'] . '" data-cantidad="1">
+                        <div class="card border-0 rounded-4 shadow-sm h-100">
+                            <div class="card-body d-flex align-items-center p-3">
                             <div class="me-3">
                                 <img src="' . $p['fotoProd'] . '" alt="' . $p['nombreProd'] . '" class="img-fluid rounded-3 shadow-sm" style="height: 90px; width: 90px; object-fit: cover;">
                             </div>
                             <div class="flex-grow-1">
                                 <h6 class="fw-bold mb-1">' . $p['nombreProd'] . '</h6>
                                 <div class="small fw-bold mb-2 text-success">
-                                    <i class="bi bi-star-fill text-warning"></i> $' . number_format($p['precioProd'], 2) . '
+                                    <i class="bi bi-star-fill text-warning"></i> <span class="precioProdBs">Bs. 0,00</span> 
+                                    <span class="text-muted ms-2 fw-bold" style="font-size: 0.8rem;">(' . '$' . number_format($p['precioProd'], 2) . ')</span>
                                 </div>
                                 <button class="btn btn-sm btn-light text-danger border px-2 py-1 shadow-sm btn-eliminar" data-index="' . $index . '">
                                     <i class="bi bi-trash me-1"></i>Eliminar
@@ -260,9 +261,9 @@ class menu extends datos
                             </div>
                             <div class="d-flex flex-column align-items-end ms-2 h-100 justify-content-center">
                                 <div class="d-flex flex-column align-items-center qty-controls p-1">
-                                    <button class="btn btn-sm text-secondary p-0 px-2" onclick="cambiarCantidadLocal(' . $index . ', -1)"><i class="bi bi-dash"></i></button>
-                                    <span class="fw-bold small my-1">' . $p['cantidad'] . '</span>
                                     <button class="btn btn-sm text-orange p-0 px-2" onclick="cambiarCantidadLocal(' . $index . ', 1)"><i class="bi bi-plus"></i></button>
+                                    <span class="fw-bold small my-1">' . $p['cantidad'] . '</span>
+                                    <button class="btn btn-sm text-secondary p-0 px-2" onclick="cambiarCantidadLocal(' . $index . ', -1)"><i class="bi bi-dash"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -275,7 +276,10 @@ class menu extends datos
             $r['subtotal'] = number_format($subtotalGeneral, 2, '.', '');
         } else {
             $r['resultado'] = 'cargarCarrito';
-            $r['mensaje']  = '<div class="col-12 text-center py-4 text-muted"><p>Tu carrito está vacío.</p></div>';
+            $r['mensaje']  = '<div class="col-12 text-center py-4 text-dashboard">
+                                <i class="bi bi-cart-x fs-1 mb-2" style="color: #FF8C00;"></i>
+                                <p class="mb-0 fw-semibold">Tu carrito está vacío.</p>
+                            </div>';
             $r['subtotal'] = '0.00';
         }
 
@@ -330,7 +334,7 @@ class menu extends datos
                     <p class="mb-1" id="copiarNum"><strong>Nro. de Cuenta:</strong> <span class="text-dark fw-bold">' . $cuenta['numCuenta'] . '</span></p>
                 </div>
                     <span class="text-muted small d-block">Monto a pagar:</span>
-                    <h4 class="text-success fw-bold mb-0">' . $montoTotal . '</h4>
+                    <h4 class="text-success fw-bold mb-0" id="copiarMonto">' . $montoTotal . '</h4>
                 </div>';
 
                 $r['resultado'] = 'mostrarDetalleCuenta';

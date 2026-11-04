@@ -89,8 +89,8 @@ class personal extends datos
                     $respuesta .= "<td>" . $fila['cedulaPer'] . "</td>";
                     $respuesta .= "<td>" . $fila['nombrePer'] . " " . $fila['apellidoPer'] . "</td>";
                     $respuesta .= "<td>";
-                    $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='pone(this)'><i class='bi bi-pencil-square'></i> Modificar</button>";
-                    $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i> Eliminar</button>";
+                    $respuesta .= "<button type='button' class='btn btn-outline-info btn-sm d-inline-flex align-items-center gap-1 my-1' onclick='pone(this)'><i class='bi bi-pencil-square'></i> Modificar</button>";
+                    $respuesta .= "<button type='button' class='btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1 m-1' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i> Eliminar</button>";
                     $respuesta .= "</td>";
                     $respuesta .= "</tr>";
                 }
@@ -196,8 +196,8 @@ class personal extends datos
                     $respuesta .= "<td>" . $fila['cedulaPer'] . "</td>";
                     $respuesta .= "<td>" . $fila['nombrePer'] . " " . $fila['apellidoPer'] . "</td>";
                     $respuesta .= "<td>";
-                    $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='pone(this)'><i class='bi bi-pencil-square'></i> Modificar</button>";
-                    $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i> Eliminar</button>";
+                    $respuesta .= "<button type='button' class='btn btn-outline-info btn-sm d-inline-flex align-items-center gap-1 my-1' onclick='pone(this)'><i class='bi bi-pencil-square'></i> Modificar</button>";
+                    $respuesta .= "<button type='button' class='btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1 m-1' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i> Eliminar</button>";
                     $respuesta .= "</td>";
                     $respuesta .= "</tr>";
                 }

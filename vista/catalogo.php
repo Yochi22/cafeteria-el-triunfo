@@ -4,12 +4,12 @@
 <?php require_once("comunes/menu_usuario.php"); ?>
 
 <body>
-    <main>
+    <main class="bg-light">
         <div class="container-fluid p-0 px-md-5 mb-5">
             <div class="row g-0 mb-4">
                 <div class="col-12">
                     <div class="hero-banner-single rounded-4 overflow-hidden position-relative shadow-sm" style="background-color: #FF8C00;">
-                        <img src="img/imagen.jpeg" class="hero-img img-fluid w-100 rounded-4" style="height: 320px; object-fit: cover; object-position: center bottom;" alt="Banner principal">
+                        <img src="img/imagen1.jpg" class="hero-img img-fluid w-100 rounded-4" style="height: 320px; object-fit: cover; object-position: center bottom;" alt="Banner principal">
                     </div>
                 </div>
             </div>
@@ -17,9 +17,19 @@
                 <div class="col-12 col-lg-3">
                     <div class="sticky-top" style="top: 20px;">
 
-                        <div class="card border-0 shadow-sm rounded-4 p-3 mb-4 bg-white">
-                            <h5 class="fw-bold mb-3 px-2 text-dark">Categorías</h5>
-                            <div class="list-group list-group-flush gap-1" id="contenedor_categorias">
+                        <div class="d-lg-none mb-3">
+                            <button class="btn w-100 d-flex justify-content-between align-items-center rounded-3 py-2 px-3 shadow-sm bg-white"
+                                type="button" data-bs-toggle="collapse" data-bs-target="#menuRes" aria-expanded="false" aria-controls="menuRes">
+                                <span class="fw-bold text-dashboard"><i class="bi bi-list me-2 fs-5"></i> Categorías</span>
+                            </button>
+                        </div>
+
+                        <div class="collapse d-lg-block" id="menuRes">
+                            <div class="card border-0 shadow-sm rounded-4 p-3 mb-4 bg-white">
+                                <h5 class="fw-bold mb-3 px-2 text-dashboard d-none d-lg-block">Categorías</h5>
+                                <div class="list-group list-group-flush gap-1" id="contenedor_categorias">
+
+                                </div>
                             </div>
                         </div>
 
@@ -68,8 +78,10 @@
                             <p id="modal-descripcion" class="text-muted small mb-4">Descripción detallada...</p>
 
                             <div class="mb-4">
-                                <span class="fs-4 fw-bold text-success" id="modal-precio">$0.00</span>
+                                <span class="fs-4 fw-bold text-success" id="modal-precioBs">Bs. 0,00</span>
+                                <span class="small text-muted fw-bold ms-2" id="modal-precio">($0.00)</span>
                             </div>
+                            
                             <div class="d-flex align-items-center gap-3 mb-4">
                                 <span class="fw-semibold text-secondary small">Cantidad:</span>
                                 <div class="d-flex align-items-center border rounded-pill px-3 py-1 bg-light" style="border-color: #FF8C00 !important;">
@@ -124,7 +136,10 @@
 
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <span class="text-muted fw-semibold">Subtotal</span>
-                                    <span class="fw-bold text-dark" id="subtotalCompra">$0.00</span>
+                                        <div class="text-end">
+                                            <span class="fw-bold text-dark fw-bold" id="subtotalCompraBs">Bs. 0,00</span>
+                                            <div class="small text-muted fw-bold" id="subtotalCompra">$0.00</div>
+                                        </div>
                                 </div>
 
                                 <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-3">
@@ -134,7 +149,10 @@
 
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <span class="fw-bold fs-5 text-brown">Costo Total</span>
-                                    <span class="fw-bold fs-5 text-dark" id="costoTotal">$0.00</span>
+                                        <div class="text-end">
+                                            <span class="fw-bold text-dark fw-bold" id="montoTotalBs">Bs. 0,00</span>
+                                            <div class="small text-muted fw-bold" id="montoTotal">$0.00</div>
+                                        </div>
                                 </div>
 
                                 <!-- Botón para pasar al siguiente modal -->

@@ -57,12 +57,21 @@ function abrirModalDetalle(id, nombre, descripcion, precio, imagen) {
     $("#modal-id-producto").val(id);
     $("#modal-titulo").text(nombre);
     $("#modal-descripcion").text(descripcion);
-    $("#modal-precio").text("Bs. " + parseFloat(precio).toFixed(2));
-    // SE GUARDA EL PRECIO EN UN INPUT OCULTO!
+    $("#modal-precio").text("$ " + parseFloat(precio).toFixed(2));
+    // Se guarda el precio original en input oculto!!!
     $("#modal-precio").attr("precioOriginal", precio);
     $("#modal-img").attr("src", imagen);
     $("#modal-cantidad").text("1");
 
+    // calculo del precio en bs :)
+    let tasaDolar = parseFloat(localStorage.getItem('tasaDolar')) || 0;
+    let precioEnBs = parseFloat(precio) * tasaDolar;
+
+    if (tasaDolar > 0) {
+        $("#modal-precioBs").text(`Bs. ${precioEnBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
+    } else {
+        $("#modal-precioBs").text("Bs. 0,00 (Sin tasa)");
+    }
     var modal = new bootstrap.Modal(
         document.getElementById("modalDetalleProducto"),
     );
@@ -153,6 +162,28 @@ function actualizarContadorCarrito() {
     $("#contador-carrito").text(totalUnidades);
 }
 
+function actualizarPreciosEnBs() {
+    let tasaDolar = parseFloat(localStorage.getItem('tasaDolar')) || 0;
+    if (tasaDolar <= 0) return;
+
+        $('#contenedorCarrito .carritoContenido').each(function() {
+            let precioUsd = parseFloat($(this).attr('data-precio')) || 0;
+            let cantidad = parseInt($(this).attr('data-cantidad')) || 1;
+            let totalItemBs = precioUsd * cantidad * tasaDolar;
+
+            $(this).find('.precioProdBs').text(`Bs. ${totalItemBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
+        });
+
+    let subtotalTexto = $('#subtotalCompra').text().replace('$', '').trim();
+    let subtotalUsd = parseFloat(subtotalTexto) || 0;
+    let totalGeneralBs = subtotalUsd * tasaDolar;
+
+    let formatoBs = `Bs. ${totalGeneralBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    
+    $('#subtotalCompraBs').text(formatoBs);
+    $('#montoTotalBs').text(formatoBs);
+}
+
 function cambiarCantidadLocal(index, cambio) {
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
@@ -183,7 +214,7 @@ $("#cuentaDestino").on("change", function () {
     let idCuenta = $(this).val();
     if (!idCuenta) return;
 
-    let montoTotal = $("#subtotalCompra").text() || "0.00";
+    let montoTotal = $("#montoTotalBs").text() || "0.00";
 
     var datos = new FormData();
     datos.append("accion", "detalleCuenta");
@@ -205,13 +236,13 @@ $(document).on("click", "#btnCopiarDatos", function () {
     let cedula = $("#copiarCedula").text();
     let telefono = $("#copiarTlfn").text();
     let cuenta = $("#copiarNum").text();
+    let montoTotal = $("#copiarMonto").text();
 
-    navigator.clipboard
-        .writeText(
-            banco + "\n" + cedula + "\n" + telefono + "\n" + "\n" + cuenta,
-        )
+    navigator.clipboard.writeText(banco + "\n" + cedula + "\n" + telefono + "\n" + cuenta + "\n" + montoTotal,)
         .then(() => {
-            alert("¡Texto copiado al portapapeles!");
+            mostrarNotificacion("¡Texto copiado al portapapeles!");
+            $("#modalCuentaCli").modal("hide");
+            
         })
         .catch((err) => {
             console.error("Error al copiar:", err);
@@ -385,8 +416,9 @@ function enviaAjax(datos) {
                     $("#contenedorCarrito").html(lee.mensaje);
                     if (lee.subtotal !== undefined) {
                         $("#subtotalCompra").text("$" + lee.subtotal);
-                        $("#costoTotal").text("$" + lee.subtotal);
+                        $("#montoTotal").text("$" + lee.subtotal);
                     }
+                    actualizarPreciosEnBs();
                 } else if (lee.resultado == "cuentasCargadas") {
                     $("#cuentaDestino").html(lee.mensaje);
                 } else if (lee.resultado == "mostrarDetalleCuenta") {

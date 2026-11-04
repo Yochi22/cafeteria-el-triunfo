@@ -160,6 +160,7 @@ function limpia() {
     $("#idPedido").val("");
     $("#idCliente").val("");
     $("#idCuenta").val("");
+    $("#numComprobante").val("");
     $("#clienteInfo").val("");
     $("#cuentaInfo").val("");
     $("#detallesdeventa").empty();
@@ -208,6 +209,7 @@ function enviaAjax(datos) {
                     $("#clienteInfo").val(lee.clienteInfo);
                     $("#idCuenta").val(lee.idCuenta);
                     $("#cuentaInfo").val(lee.cuentaInfo);
+                    $("#numComprobante").val(lee.numComprobante);
                     $("#estadoPedido").val(lee.estadoPedido);
                     $("#detallesdeventa").html(lee.detalleHtml);
                     calculaTotal();

@@ -4,7 +4,7 @@ require_once("modelo/datos.php");
 
 class pedidos extends datos
 {
-    function incluir($idCliente, $idCuenta, $idProducto, $cantidad, $precio)
+    function incluir($idCliente, $idCuenta, $idProducto, $cantidad, $precio, $numComprobante)
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -18,12 +18,13 @@ class pedidos extends datos
                 $precioTotal += ($cantidad[$i] * $precio[$i]);
             }
 
-            $sqlPedido = "INSERT INTO pedidos (idCliente, idCuenta, precioTotal, estadoPedido) VALUES (:idCliente, :idCuenta, :precioTotal, 'En Proceso')";
+            $sqlPedido = "INSERT INTO pedidos (idCliente, idCuenta, precioTotal, numComprobante, estadoPedido) VALUES (:idCliente, :idCuenta, :precioTotal, :numComprobante, 'En Proceso')";
             $stmt = $co->prepare($sqlPedido);
             $stmt->execute([
                 ':idCliente' => $idCliente,
                 ':idCuenta' => empty($idCuenta) ? null : $idCuenta,
-                ':precioTotal' => $precioTotal
+                ':precioTotal' => $precioTotal,
+                ':numComprobante' => empty($numComprobante) ? null : $numComprobante
             ]);
 
             $idPedido = $co->lastInsertId();
@@ -105,6 +106,7 @@ class pedidos extends datos
                 }
 
                 $bancoTexto = $fila['idCuenta'] ? $fila['nombreBanco'] . ' - ' . substr($fila['numCuenta'], -4) : 'Sin cuenta asignada';
+                $comprobanteTexto = !empty($fila['numComprobante']) ? $fila['numComprobante'] : 'N/A';
 
                 $html .= '
                 <div class="card border-0 shadow-sm rounded-4 mb-3">
@@ -124,12 +126,12 @@ class pedidos extends datos
                                         <p class="mb-0 small text-muted"><i class="bi bi-telephone-fill text-secondary"></i> Tel: ' . $fila['tlfCli'] . '</p>
                                     </div>
                                     <div class="col-sm-4 col-md-3 mb-2 mb-sm-0">
-                                        <p class="mb-1 text-muted small fw-bold">Cuenta</p>
+                                        <p class="mb-1 text-muted small fw-bold">Cuenta / Comprobante</p>
                                         <p class="mb-1 fw-semibold"><i class="bi bi-bank text-secondary"></i> ' . $bancoTexto . '</p>';
                 if ($fila['idCuenta']) {
-                    $html .= '<p class="mb-0 small text-muted"><i class="bi bi-tag text-secondary"></i> ' . $fila['tipoCuenta'] . '</p>';
+                    $html .= '<p class="mb-1 small text-muted"><i class="bi bi-tag text-secondary"></i> ' . $fila['tipoCuenta'] . '</p>';
                 }
-                $html .= '
+                $html .= '              <p class="mb-0 small text-muted"><i class="bi bi-file-earmark-text text-secondary"></i> N° Compr: ' . $comprobanteTexto . '</p>
                                     </div>
                                     <div class="col-sm-4 col-md-6">
                                         <p class="mb-1 text-muted small fw-bold">Detalle del pedido</p>
@@ -176,7 +178,7 @@ class pedidos extends datos
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         try {
-            $stmt = $co->prepare("SELECT p.idPedido, p.idCliente, p.idCuenta, p.estadoPedido, c.cedulaCli, c.nombreCli, c.apellidoCli, cu.nombreBanco, cu.numCuenta FROM pedidos p INNER JOIN clientes c ON p.idCliente = c.idCliente LEFT JOIN cuentas cu ON p.idCuenta = cu.idCuenta WHERE p.idPedido = :idPedido");
+            $stmt = $co->prepare("SELECT p.idPedido, p.idCliente, p.idCuenta, p.numComprobante, p.estadoPedido, c.cedulaCli, c.nombreCli, c.apellidoCli, cu.nombreBanco, cu.numCuenta FROM pedidos p INNER JOIN clientes c ON p.idCliente = c.idCliente LEFT JOIN cuentas cu ON p.idCuenta = cu.idCuenta WHERE p.idPedido = :idPedido");
             $stmt->execute([':idPedido' => $idPedido]);
             $datosPedido = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -212,6 +214,7 @@ class pedidos extends datos
                 "clienteInfo" => $datosPedido['cedulaCli'] . " - " . $datosPedido['nombreCli'] . " " . $datosPedido['apellidoCli'],
                 "idCuenta" => $datosPedido['idCuenta'],
                 "cuentaInfo" => $cuentaInfo,
+                "numComprobante" => $datosPedido['numComprobante'],
                 "estadoPedido" => $datosPedido['estadoPedido'],
                 "detalleHtml" => $detalleHtml
             );
@@ -313,7 +316,7 @@ class pedidos extends datos
         return $r;
     }
 
-    function modificar($idPedido, $idCliente, $idCuenta, $estadoPedido, $idProducto, $cantidad, $precio)
+    function modificar($idPedido, $idCliente, $idCuenta, $estadoPedido, $idProducto, $cantidad, $precio, $numComprobante)
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -327,11 +330,12 @@ class pedidos extends datos
                 $precioTotal += ($cantidad[$i] * $precio[$i]);
             }
 
-            $stmtP = $co->prepare("UPDATE pedidos SET idCliente = :idCliente, idCuenta = :idCuenta, precioTotal = :precioTotal, estadoPedido = :estadoPedido WHERE idPedido = :idPedido");
+            $stmtP = $co->prepare("UPDATE pedidos SET idCliente = :idCliente, idCuenta = :idCuenta, precioTotal = :precioTotal, numComprobante = :numComprobante, estadoPedido = :estadoPedido WHERE idPedido = :idPedido");
             $stmtP->execute([
                 ':idCliente' => $idCliente,
                 ':idCuenta' => empty($idCuenta) ? null : $idCuenta,
                 ':precioTotal' => $precioTotal,
+                ':numComprobante' => empty($numComprobante) ? null : $numComprobante,
                 ':estadoPedido' => $estadoPedido,
                 ':idPedido' => $idPedido
             ]);

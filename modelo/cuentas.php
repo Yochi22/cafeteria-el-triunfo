@@ -99,8 +99,8 @@ class cuentas extends datos
                     $respuesta .= "<td>" . $fila['tipoCuenta'] . "</td>";
                     $respuesta .= "<td>" . $fila['numCuenta'] . "</td>";
                     $respuesta .= "<td>";
-                    $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' data-banco='" . $fila['nombreBanco'] . "' data-cedula='" . $fila['cedulaTitular'] . "' data-telefono='" . $fila['tlfCuenta'] . "' data-tipo='" . $fila['tipoCuenta'] . "' onclick='pone(this)'><i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span></button>";
-                    $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i><span class='d-none d-sm-inline'> Eliminar</span></button>";
+                    $respuesta .= "<button type='button' class='btn btn-outline-info btn-sm d-inline-flex align-items-center gap-1 my-1' data-banco='" . $fila['nombreBanco'] . "' data-cedula='" . $fila['cedulaTitular'] . "' data-telefono='" . $fila['tlfCuenta'] . "' data-tipo='" . $fila['tipoCuenta'] . "' onclick='pone(this)'><i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span></button>";
+                    $respuesta .= "<button type='button' class='btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1 m-1' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i><span class='d-none d-sm-inline'> Eliminar</span></button>";
                     $respuesta .= "</td>";
                     $respuesta .= "</tr>";
                 }
@@ -221,8 +221,8 @@ class cuentas extends datos
                     $respuesta .= "<td>" . $fila['tipoCuenta'] . "</td>";
                     $respuesta .= "<td>" . $fila['numCuenta'] . "</td>";
                     $respuesta .= "<td>";
-                    $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' data-banco='" . $fila['nombreBanco'] . "' data-cedula='" . $fila['cedulaTitular'] . "' data-telefono='" . $fila['tlfCuenta'] . "' data-tipo='" . $fila['tipoCuenta'] . "' onclick='pone(this)'><i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span></button>";
-                    $respuesta .= "<button type='button' class='btn text-white w-80 small-width m-1' style='background-color: #FF8C00;' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i> Eliminar</button>";
+                    $respuesta .= "<button type='button' class='btn btn-outline-info btn-sm d-inline-flex align-items-center gap-1 my-1' data-banco='" . $fila['nombreBanco'] . "' data-cedula='" . $fila['cedulaTitular'] . "' data-telefono='" . $fila['tlfCuenta'] . "' data-tipo='" . $fila['tipoCuenta'] . "' onclick='pone(this)'><i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span></button>";
+                    $respuesta .= "<button type='button' class='btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1 m-1' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i> Eliminar</button>";
                     $respuesta .= "</td>";
                     $respuesta .= "</tr>";
                 }
