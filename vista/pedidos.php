@@ -83,6 +83,30 @@
                             </div>
                         </div>
 
+                        <div class="row mb-3" id="datosPagoPedido" style="display:none;">
+                            <div class="col-12">
+                                <hr>
+                                <h6 class="fw-bold text-dashboard">Confirmación del pago</h6>
+                                <p class="small text-muted">Confirme el método de pago. Para Pago Móvil se requieren los datos del pagador y la referencia.</p>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label for="tipoPagoPedido" class="form-label small fw-bold">Método de pago</label>
+                                <select class="form-select" id="tipoPagoPedido" name="tipoPago">
+                                    <option value="">Seleccione...</option>
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Pago Móvil">Pago Móvil</option>
+                                    <option value="Tarjeta">Tarjeta</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-2" id="cuentaPagoPedidoCont">
+                                <label class="form-label small fw-bold">Cuenta destino (Pago Móvil)</label>
+                                <div class="input-group"><input type="text" class="form-control bg-light" id="cuentaPagoPedidoInfo" readonly><button class="btn btn-outline-secondary" type="button" id="btnBuscarCuentaPago">Buscar</button><button class="btn btn-outline-danger" type="button" id="btnQuitarCuentaPago">×</button></div>
+                            </div>
+                            <div class="col-md-4 mb-2" id="cedulaPagoPedidoCont"><label for="cedulaPagoPedido" class="form-label small fw-bold">Cédula del pagador</label><input type="text" class="form-control" id="cedulaPagoPedido" name="cedulaPago" maxlength="12"><span id="scedulaPagoPedido" class="text-danger small"></span></div>
+                            <div class="col-md-4 mb-2" id="tlfPagoPedidoCont"><label for="tlfPagoPedido" class="form-label small fw-bold">Teléfono del pagador</label><input type="text" class="form-control" id="tlfPagoPedido" name="tlfPago" maxlength="12"><span id="stlfPagoPedido" class="text-danger small"></span></div>
+                            <div class="col-md-4 mb-2" id="referenciaPagoPedidoCont"><label for="referenciaPagoPedido" class="form-label small fw-bold">Referencia del pago (11-12 caracteres)</label><input type="text" class="form-control" id="referenciaPagoPedido" name="referenciaPago" maxlength="12"><span id="sreferenciaPagoPedido" class="text-danger small"></span></div>
+                        </div>
+
                         <div class="row mb-4">
                             <div class="col-12 d-flex justify-content-end">
                                 <button class="btn btn-success py-2" type="button" id="btnBuscarProducto"><i class="bi bi-cart-plus"></i> Añadir Producto al Pedido</button>

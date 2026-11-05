@@ -12,6 +12,34 @@ $(document).ready(function () {
         consultar($(this).val());
     });
 
+    $("#estadoPedido").on("change", function () {
+        $("#datosPagoPedido").toggle($(this).val() === "Finalizado");
+    });
+    $("#tipoPagoPedido").on("change", function () {
+        var esMovil = $(this).val() === "Pago Móvil";
+        $("#cuentaPagoPedidoCont, #cedulaPagoPedidoCont, #tlfPagoPedidoCont, #referenciaPagoPedidoCont").toggle(esMovil);
+        $("#cedulaPagoPedido, #tlfPagoPedido, #referenciaPagoPedido").prop("required", esMovil);
+        if ($(this).val() !== "" && !esMovil) {
+            $("#cedulaPagoPedido, #tlfPagoPedido, #referenciaPagoPedido").val("");
+            $("#scedulaPagoPedido, #stlfPagoPedido, #sreferenciaPagoPedido").text("");
+        }
+    });
+
+    $("#cedulaPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9\-\.]*$/, e); });
+    $("#cedulaPagoPedido").on("keyup", function () {
+        validarkeyup(/^[0-9\.]{7,12}$/, $(this), $("#scedulaPagoPedido"), "Cédula Inválida - El formato debe ser: 999999999");
+    });
+    $("#tlfPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9\-+ ]*$/, e); });
+    $("#tlfPagoPedido").on("keyup", function () {
+        validarkeyup(/^[0-9\-+ ]{11,12}$/, $(this), $("#stlfPagoPedido"), "Teléfono Inválido - Formato: 0000-0000000");
+    });
+    $("#referenciaPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9\-+ ]*$/, e); });
+    $("#referenciaPagoPedido").on("keyup", function () {
+        validarkeyup(/^[0-9\-+ ]{11,12}$/, $(this), $("#sreferenciaPagoPedido"), "Referencia Inválida - Formato: 0000");
+    });
+    $("#btnBuscarCuentaPago").on("click", function () { $("#modal_cuentas").modal("show"); });
+    $("#btnQuitarCuentaPago").on("click", function () { $("#idCuenta").val(""); $("#cuentaInfo, #cuentaPagoPedidoInfo").val(""); });
+
     var datosCli = new FormData();
     datosCli.append("accion", "modalclientes");
     enviaAjax(datosCli);
@@ -34,7 +62,21 @@ $(document).ready(function () {
             return;
         }
 
+        if ($("#estadoPedido").val() === "Finalizado") {
+            if (!$("#tipoPagoPedido").val()) { mostrarMensaje("Confirme el método de pago para finalizar el pedido."); return; }
+            if ($("#tipoPagoPedido").val() === "Pago Móvil") {
+                if (!$("#idCuenta").val()) { mostrarMensaje("Seleccione la cuenta destino del Pago Móvil."); return; }
+                if (validarkeyup(/^[0-9\-+ ]{11,12}$/, $("#referenciaPagoPedido"), $("#sreferenciaPagoPedido"), "Referencia Inválida - Formato: 0000") === 0) { mostrarMensaje("Referencia inválida. Revise el formato indicado."); return; }
+                if (validarkeyup(/^[0-9\.]{7,12}$/, $("#cedulaPagoPedido"), $("#scedulaPagoPedido"), "Cédula Inválida - El formato debe ser: 999999999") === 0) { mostrarMensaje("Cédula inválida del pagador."); return; }
+                if (validarkeyup(/^[0-9\-+ ]{11,12}$/, $("#tlfPagoPedido"), $("#stlfPagoPedido"), "Teléfono Inválido - Formato: 0000-0000000") === 0) { mostrarMensaje("Teléfono inválido del pagador."); return; }
+            }
+        }
+
         var datos = new FormData($("#f")[0]);
+        datos.set("tipoPago", $("#tipoPagoPedido").val());
+        datos.set("cedulaPago", $("#cedulaPagoPedido").val());
+        datos.set("tlfPago", $("#tlfPagoPedido").val());
+        datos.set("referenciaPago", $("#referenciaPagoPedido").val());
         if ($(this).data("accion") == "modificar") {
             datos.append("accion", "modificar");
         } else {
@@ -78,6 +120,7 @@ function seleccionarCliente(id, cedula, nombre) {
 function seleccionarCuenta(id, banco, numero) {
     $("#idCuenta").val(id);
     $("#cuentaInfo").val(banco + " - " + numero);
+    $("#cuentaPagoPedidoInfo").val(banco + " - " + numero);
     $("#modal_cuentas").modal("hide");
 }
 
@@ -166,6 +209,9 @@ function limpia() {
     $("#detallesdeventa").empty();
     $("#totalGeneral").text("$0.00");
     $("#divEstadoPedido").hide();
+    $("#datosPagoPedido").hide();
+    $("#tipoPagoPedido, #cedulaPagoPedido, #tlfPagoPedido, #referenciaPagoPedido, #cuentaPagoPedidoInfo").val("");
+    $("#cuentaPagoPedidoCont, #cedulaPagoPedidoCont, #tlfPagoPedidoCont, #referenciaPagoPedidoCont").hide();
     $("#btnGuardar").data("accion", "incluir");
     $("#btnGuardar").html('<i class="bi bi-check-circle"></i> Procesar Pedido');
 }
@@ -211,6 +257,13 @@ function enviaAjax(datos) {
                     $("#cuentaInfo").val(lee.cuentaInfo);
                     $("#numComprobante").val(lee.numComprobante);
                     $("#estadoPedido").val(lee.estadoPedido);
+                    $("#tipoPagoPedido").val(lee.tipoPago || "");
+                    $("#cedulaPagoPedido").val(lee.cedulaPago || "");
+                    $("#tlfPagoPedido").val(lee.tlfPago || "");
+                    $("#referenciaPagoPedido").val(lee.numComprobante || "");
+                    $("#cuentaPagoPedidoInfo").val(lee.cuentaInfo || "");
+                    if (lee.estadoPedido === "Finalizado") $("#datosPagoPedido").show();
+                    $("#tipoPagoPedido").trigger("change");
                     $("#detallesdeventa").html(lee.detalleHtml);
                     calculaTotal();
                     $("#divEstadoPedido").show();
@@ -241,6 +294,24 @@ function enviaAjax(datos) {
             mostrarMensaje("Error de conexión: " + request.responseText);
         },
     });
+}
+
+function validarkeypress(er, e) {
+    var key = e.keyCode;
+    var tecla = String.fromCharCode(key);
+    var permitido = er.test(tecla);
+    if (!permitido) e.preventDefault();
+}
+
+function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
+    var valido = er.test(etiqueta.val());
+    if (valido) {
+        etiquetamensaje.text("");
+        return 1;
+    } else {
+        etiquetamensaje.text(mensaje);
+        return 0;
+    }
 }
 
 function mostrarMensaje(mensaje) {

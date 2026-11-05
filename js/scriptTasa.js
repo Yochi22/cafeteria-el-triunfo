@@ -1,3 +1,32 @@
+
+// Consulta silenciosa al abrir el catálogo. No muestra el modal ni interrumpe la compra.
+function actualizarTasaCatalogo() {
+    $.ajax({
+        url: "https://ve.dolarapi.com/v1/dolares/oficial",
+        method: "GET",
+        dataType: "json",
+        timeout: 10000,
+        success: function (R) {
+            var precio = Number(R && R.promedio);
+            if (Number.isFinite(precio) && precio > 0) {
+                localStorage.setItem("tasaDolar", String(precio));
+                if (typeof actualizarPreciosEnBs === "function") {
+                    actualizarPreciosEnBs();
+                }
+            } else {
+                console.warn("La API de tasa respondió sin un promedio válido.");
+            }
+        },
+        error: function (request, status, err) {
+            console.warn("No se pudo actualizar la tasa automáticamente:", status, err);
+            // Se conserva la última tasa válida guardada, si existe.
+            if (typeof actualizarPreciosEnBs === "function") {
+                actualizarPreciosEnBs();
+            }
+        }
+    });
+}
+
 function cargarTasa() {
     $.ajax({
         url: "https://ve.dolarapi.com/v1/dolares/oficial",
@@ -7,6 +36,7 @@ function cargarTasa() {
             const precio = R.promedio;
 
             localStorage.setItem('tasaDolar', precio);
+            if (typeof actualizarPreciosEnBs === "function") actualizarPreciosEnBs();
 
             const fechaActualizacion = new Date(R.fechaActualizacion).toLocaleDateString('es-VE', {
                 year: 'numeric',
@@ -73,10 +103,13 @@ $(document).ready(function () {
         cargarTasa();
     });
 
-    if (!localStorage.getItem('tasaDolar')) {
+    // En el catálogo la consulta actualizada se ejecuta desde catalogo.js.
+    // En las demás vistas se conserva el comportamiento original de carga inicial.
+    if (!localStorage.getItem('tasaDolar') && typeof actualizarPreciosEnBs !== "function") {
         $.get("https://ve.dolarapi.com/v1/dolares/oficial", function (R) {
-            if (R && R.promedio) {
-                localStorage.setItem('tasaDolar', R.promedio);
+            var precio = Number(R && R.promedio);
+            if (Number.isFinite(precio) && precio > 0) {
+                localStorage.setItem('tasaDolar', precio);
             }
         });
     }

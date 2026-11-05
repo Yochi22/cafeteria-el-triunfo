@@ -81,7 +81,7 @@
                                 <span class="fs-4 fw-bold text-success" id="modal-precioBs">Bs. 0,00</span>
                                 <span class="small text-muted fw-bold ms-2" id="modal-precio">($0.00)</span>
                             </div>
-                            
+
                             <div class="d-flex align-items-center gap-3 mb-4">
                                 <span class="fw-semibold text-secondary small">Cantidad:</span>
                                 <div class="d-flex align-items-center border rounded-pill px-3 py-1 bg-light" style="border-color: #FF8C00 !important;">
@@ -136,10 +136,10 @@
 
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <span class="text-muted fw-semibold">Subtotal</span>
-                                        <div class="text-end">
-                                            <span class="fw-bold text-dark fw-bold" id="subtotalCompraBs">Bs. 0,00</span>
-                                            <div class="small text-muted fw-bold" id="subtotalCompra">$0.00</div>
-                                        </div>
+                                    <div class="text-end">
+                                        <span class="fw-bold text-dark fw-bold" id="subtotalCompraBs">Bs. 0,00</span>
+                                        <div class="small text-muted fw-bold" id="subtotalCompra">$0.00</div>
+                                    </div>
                                 </div>
 
                                 <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-3">
@@ -149,10 +149,10 @@
 
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <span class="fw-bold fs-5 text-brown">Costo Total</span>
-                                        <div class="text-end">
-                                            <span class="fw-bold text-dark fw-bold" id="montoTotalBs">Bs. 0,00</span>
-                                            <div class="small text-muted fw-bold" id="montoTotal">$0.00</div>
-                                        </div>
+                                    <div class="text-end">
+                                        <span class="fw-bold text-dark fw-bold" id="montoTotalBs">Bs. 0,00</span>
+                                        <div class="small text-muted fw-bold" id="montoTotal">$0.00</div>
+                                    </div>
                                 </div>
 
                                 <!-- Botón para pasar al siguiente modal -->
@@ -217,27 +217,48 @@
                             </div>
                         </div>
 
-                        <!-- Datos del pago móvil -->
                         <hr>
-                        <p class="small mb-4" style="opacity: 0.5;">Seleccione una cuenta, realice el pago móvil / transferencia e introduzca la referencia.</p>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="cuentaDestino" class="form-label">Cuenta destino</label>
-                                <select class="form-select" id="cuentaDestino" name="cuentaDestino">
+                                <label for="tipoPago" class="form-label text-muted small fw-bold">Método de pago</label>
+                                <select class="form-select rounded-3" id="tipoPago" name="tipoPago" required>
                                     <option value="">Seleccione...</option>
+                                    <option value="Efectivo">Efectivo</option>
+                                    <option value="Pago Móvil">Pago Móvil</option>
+                                    <option value="Tarjeta">Tarjeta</option>
                                 </select>
                             </div>
-
-                            <div class="col-md-6 mb-3">
-                                <label for="refPago" class="form-label text-muted small fw-bold">Últimos 4 digitos de la referencia</label>
-                                <input type="text" class="form-control rounded-3" id="refPago" name="refPago" required>
-                                <span id="srefPago" class="text-danger small"></span>
-                            </div>
-
-                            <div class="d-grid mt-4">
-                                <button type="button" class="btn btn-crear w-100 mt-3" id="btnGuardar">Hacer Pedido!</button>
+                        </div>
+                        <div id="datosPagoMovil" style="display:none;">
+                            <p class="small mb-3 text-muted">Para Pago Móvil, seleccione la cuenta destino e indique los datos de la persona que realizó el pago. Puede ser distinta del cliente.</p>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="cuentaDestino" class="form-label">Cuenta destino</label>
+                                    <select class="form-select" id="cuentaDestino" name="cuentaDestino">
+                                        <option value="">Seleccione...</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="refPago" class="form-label text-muted small fw-bold">Referencia del pago (11-12 caracteres)</label>
+                                    <input type="text" class="form-control rounded-3" id="refPago" name="refPago" maxlength="12">
+                                    <span id="srefPago" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="cedulaPago" class="form-label text-muted small fw-bold">Cédula de quien pagó</label>
+                                    <input type="text" class="form-control rounded-3" id="cedulaPago" name="cedulaPago" maxlength="12">
+                                    <span id="scedulaPago" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="tlfPago" class="form-label text-muted small fw-bold">Teléfono de quien pagó</label>
+                                    <input type="text" class="form-control rounded-3" id="tlfPago" name="tlfPago" maxlength="12">
+                                    <span id="stlfPago" class="text-danger small"></span>
+                                </div>
                             </div>
                         </div>
+                        <div class="d-grid mt-4">
+                            <button type="button" class="btn btn-crear w-100 mt-3" id="btnGuardar">Hacer Pedido!</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -246,7 +267,8 @@
     <!-- Modal con info de cuenta -->
     <div class="modal fade" id="modalCuentaCli" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-md">
-            <div class="modal-content border-0 rounded-4 shadow text-center p-3">
+            <div class="modal-content border-0 rounded-4 shadow text-center p-3 position-relative">
+                <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 <i class="bi bi-bank fs-1" style="color: #ff8c00;"></i>
                 <h6 class="fw-bold text-dashboard mt-2">Datos de la Cuenta</h6>
                 <div class="modal-body text-start" id="modalCuentaCliCont"> </div>
@@ -260,6 +282,7 @@
     <!-- Llamada a archivo modal.php, dentro de él hay una sección modal -->
     <?php require_once("comunes/modal.php"); ?>
 
+    <script src="js/scriptTasa.js"></script>
     <script src="js/catalogo.js"></script>
 </body>
 

@@ -31,7 +31,7 @@ if (is_file("vista/" . $pagina . ".php")) {
                 echo json_encode($o->listadoDeProductos());
                 break;
             case 'modificar':
-                echo json_encode($o->modificar($_POST['idPedido'], $_POST['idCliente'], $_POST['idCuenta'], $_POST['estadoPedido'], $_POST['idProducto'], $_POST['cantidad'], $_POST['precio'], $_POST['numComprobante']));
+                echo json_encode($o->modificar($_POST['idPedido'], $_POST['idCliente'], $_POST['idCuenta'], $_POST['estadoPedido'], $_POST['idProducto'], $_POST['cantidad'], $_POST['precio'], (array_key_exists('referenciaPago', $_POST) ? $_POST['referenciaPago'] : ($_POST['numComprobante'] ?? '')), $_POST['tipoPago'] ?? '', $_POST['cedulaPago'] ?? '', $_POST['tlfPago'] ?? ''));
                 break;
             case 'eliminar':
                 echo json_encode($o->eliminar($_POST['idPedido']));

@@ -242,7 +242,7 @@ class menu extends datos
                 $subtotalProd = $p['precioProd'] * $p['cantidad'];
                 $subtotalGeneral += $subtotalProd;
 
-                    $html .= '
+                $html .= '
                     <div class="col-12 col-md-6 carritoContenido" data-precio="' . $p['precioProd'] . '" data-cantidad="1">
                         <div class="card border-0 rounded-4 shadow-sm h-100">
                             <div class="card-body d-flex align-items-center p-3">
@@ -346,6 +346,117 @@ class menu extends datos
         } catch (Exception $e) {
             $r['resultado'] = 'error';
             $r['mensaje'] = 'Error en base de datos: ' . $e->getMessage();
+        }
+        return $r;
+    }
+
+    public function registrarPedidoCliente($datos)
+    {
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $r = array();
+
+        try {
+            $nombre = trim($datos['nombreCli'] ?? '');
+            $apellido = trim($datos['apellidoCli'] ?? '');
+            $cedula = trim($datos['cedulaCli'] ?? '');
+            $telefono = trim($datos['tlfCli'] ?? '');
+            $tipoPago = trim($datos['tipoPago'] ?? '');
+            $idCuenta = trim($datos['cuentaDestino'] ?? '');
+            $referencia = trim($datos['refPago'] ?? '');
+            $cedulaPago = trim($datos['cedulaPago'] ?? '');
+            $tlfPago = trim($datos['tlfPago'] ?? '');
+            $carrito = json_decode($datos['carrito'] ?? '[]', true);
+
+            if ($nombre === '' || $apellido === '' || $cedula === '' || $telefono === '') {
+                throw new Exception('Complete todos los datos del cliente.');
+            }
+            if (!in_array($tipoPago, array('Efectivo', 'Pago Móvil', 'Tarjeta'), true)) {
+                throw new Exception('Seleccione un método de pago válido.');
+            }
+            if (!is_array($carrito) || count($carrito) === 0) {
+                throw new Exception('El carrito está vacío.');
+            }
+            if ($tipoPago === 'Pago Móvil') {
+                if ($idCuenta === '' || $referencia === '' || $cedulaPago === '' || $tlfPago === '') {
+                    throw new Exception('Para Pago Móvil debe indicar cuenta destino, referencia y datos del pagador.');
+                }
+                if (strlen($referencia) > 50 || strlen($cedulaPago) > 12 || strlen($tlfPago) > 12) {
+                    throw new Exception('Revise la longitud de los datos del pago.');
+                }
+            }
+
+            $co->beginTransaction();
+
+            $buscarCliente = $co->prepare('SELECT idCliente FROM clientes WHERE cedulaCli = :cedula LIMIT 1');
+            $buscarCliente->execute(array(':cedula' => $cedula));
+            $clienteExistente = $buscarCliente->fetch(PDO::FETCH_ASSOC);
+
+            if ($clienteExistente) {
+                $idCliente = $clienteExistente['idCliente'];
+                $actualizarCliente = $co->prepare('UPDATE clientes SET nombreCli = :nombre, apellidoCli = :apellido, tlfCli = :telefono WHERE idCliente = :idCliente');
+                $actualizarCliente->execute(array(':nombre' => $nombre, ':apellido' => $apellido, ':telefono' => $telefono, ':idCliente' => $idCliente));
+            } else {
+                $insertarCliente = $co->prepare('INSERT INTO clientes (cedulaCli, nombreCli, apellidoCli, tlfCli) VALUES (:cedula, :nombre, :apellido, :telefono)');
+                $insertarCliente->execute(array(':cedula' => $cedula, ':nombre' => $nombre, ':apellido' => $apellido, ':telefono' => $telefono));
+                $idCliente = $co->lastInsertId();
+            }
+
+            $lineas = array();
+            $precioTotal = 0;
+            $consultaProducto = $co->prepare('SELECT idProducto, precioProd FROM productos WHERE codigoProd = :codigo LIMIT 1');
+            foreach ($carrito as $item) {
+                $codigo = trim($item['codigoProd'] ?? '');
+                $cantidad = filter_var($item['cantidad'] ?? null, FILTER_VALIDATE_INT);
+                if ($codigo === '' || !$cantidad || $cantidad < 1) {
+                    throw new Exception('Hay un producto o cantidad inválida en el carrito. Vacíe y vuelva a agregar los productos.');
+                }
+                $consultaProducto->execute(array(':codigo' => $codigo));
+                $producto = $consultaProducto->fetch(PDO::FETCH_ASSOC);
+                if (!$producto) {
+                    throw new Exception('Uno de los productos del carrito ya no está disponible. Actualice el carrito.');
+                }
+                $subtotal = (float)$producto['precioProd'] * $cantidad;
+                $precioTotal += $subtotal;
+                $lineas[] = array('idProducto' => $producto['idProducto'], 'cantidad' => $cantidad, 'subtotal' => $subtotal);
+            }
+
+            $idCuentaGuardar = ($tipoPago === 'Pago Móvil' && $idCuenta !== '') ? $idCuenta : null;
+            $referenciaGuardar = ($tipoPago === 'Efectivo') ? null : ($referencia !== '' ? $referencia : null);
+            $cedulaPagoGuardar = ($tipoPago === 'Pago Móvil' && $cedulaPago !== '') ? $cedulaPago : null;
+            $tlfPagoGuardar = ($tipoPago === 'Pago Móvil' && $tlfPago !== '') ? $tlfPago : null;
+
+            $insertarPedido = $co->prepare("INSERT INTO pedidos (idCliente, idCuenta, precioTotal, numComprobante, tipoPago, estadoPedido, cedulaPago, tlfPago) VALUES (:idCliente, :idCuenta, :total, :referencia, :tipoPago, 'En Proceso', :cedulaPago, :tlfPago)");
+            $insertarPedido->execute(array(
+                ':idCliente' => $idCliente,
+                ':idCuenta' => $idCuentaGuardar,
+                ':total' => $precioTotal,
+                ':referencia' => $referenciaGuardar,
+                ':tipoPago' => $tipoPago,
+                ':cedulaPago' => $cedulaPagoGuardar,
+                ':tlfPago' => $tlfPagoGuardar
+            ));
+            $idPedido = $co->lastInsertId();
+
+            $insertarDetalle = $co->prepare('INSERT INTO pedidosproducto (idPedido, idProducto, cantidadProd, subTotal) VALUES (:idPedido, :idProducto, :cantidad, :subtotal)');
+            foreach ($lineas as $linea) {
+                $insertarDetalle->execute(array(
+                    ':idPedido' => $idPedido,
+                    ':idProducto' => $linea['idProducto'],
+                    ':cantidad' => $linea['cantidad'],
+                    ':subtotal' => $linea['subtotal']
+                ));
+            }
+
+            $co->commit();
+            $r['resultado'] = 'pedidoClienteRegistrado';
+            $r['mensaje'] = 'Tu pedido fue registrado correctamente. Número de pedido: #' . $idPedido;
+        } catch (Exception $e) {
+            if ($co->inTransaction()) {
+                $co->rollBack();
+            }
+            $r['resultado'] = 'error';
+            $r['mensaje'] = $e->getMessage();
         }
         return $r;
     }

@@ -46,6 +46,10 @@ if (is_file("vista/" . $pagina . ".php")) {
                 $montoTotal = $_POST['montoTotal'];
                 echo json_encode($o->detalleCuenta($idCuenta, $montoTotal));
                 break;
+
+            case 'registrarPedidoCliente':
+                echo json_encode($o->registrarPedidoCliente($_POST));
+                break;
         }
 
         exit;

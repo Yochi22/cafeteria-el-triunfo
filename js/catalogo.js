@@ -6,6 +6,9 @@ $(document).ready(function () {
         cargarCarritoLocal();
         cargarCuentas();
         actualizarContadorCarrito();
+        if (typeof actualizarTasaCatalogo === "function") {
+            actualizarTasaCatalogo();
+        }
     } catch (e) {
         console.error(e);
     }
@@ -58,12 +61,12 @@ function abrirModalDetalle(id, nombre, descripcion, precio, imagen) {
     $("#modal-titulo").text(nombre);
     $("#modal-descripcion").text(descripcion);
     $("#modal-precio").text("$ " + parseFloat(precio).toFixed(2));
-    // Se guarda el precio original en input oculto!!!
+    // Se guarda el precio original en input oculto
     $("#modal-precio").attr("precioOriginal", precio);
     $("#modal-img").attr("src", imagen);
     $("#modal-cantidad").text("1");
 
-    // calculo del precio en bs :)
+    // Calculo del precio en BS
     let tasaDolar = parseFloat(localStorage.getItem('tasaDolar')) || 0;
     let precioEnBs = parseFloat(precio) * tasaDolar;
 
@@ -111,7 +114,8 @@ function cargarCarritoLocal() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    let carrito = JSON.parse(localStorage.removeItem("carrito")) || [];
+    // Solo leer el carrito al cargar, no eliminarlo
+    JSON.parse(localStorage.getItem("carrito") || "[]");
 });
 
 $("#carritoModal").on("show.bs.modal", function () {
@@ -121,6 +125,7 @@ $("#carritoModal").on("show.bs.modal", function () {
 // Función para agregar productos al carrito
 $("#modal-btn-agregar").on("click", function () {
     let nuevoProd = {
+        codigoProd: $("#modal-id-producto").val(),
         nombreProd: $("#modal-titulo").text(),
         precioProd: parseFloat($("#modal-precio").attr("precioOriginal")) || 0,
         fotoProd: $("#modal-img").attr("src"),
@@ -166,20 +171,26 @@ function actualizarPreciosEnBs() {
     let tasaDolar = parseFloat(localStorage.getItem('tasaDolar')) || 0;
     if (tasaDolar <= 0) return;
 
-        $('#contenedorCarrito .carritoContenido').each(function() {
-            let precioUsd = parseFloat($(this).attr('data-precio')) || 0;
-            let cantidad = parseInt($(this).attr('data-cantidad')) || 1;
-            let totalItemBs = precioUsd * cantidad * tasaDolar;
+    let precioModalUsd = parseFloat($("#modal-precio").attr("precioOriginal")) || 0;
+    if (precioModalUsd > 0) {
+        let precioModalBs = precioModalUsd * tasaDolar;
+        $("#modal-precioBs").text(`Bs. ${precioModalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
+    }
 
-            $(this).find('.precioProdBs').text(`Bs. ${totalItemBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
-        });
+    $('#contenedorCarrito .carritoContenido').each(function () {
+        let precioUsd = parseFloat($(this).attr('data-precio')) || 0;
+        let cantidad = parseInt($(this).attr('data-cantidad')) || 1;
+        let totalItemBs = precioUsd * cantidad * tasaDolar;
+
+        $(this).find('.precioProdBs').text(`Bs. ${totalItemBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
+    });
 
     let subtotalTexto = $('#subtotalCompra').text().replace('$', '').trim();
     let subtotalUsd = parseFloat(subtotalTexto) || 0;
     let totalGeneralBs = subtotalUsd * tasaDolar;
 
     let formatoBs = `Bs. ${totalGeneralBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    
+
     $('#subtotalCompraBs').text(formatoBs);
     $('#montoTotalBs').text(formatoBs);
 }
@@ -220,9 +231,9 @@ $("#cuentaDestino").on("change", function () {
     datos.append("accion", "detalleCuenta");
     datos.append("idCuenta", idCuenta);
     datos.append("montoTotal", montoTotal);
+    // Conservar la cuenta seleccionada: el formulario la enviará como cuentaDestino
+    // No limpiar el select mientras se muestra la información bancaria
     enviaAjax(datos);
-
-    $(this).val("");
 });
 
 function cargarCuentas() {
@@ -242,7 +253,7 @@ $(document).on("click", "#btnCopiarDatos", function () {
         .then(() => {
             mostrarNotificacion("¡Texto copiado al portapapeles!");
             $("#modalCuentaCli").modal("hide");
-            
+
         })
         .catch((err) => {
             console.error("Error al copiar:", err);
@@ -314,6 +325,51 @@ $("#refPago").on("keyup", function () {
     );
 });
 
+// Datos de quien realizó el Pago Móvil
+$("#cedulaPago").on("keypress", function (e) {
+    validarkeypress(/^[0-9\-\.]*$/, e);
+});
+$("#cedulaPago").on("keyup", function () {
+    validarkeyup(/^[0-9\.]{7,12}$/, $(this), $("#scedulaPago"), "Cédula Inválida - El formato debe ser: 999999999");
+});
+$("#tlfPago").on("keypress", function (e) {
+    validarkeypress(/^[0-9\-+ ]*$/, e);
+});
+$("#tlfPago").on("keyup", function () {
+    validarkeyup(/^[0-9\-+ ]{11,12}$/, $(this), $("#stlfPago"), "Teléfono Inválido - Formato: 0000-0000000");
+});
+
+$("#tipoPago").on("change", function () {
+    var esPagoMovil = $(this).val() === "Pago Móvil";
+    $("#datosPagoMovil").toggle(esPagoMovil);
+    $("#cuentaDestino, #refPago, #cedulaPago, #tlfPago").prop("required", esPagoMovil);
+    if (!esPagoMovil) {
+        $("#cuentaDestino, #refPago, #cedulaPago, #tlfPago").val("");
+        $("#srefPago, #scedulaPago, #stlfPago").text("");
+    }
+});
+
+$("#btnGuardar").on("click", function () {
+    if (!validarEnvio()) return;
+    var carrito = JSON.parse(localStorage.getItem("carrito") || "[]");
+    if (!carrito.length) {
+        mostrarMensaje("El carrito está vacío.");
+        return;
+    }
+    if (!$("#tipoPago").val()) {
+        mostrarMensaje("Seleccione un método de pago.");
+        return;
+    }
+    if (carrito.some(function (p) { return !p.codigoProd; })) {
+        mostrarMensaje("Hay productos antiguos en el carrito. Retírelos y agréguelos nuevamente para continuar.");
+        return;
+    }
+    var datos = new FormData($("#f")[0]);
+    datos.set("accion", "registrarPedidoCliente");
+    datos.append("carrito", JSON.stringify(carrito));
+    enviaAjax(datos);
+});
+
 // Función para validar por keypress
 function validarkeypress(er, e) {
     key = e.keyCode;
@@ -340,7 +396,7 @@ function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
 function validarEnvio() {
     if (
         validarkeyup(
-            /^[0-9\.]{7,11}$/,
+            /^[0-9\.]{7,12}$/,
             $("#cedulaCli"),
             $("#scedulaCli"),
             "Cédula Inválida - El formato debe ser: 999999999",
@@ -384,7 +440,39 @@ function validarEnvio() {
         return false;
     }
 
+    if ($("#tipoPago").val() === "") {
+        mostrarMensaje("Seleccione un método de pago.");
+        return false;
+    }
+    if ($("#tipoPago").val() === "Pago Móvil") {
+        if (validarkeyup(/^[0-9\-+ ]{11,12}$/, $("#refPago"), $("#srefPago"), "Referencia Inválida - Formato: 0000") === 0) {
+            mostrarMensaje("Referencia inválida. Revise el formato indicado.");
+            return false;
+        }
+        if (validarkeyup(/^[0-9\.]{7,12}$/, $("#cedulaPago"), $("#scedulaPago"), "Cédula Inválida - El formato debe ser: 999999999") === 0) {
+            mostrarMensaje("Cédula inválida de quien realizó el pago.");
+            return false;
+        }
+        if (validarkeyup(/^[0-9\-+ ]{11,12}$/, $("#tlfPago"), $("#stlfPago"), "Teléfono Inválido - Formato: 0000-0000000") === 0) {
+            mostrarMensaje("Teléfono inválido de quien realizó el pago.");
+            return false;
+        }
+        if (!$("#cuentaDestino").val()) {
+            mostrarMensaje("Seleccione la cuenta destino del Pago Móvil.");
+            return false;
+        }
+    }
     return true;
+}
+
+function mostrarMensaje(mensaje) {
+    if ($("#mostrarModal").length) {
+        $(".modal").modal("hide");
+        $("#contenidoModal").text(mensaje);
+        setTimeout(function () { $("#mostrarModal").modal("show"); }, 200);
+    } else {
+        alert(mensaje);
+    }
 }
 
 // ENVIAR AJAX
@@ -397,7 +485,7 @@ function enviaAjax(datos) {
         data: datos,
         processData: false,
         cache: false,
-        beforeSend: function () {},
+        beforeSend: function () { },
         timeout: 10000,
         success: function (respuesta) {
             console.log(respuesta);
@@ -424,6 +512,14 @@ function enviaAjax(datos) {
                 } else if (lee.resultado == "mostrarDetalleCuenta") {
                     $("#modalCuentaCliCont").html(lee.mensaje);
                     $("#modalCuentaCli").modal("show");
+                } else if (lee.resultado == "pedidoClienteRegistrado") {
+                    $("#pagoModal").modal("hide");
+                    localStorage.removeItem("carrito");
+                    actualizarContadorCarrito();
+                    $("#f")[0].reset();
+                    $("#datosPagoMovil").hide();
+                    cargarCarritoLocal();
+                    mostrarNotificacion(lee.mensaje);
                 } else if (lee.resultado == "error") {
                     mostrarMensaje(lee.mensaje);
                 }
@@ -440,6 +536,6 @@ function enviaAjax(datos) {
                 mostrarMensaje("ERROR: <br/>" + status + " " + err);
             }
         },
-        complete: function () {},
+        complete: function () { },
     });
 }
