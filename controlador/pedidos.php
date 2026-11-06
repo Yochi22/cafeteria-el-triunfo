@@ -6,6 +6,7 @@ if (!is_file("modelo/" . $pagina . ".php")) {
 }
 
 require_once("modelo/" . $pagina . ".php");
+
 if (is_file("vista/" . $pagina . ".php")) {
     $o = new pedidos();
     if (!empty($_POST['accion'])) {

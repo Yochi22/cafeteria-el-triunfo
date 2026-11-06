@@ -13,11 +13,9 @@ class pedidos extends datos
         try {
             $co->beginTransaction();
             $precioTotal = 0;
-
             for ($i = 0; $i < count($idProducto); $i++) {
                 $precioTotal += ($cantidad[$i] * $precio[$i]);
             }
-
             $sqlPedido = "INSERT INTO pedidos (idCliente, idCuenta, precioTotal, numComprobante, estadoPedido) VALUES (:idCliente, :idCuenta, :precioTotal, :numComprobante, 'En Proceso')";
             $stmt = $co->prepare($sqlPedido);
             $stmt->execute([
@@ -26,12 +24,9 @@ class pedidos extends datos
                 ':precioTotal' => $precioTotal,
                 ':numComprobante' => empty($numComprobante) ? null : $numComprobante
             ]);
-
             $idPedido = $co->lastInsertId();
-
             $sqlDetalle = "INSERT INTO pedidosproducto (idPedido, idProducto, cantidadProd, subTotal) VALUES (:idPedido, :idProducto, :cantidad, :subTotal)";
             $stmtDetalle = $co->prepare($sqlDetalle);
-
             for ($i = 0; $i < count($idProducto); $i++) {
                 $subT = $cantidad[$i] * $precio[$i];
                 $stmtDetalle->execute([
@@ -41,7 +36,6 @@ class pedidos extends datos
                     ':subTotal' => $subT
                 ]);
             }
-
             $co->commit();
             $r['resultado'] = 'incluir';
             $r['mensaje'] = 'Pedido registrado con éxito.';
@@ -49,7 +43,6 @@ class pedidos extends datos
             if ($co->inTransaction()) {
                 $co->rollBack();
             }
-
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }
@@ -68,48 +61,36 @@ class pedidos extends datos
                     FROM pedidos p 
                     JOIN clientes c ON p.idCliente = c.idCliente 
                     LEFT JOIN cuentas cu ON p.idCuenta = cu.idCuenta";
-
             $params = array();
-
             if (!empty($estado) && $estado != 'Todos') {
                 $sql .= " WHERE p.estadoPedido = :estado";
                 $params[':estado'] = $estado;
             }
-
             $sql .= " ORDER BY p.idPedido DESC";
-
             $stmt = $co->prepare($sql);
             $stmt->execute($params);
             $html = '';
-
             foreach ($stmt as $fila) {
                 $estadoClase = $fila['estadoPedido'] == 'En Proceso' ? 'bg-warning text-dark' : ($fila['estadoPedido'] == 'Cancelado' ? 'bg-danger' : 'bg-success');
-
                 $detalles = $co->prepare("SELECT pp.cantidadProd, pr.nombreProd FROM pedidosproducto pp LEFT JOIN productos pr ON pp.idProducto = pr.idProducto WHERE pp.idPedido = :idPedido");
                 $detalles->execute([':idPedido' => $fila['idPedido']]);
-
                 $listaDetallesHtml = '';
                 $listaDetallesPlain = '';
-
                 foreach ($detalles as $det) {
                     $nombreProd = !empty($det['nombreProd']) ? $det['nombreProd'] : 'Producto eliminado del catálogo';
                     $listaDetallesHtml .= $det['cantidadProd'] . 'x ' . $nombreProd . ', ';
                     $listaDetallesPlain .= $det['cantidadProd'] . 'x ' . $nombreProd . ', ';
                 }
-
                 $listaDetallesHtml = rtrim($listaDetallesHtml, ', ');
                 $listaDetallesPlain = rtrim($listaDetallesPlain, ', ');
-
                 if (empty($listaDetallesHtml)) {
                     $listaDetallesHtml = '<span class="text-muted fst-italic">Productos eliminados del catálogo</span>';
                     $listaDetallesPlain = 'Productos eliminados del catálogo';
                 }
-
                 $bancoTexto = $fila['idCuenta'] ? $fila['nombreBanco'] . ' - ' . substr($fila['numCuenta'], -4) : 'Sin cuenta asignada';
                 $comprobanteTexto = !empty($fila['numComprobante']) ? $fila['numComprobante'] : 'N/A';
                 $tipoPagoTexto = !empty($fila['tipoPago']) ? $fila['tipoPago'] : 'Por confirmar';
                 $pagadorTexto = !empty($fila['cedulaPago']) ? 'Pagador: ' . $fila['cedulaPago'] . ' / ' . $fila['tlfPago'] : '';
-
                 $html .= '
                 <div class="card border-0 shadow-sm rounded-4 mb-3">
                     <div class="card-body p-4">
@@ -134,8 +115,8 @@ class pedidos extends datos
                     $html .= '<p class="mb-1 small text-muted"><i class="bi bi-tag text-secondary"></i> ' . $fila['tipoCuenta'] . '</p>';
                 }
                 $html .= '              <p class="mb-0 small text-muted"><i class="bi bi-file-earmark-text text-secondary"></i> N° Compr: ' . $comprobanteTexto . '</p>
-                                    <p class="mb-1 small text-muted"><i class="bi bi-credit-card text-secondary"></i> Método: ' . htmlspecialchars($tipoPagoTexto, ENT_QUOTES, 'UTF-8') . '</p>
-                                    <p class="mb-0 small text-muted">' . htmlspecialchars($pagadorTexto, ENT_QUOTES, 'UTF-8') . '</p>
+                                        <p class="mb-1 small text-muted"><i class="bi bi-credit-card text-secondary"></i> Método: ' . htmlspecialchars($tipoPagoTexto, ENT_QUOTES, 'UTF-8') . '</p>
+                                        <p class="mb-0 small text-muted">' . htmlspecialchars($pagadorTexto, ENT_QUOTES, 'UTF-8') . '</p>
                                     </div>
                                     <div class="col-sm-4 col-md-6">
                                         <p class="mb-1 text-muted small fw-bold">Detalle del pedido</p>
@@ -161,11 +142,9 @@ class pedidos extends datos
                     </div>
                 </div>';
             }
-
             if ($html == '') {
                 $html = '<div class="col-12 text-center text-muted py-5"><i class="bi bi-journal-x fs-1 text-warning"></i><h5 class="mt-2 text-dashboard">No hay pedidos registrados con este estado.</h5></div>';
             }
-
             $r['resultado'] = 'consultar';
             $r['mensaje'] = $html;
         } catch (Exception $e) {
@@ -238,10 +217,8 @@ class pedidos extends datos
 
         try {
             $resultado = $co->query("SELECT * FROM clientes");
-
             if ($resultado) {
                 $html = '';
-
                 foreach ($resultado as $fila) {
                     $html .= "<tr style='cursor:pointer' class='bg-light-hover' onclick='seleccionarCliente(" . $fila['idCliente'] . ", \"" . $fila['cedulaCli'] . "\", \"" . $fila['nombreCli'] . " " . $fila['apellidoCli'] . "\")'>";
                     $html .= "<td>" . $fila['cedulaCli'] . "</td>";
@@ -249,7 +226,6 @@ class pedidos extends datos
                     $html .= "<td>" . $fila['tlfCli'] . "</td>";
                     $html .= "</tr>";
                 }
-
                 $r['resultado'] = 'modalclientes';
                 $r['mensaje'] = $html;
             }
@@ -269,10 +245,8 @@ class pedidos extends datos
 
         try {
             $resultado = $co->query("SELECT * FROM cuentas");
-
             if ($resultado) {
                 $html = '';
-
                 foreach ($resultado as $fila) {
                     $html .= "<tr style='cursor:pointer' class='bg-light-hover' onclick='seleccionarCuenta(" . $fila['idCuenta'] . ", \"" . $fila['nombreBanco'] . "\", \"" . $fila['numCuenta'] . "\")'>";
                     $html .= "<td>" . $fila['nombreBanco'] . "</td>";
@@ -280,7 +254,6 @@ class pedidos extends datos
                     $html .= "<td>" . $fila['tipoCuenta'] . "</td>";
                     $html .= "</tr>";
                 }
-
                 $r['resultado'] = 'modalcuentas';
                 $r['mensaje'] = $html;
             }
@@ -300,10 +273,8 @@ class pedidos extends datos
 
         try {
             $resultado = $co->query("SELECT * FROM productos");
-
             if ($resultado) {
                 $html = '';
-
                 foreach ($resultado as $fila) {
                     $html .= "<tr style='cursor:pointer' class='bg-light-hover' onclick='seleccionarProducto(" . $fila['idProducto'] . ", \"" . $fila['codigoProd'] . "\", \"" . $fila['nombreProd'] . "\", " . $fila['precioProd'] . ")'>";
                     $html .= "<td>" . $fila['codigoProd'] . "</td>";
@@ -311,7 +282,6 @@ class pedidos extends datos
                     $html .= "<td class='text-success fw-bold'>$" . number_format($fila['precioProd'], 2) . "</td>";
                     $html .= "</tr>";
                 }
-
                 $r['resultado'] = 'modalproductos';
                 $r['mensaje'] = $html;
             }
@@ -331,27 +301,23 @@ class pedidos extends datos
 
         try {
             $co->beginTransaction();
-
             $bloqueo = $co->prepare('SELECT estadoPedido, tipoPago, cedulaPago, tlfPago, numComprobante FROM pedidos WHERE idPedido = :idPedido FOR UPDATE');
             $bloqueo->execute(array(':idPedido' => $idPedido));
             $pedidoActual = $bloqueo->fetch(PDO::FETCH_ASSOC);
             if (!$pedidoActual) {
                 throw new Exception('El pedido indicado no existe.');
             }
-
             $vinculo = $co->prepare('SELECT idVenta FROM pedidosventa WHERE idPedido = :idPedido LIMIT 1');
             $vinculo->execute(array(':idPedido' => $idPedido));
             if ($vinculo->fetch(PDO::FETCH_ASSOC)) {
                 throw new Exception('Este pedido ya fue convertido en venta y no puede procesarse nuevamente.');
             }
-
             if (!in_array($estadoPedido, array('En Proceso', 'Finalizado', 'Cancelado'), true)) {
                 throw new Exception('Estado de pedido no válido.');
             }
             if (!is_array($idProducto) || count($idProducto) === 0 || count($idProducto) !== count($cantidad)) {
                 throw new Exception('El pedido debe contener al menos un producto válido.');
             }
-
             $lineas = array();
             $precioTotal = 0;
             $cantidadTotal = 0;
@@ -372,12 +338,10 @@ class pedidos extends datos
                 $cantidadTotal += $cant;
                 $lineas[] = array('idProducto' => $idProd, 'cantidad' => $cant, 'subtotal' => $subtotal);
             }
-
             $tipoPagoGuardar = trim($tipoPago) !== '' ? trim($tipoPago) : ($pedidoActual['tipoPago'] ?? '');
             $cedulaGuardar = trim((string)$cedulaPago);
             $telefonoGuardar = trim((string)$tlfPago);
             $referenciaGuardar = trim((string)$numComprobante);
-
             if ($estadoPedido === 'Finalizado') {
                 if (!in_array($tipoPagoGuardar, array('Efectivo', 'Pago Móvil', 'Tarjeta'), true)) {
                     throw new Exception('Seleccione el método de pago antes de finalizar el pedido.');
@@ -391,7 +355,6 @@ class pedidos extends datos
                     }
                 }
             }
-
             $cuentaGuardar = in_array($tipoPagoGuardar, array('Efectivo', 'Tarjeta'), true) ? null : (($idCuenta === '' || $idCuenta === null) ? null : $idCuenta);
             $stmtP = $co->prepare('UPDATE pedidos SET idCliente = :idCliente, idCuenta = :idCuenta, precioTotal = :precioTotal, numComprobante = :numComprobante, tipoPago = :tipoPago, cedulaPago = :cedulaPago, tlfPago = :tlfPago, estadoPedido = :estadoPedido WHERE idPedido = :idPedido');
             $stmtP->execute(array(
@@ -405,27 +368,23 @@ class pedidos extends datos
                 ':estadoPedido' => $estadoPedido,
                 ':idPedido' => $idPedido
             ));
-
             $delD = $co->prepare('DELETE FROM pedidosproducto WHERE idPedido = :idPedido');
             $delD->execute(array(':idPedido' => $idPedido));
             $stmtD = $co->prepare('INSERT INTO pedidosproducto (idPedido, idProducto, cantidadProd, subTotal) VALUES (:idPedido, :idProducto, :cantidad, :subTotal)');
             foreach ($lineas as $linea) {
                 $stmtD->execute(array(':idPedido' => $idPedido, ':idProducto' => $linea['idProducto'], ':cantidad' => $linea['cantidad'], ':subTotal' => $linea['subtotal']));
             }
-
             if ($estadoPedido === 'Finalizado') {
                 $personal = $co->query('SELECT idPersonal FROM personal ORDER BY idPersonal ASC LIMIT 1')->fetch(PDO::FETCH_ASSOC);
                 if (!$personal) {
                     throw new Exception('No hay personal registrado para asociar la venta. Registre un empleado antes de finalizar.');
                 }
-
                 $cedulaDetalle = $tipoPagoGuardar === 'Pago Móvil' ? $cedulaGuardar : '';
                 $telefonoDetalle = $tipoPagoGuardar === 'Pago Móvil' ? $telefonoGuardar : '';
                 $referenciaDetalle = $tipoPagoGuardar === 'Efectivo' ? '' : $referenciaGuardar;
                 $insertarDetalle = $co->prepare('INSERT INTO detallesventa (cedulaPago, tlfPago, referencia) VALUES (:cedula, :telefono, :referencia)');
                 $insertarDetalle->execute(array(':cedula' => $cedulaDetalle, ':telefono' => $telefonoDetalle, ':referencia' => $referenciaDetalle));
                 $idDetalle = $co->lastInsertId();
-
                 $insertarVenta = $co->prepare('INSERT INTO ventas (idDetalle, idPersonal, tipoPago, fechaVenta, cantidadVenta, totalVenta) VALUES (:idDetalle, :idPersonal, :tipoPago, :fechaVenta, :cantidad, :total)');
                 $insertarVenta->execute(array(
                     ':idDetalle' => $idDetalle,
@@ -436,11 +395,9 @@ class pedidos extends datos
                     ':total' => $precioTotal
                 ));
                 $idVenta = $co->lastInsertId();
-
                 $relacion = $co->prepare('INSERT INTO pedidosventa (idPedido, idVenta) VALUES (:idPedido, :idVenta)');
                 $relacion->execute(array(':idPedido' => $idPedido, ':idVenta' => $idVenta));
             }
-
             $co->commit();
             $r['resultado'] = 'modificar';
             $r['mensaje'] = $estadoPedido === 'Finalizado' ? 'Pedido finalizado y venta registrada correctamente.' : 'Pedido modificado correctamente.';
@@ -451,6 +408,7 @@ class pedidos extends datos
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }
+
         return $r;
     }
 
@@ -462,22 +420,17 @@ class pedidos extends datos
 
         try {
             $co->beginTransaction();
-
             $delDetalle = $co->prepare("DELETE FROM pedidosproducto WHERE idPedido = :idPedido");
             $delDetalle->execute([':idPedido' => $idPedido]);
-
             $delPedido = $co->prepare("DELETE FROM pedidos WHERE idPedido = :idPedido");
             $delPedido->execute([':idPedido' => $idPedido]);
-
             $co->commit();
-
             $r['resultado'] = 'eliminar';
             $r['mensaje'] = 'Pedido eliminado correctamente.';
         } catch (Exception $e) {
             if ($co->inTransaction()) {
                 $co->rollBack();
             }
-
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }

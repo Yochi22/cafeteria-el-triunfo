@@ -15,6 +15,7 @@ $(document).ready(function () {
     $("#estadoPedido").on("change", function () {
         $("#datosPagoPedido").toggle($(this).val() === "Finalizado");
     });
+
     $("#tipoPagoPedido").on("change", function () {
         var esMovil = $(this).val() === "Pago Móvil";
         $("#cuentaPagoPedidoCont, #cedulaPagoPedidoCont, #tlfPagoPedidoCont, #referenciaPagoPedidoCont").toggle(esMovil);
@@ -25,18 +26,26 @@ $(document).ready(function () {
         }
     });
 
+    $("#numComprobante").on("keypress", function (e) { validarkeypress(/^[0-9]*$/, e); });
+    $("#numComprobante").on("keyup", function () {
+        validarkeyup(/^[0-9]{11,12}$/, $(this), $("#snumComprobante"), "Comprobante Inválido");
+    });
+
     $("#cedulaPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9\-\.]*$/, e); });
     $("#cedulaPagoPedido").on("keyup", function () {
-        validarkeyup(/^[0-9\.]{7,12}$/, $(this), $("#scedulaPagoPedido"), "Cédula Inválida - El formato debe ser: 999999999");
+        validarkeyup(/^[0-9\.]{7,12}$/, $(this), $("#scedulaPagoPedido"), "Cédula Inválida - Formato: 999999999");
     });
+
     $("#tlfPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9\-+ ]*$/, e); });
     $("#tlfPagoPedido").on("keyup", function () {
         validarkeyup(/^[0-9\-+ ]{11,12}$/, $(this), $("#stlfPagoPedido"), "Teléfono Inválido - Formato: 0000-0000000");
     });
+
     $("#referenciaPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9\-+ ]*$/, e); });
     $("#referenciaPagoPedido").on("keyup", function () {
-        validarkeyup(/^[0-9\-+ ]{11,12}$/, $(this), $("#sreferenciaPagoPedido"), "Referencia Inválida - Formato: 0000");
+        validarkeyup(/^[0-9\-+ ]{11,12}$/, $(this), $("#sreferenciaPagoPedido"), "Referencia Inválida");
     });
+
     $("#btnBuscarCuentaPago").on("click", function () { $("#modal_cuentas").modal("show"); });
     $("#btnQuitarCuentaPago").on("click", function () { $("#idCuenta").val(""); $("#cuentaInfo, #cuentaPagoPedidoInfo").val(""); });
 
@@ -52,26 +61,12 @@ $(document).ready(function () {
     datosProd.append("accion", "modalproductos");
     enviaAjax(datosProd);
 
+    $("#f").on("submit", function (e) {
+        e.preventDefault();
+    });
+
     $("#btnGuardar").on("click", function () {
-        if ($("#idCliente").val() == "") {
-            mostrarMensaje("Debe seleccionar un cliente antes de procesar.");
-            return;
-        }
-        if ($("#detallesdeventa tr").length == 0) {
-            mostrarMensaje("Debe agregar al menos un producto al pedido.");
-            return;
-        }
-
-        if ($("#estadoPedido").val() === "Finalizado") {
-            if (!$("#tipoPagoPedido").val()) { mostrarMensaje("Confirme el método de pago para finalizar el pedido."); return; }
-            if ($("#tipoPagoPedido").val() === "Pago Móvil") {
-                if (!$("#idCuenta").val()) { mostrarMensaje("Seleccione la cuenta destino del Pago Móvil."); return; }
-                if (validarkeyup(/^[0-9\-+ ]{11,12}$/, $("#referenciaPagoPedido"), $("#sreferenciaPagoPedido"), "Referencia Inválida - Formato: 0000") === 0) { mostrarMensaje("Referencia inválida. Revise el formato indicado."); return; }
-                if (validarkeyup(/^[0-9\.]{7,12}$/, $("#cedulaPagoPedido"), $("#scedulaPagoPedido"), "Cédula Inválida - El formato debe ser: 999999999") === 0) { mostrarMensaje("Cédula inválida del pagador."); return; }
-                if (validarkeyup(/^[0-9\-+ ]{11,12}$/, $("#tlfPagoPedido"), $("#stlfPagoPedido"), "Teléfono Inválido - Formato: 0000-0000000") === 0) { mostrarMensaje("Teléfono inválido del pagador."); return; }
-            }
-        }
-
+        if (!validarEnvio()) return;
         var datos = new FormData($("#f")[0]);
         datos.set("tipoPago", $("#tipoPagoPedido").val());
         datos.set("cedulaPago", $("#cedulaPagoPedido").val());
@@ -111,6 +106,48 @@ $(document).ready(function () {
     });
 });
 
+function validarEnvio() {
+    if ($("#idCliente").val() == "") {
+        mostrarMensaje("Debe seleccionar un cliente antes de procesar.");
+        return false;
+    }
+    if ($("#detallesdeventa tr").length == 0) {
+        mostrarMensaje("Debe agregar al menos un producto al pedido.");
+        return false;
+    }
+    if ($("#numComprobante").val().trim() !== "") {
+        if (validarkeyup(/^[0-9]{11,12}$/, $("#numComprobante"), $("#snumComprobante"), "Comprobante Inválido") === 0) {
+            mostrarMensaje("Número de Comprobante Inválido");
+            return false;
+        }
+    }
+    if ($("#estadoPedido").val() === "Finalizado") {
+        if (!$("#tipoPagoPedido").val()) {
+            mostrarMensaje("Confirme el método de pago para finalizar el pedido.");
+            return false;
+        }
+        if ($("#tipoPagoPedido").val() === "Pago Móvil") {
+            if (!$("#idCuenta").val()) {
+                mostrarMensaje("Seleccione la cuenta destino del Pago Móvil.");
+                return false;
+            }
+            if (validarkeyup(/^[0-9\-+ ]{11,12}$/, $("#referenciaPagoPedido"), $("#sreferenciaPagoPedido"), "Referencia Inválida") === 0) {
+                mostrarMensaje("Referencia inválida. Revise el formato indicado.");
+                return false;
+            }
+            if (validarkeyup(/^[0-9\.]{7,12}$/, $("#cedulaPagoPedido"), $("#scedulaPagoPedido"), "Cédula Inválida") === 0) {
+                mostrarMensaje("Cédula inválida del pagador.");
+                return false;
+            }
+            if (validarkeyup(/^[0-9\-+ ]{11,12}$/, $("#tlfPagoPedido"), $("#stlfPagoPedido"), "Teléfono Inválido") === 0) {
+                mostrarMensaje("Teléfono inválido del pagador.");
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 function seleccionarCliente(id, cedula, nombre) {
     $("#idCliente").val(id);
     $("#clienteInfo").val(cedula + " - " + nombre);
@@ -126,7 +163,6 @@ function seleccionarCuenta(id, banco, numero) {
 
 function seleccionarProducto(id, codigo, nombre, precio) {
     var encontro = false;
-
     $("#detallesdeventa tr").each(function () {
         if (id == $(this).find("input[name='idProducto[]']").val()) {
             encontro = true;
@@ -162,7 +198,6 @@ function seleccionarProducto(id, codigo, nombre, precio) {
         $("#detallesdeventa").append(fila);
         calculaTotal();
     }
-
     $("#modal_productos").modal("hide");
 }
 
@@ -170,12 +205,10 @@ function modificasubtotal(input) {
     var fila = $(input).closest("tr");
     var precio = parseFloat(fila.find("input[name='precio[]']").val());
     var cantidad = parseInt($(input).val());
-
     if (isNaN(cantidad) || cantidad < 1) {
         cantidad = 1;
         $(input).val(1);
     }
-
     var subtotal = precio * cantidad;
     fila.find(".subtotal-cell").text("$" + subtotal.toFixed(2));
     calculaTotal();
@@ -212,6 +245,7 @@ function limpia() {
     $("#datosPagoPedido").hide();
     $("#tipoPagoPedido, #cedulaPagoPedido, #tlfPagoPedido, #referenciaPagoPedido, #cuentaPagoPedidoInfo").val("");
     $("#cuentaPagoPedidoCont, #cedulaPagoPedidoCont, #tlfPagoPedidoCont, #referenciaPagoPedidoCont").hide();
+    $("#snumComprobante, #scedulaPagoPedido, #stlfPagoPedido, #sreferenciaPagoPedido").text("");
     $("#btnGuardar").data("accion", "incluir");
     $("#btnGuardar").html('<i class="bi bi-check-circle"></i> Procesar Pedido');
 }
@@ -268,14 +302,9 @@ function enviaAjax(datos) {
                     calculaTotal();
                     $("#divEstadoPedido").show();
                     $("#btnGuardar").data("accion", "modificar");
-                    $("#btnGuardar").html(
-                        '<i class="bi bi-check-circle"></i> Modificar Pedido',
-                    );
+                    $("#btnGuardar").html('<i class="bi bi-check-circle"></i> Modificar Pedido');
                     $("#modal_pedido").modal("show");
-                } else if (
-                    lee.resultado == "incluir" ||
-                    lee.resultado == "modificar"
-                ) {
+                } else if (lee.resultado == "incluir" || lee.resultado == "modificar") {
                     mostrarMensaje(lee.mensaje);
                     $("#modal_pedido").modal("hide");
                     consultar($("#filtroEstado").val());

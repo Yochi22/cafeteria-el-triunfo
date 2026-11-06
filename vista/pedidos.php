@@ -5,7 +5,6 @@
 <body>
     <div class="d-flex min-vh-100 position-relative bg-light">
         <?php require_once("comunes/sidebar.php"); ?>
-
         <main class="main-content w-100 p-4">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
                 <div class="d-flex align-items-center gap-3">
@@ -29,14 +28,11 @@
                     </button>
                 </div>
             </div>
-
             <hr class="text-secondary mb-4">
-
             <div class="d-flex flex-column gap-3" id="contenedor_pedidos">
             </div>
         </main>
     </div>
-
     <div class="modal fade" id="modal_pedido" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content border-0 rounded-4 shadow">
@@ -45,9 +41,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body pt-3">
-                    <form id="f">
+                    <form id="f" autocomplete="off">
                         <input type="hidden" id="idPedido" name="idPedido">
-
                         <div class="row mb-3">
                             <div class="col-md-6 mb-3 mb-md-0">
                                 <label class="form-label text-muted small fw-bold">Cliente</label>
@@ -67,11 +62,11 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="row mb-3">
                             <div class="col-md-6 mb-3 mb-md-0">
                                 <label class="form-label text-muted small fw-bold">Número de Comprobante / Referencia (Opcional)</label>
-                                <input type="text" class="form-control rounded-3 bg-light border-secondary-subtle" id="numComprobante" name="numComprobante" placeholder="Ej: 12345678">
+                                <input type="text" class="form-control rounded-3 bg-light border-secondary-subtle" id="numComprobante" name="numComprobante" maxlength="100" placeholder="Ej: 12345678">
+                                <span id="snumComprobante" class="text-danger small"></span>
                             </div>
                             <div class="col-md-6 mb-3 mb-md-0" id="divEstadoPedido" style="display: none;">
                                 <label class="form-label text-muted small fw-bold">Estado del Pedido</label>
@@ -82,7 +77,6 @@
                                 </select>
                             </div>
                         </div>
-
                         <div class="row mb-3" id="datosPagoPedido" style="display:none;">
                             <div class="col-12">
                                 <hr>
@@ -104,15 +98,13 @@
                             </div>
                             <div class="col-md-4 mb-2" id="cedulaPagoPedidoCont"><label for="cedulaPagoPedido" class="form-label small fw-bold">Cédula del pagador</label><input type="text" class="form-control" id="cedulaPagoPedido" name="cedulaPago" maxlength="12"><span id="scedulaPagoPedido" class="text-danger small"></span></div>
                             <div class="col-md-4 mb-2" id="tlfPagoPedidoCont"><label for="tlfPagoPedido" class="form-label small fw-bold">Teléfono del pagador</label><input type="text" class="form-control" id="tlfPagoPedido" name="tlfPago" maxlength="12"><span id="stlfPagoPedido" class="text-danger small"></span></div>
-                            <div class="col-md-4 mb-2" id="referenciaPagoPedidoCont"><label for="referenciaPagoPedido" class="form-label small fw-bold">Referencia del pago (11-12 caracteres)</label><input type="text" class="form-control" id="referenciaPagoPedido" name="referenciaPago" maxlength="12"><span id="sreferenciaPagoPedido" class="text-danger small"></span></div>
+                            <div class="col-md-4 mb-2" id="referenciaPagoPedidoCont"><label for="referenciaPagoPedido" class="form-label small fw-bold">Referencia del pago</label><input type="text" class="form-control" id="referenciaPagoPedido" name="referenciaPago" maxlength="12"><span id="sreferenciaPagoPedido" class="text-danger small"></span></div>
                         </div>
-
                         <div class="row mb-4">
                             <div class="col-12 d-flex justify-content-end">
                                 <button class="btn btn-success py-2" type="button" id="btnBuscarProducto"><i class="bi bi-cart-plus"></i> Añadir Producto al Pedido</button>
                             </div>
                         </div>
-
                         <div class="table-responsive border rounded-3 mb-3 shadow-sm">
                             <table class="table table-hover mb-0 text-center align-middle">
                                 <thead class="table-light text-dashboard">
@@ -129,11 +121,9 @@
                                 </tbody>
                             </table>
                         </div>
-
                         <div class="d-flex justify-content-end mb-3">
                             <h4 class="text-dashboard fw-bold mb-0">Total: <span id="totalGeneral" class="text-success">$0.00</span></h4>
                         </div>
-
                         <div class="d-grid mt-4">
                             <button type="button" class="btn btn-crear py-2 fw-semibold" id="btnGuardar" data-accion="incluir">
                                 <i class="bi bi-check-circle"></i> Procesar Pedido
@@ -144,7 +134,6 @@
             </div>
         </div>
     </div>
-
     <div class="modal fade" id="modal_clientes" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content rounded-4 shadow">
@@ -169,7 +158,6 @@
             </div>
         </div>
     </div>
-
     <div class="modal fade" id="modal_cuentas" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content rounded-4 shadow">
@@ -194,7 +182,6 @@
             </div>
         </div>
     </div>
-
     <div class="modal fade" id="modal_productos" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content rounded-4 shadow">
@@ -219,7 +206,6 @@
             </div>
         </div>
     </div>
-
     <?php require_once("comunes/modal_eliminar.php"); ?>
     <?php require_once("comunes/modal.php"); ?>
     <script src="js/pedidos.js"></script>

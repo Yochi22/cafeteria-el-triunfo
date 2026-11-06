@@ -185,7 +185,7 @@
                 <div class="modal-body px-4 px-md-5 pt-2 pb-4">
                     <p class="small mb-4" style="opacity: 0.5;">Introduzca sus datos. Este es un registro único, te recordaremos en tu próxima compra. :)</p>
                     <div class="row g-3"></div>
-                    <form id="f">
+                    <form id="f" autocomplete="off">
                         <input type="hidden" id="accion" name="accion">
 
                         <!-- Datos de cliente -->

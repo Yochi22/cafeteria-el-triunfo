@@ -1,45 +1,93 @@
 <?php
-require_once('modelo/datos.php');
 
-class principal extends datos {
-    
-    public function obtenerMetricas() {
+require_once("modelo/datos.php");
+
+class principal extends datos
+{
+    public function consultarHorarios()
+    {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        
-        $hoy = date('Y-m-d');
-        
         try {
-
-            $s1 = $co->prepare("SELECT COUNT(*) as total FROM pedidos WHERE fecha = ?");
-            $s1->execute([$hoy]);
-            $total = $s1->fetch(PDO::FETCH_ASSOC)['total'];
-            
-          
-            $s2 = $co->prepare("SELECT COUNT(*) as enviadas FROM pedidos WHERE fecha = ? AND estado = 'finalizado'");
-            $s2->execute([$hoy]);
-            $enviadas = $s2->fetch(PDO::FETCH_ASSOC)['enviadas'];
-            
-           
-            $s3 = $co->prepare("SELECT COUNT(*) as canceladas FROM pedidos WHERE fecha = ? AND estado = 'anulado'");
-            $s3->execute([$hoy]);
-            $canceladas = $s3->fetch(PDO::FETCH_ASSOC)['canceladas'];
-            
-          
-            $s4 = $co->prepare("SELECT SUM(precioTotal) as ganancias FROM pedidos WHERE fecha = ? AND estado = 'finalizado'");
-            $s4->execute([$hoy]);
-            $ganancia = $s4->fetch(PDO::FETCH_ASSOC)['ganancias'] ?? 0;
-            
-            return [
-                'total' => $total,
-                'enviadas' => $enviadas,
-                'canceladas' => $canceladas,
-                'ganancias' => number_format($ganancia, 2)
-            ];
-            
+            $stmt = $co->query("SELECT * FROM horario");
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            return ['error' => $e->getMessage()];
+            return array();
         }
     }
+
+    public function modificarHorario($idHorario, $horaApertura, $horaCierre)
+    {
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $r = array();
+        try {
+            if (empty($horaApertura) || empty($horaCierre)) {
+                throw new Exception('Debe completar ambas horas.');
+            }
+            $stmt = $co->prepare("UPDATE horario SET horaApertura = :apertura, horaCierre = :cierre WHERE idHorario = :id");
+            $stmt->execute([':apertura' => $horaApertura, ':cierre' => $horaCierre, ':id' => $idHorario]);
+            $r['resultado'] = 'modificar_horario';
+            $r['mensaje'] = 'Horario actualizado con éxito.';
+        } catch (Exception $e) {
+            $r['resultado'] = 'error';
+            $r['mensaje'] = $e->getMessage();
+        }
+        return $r;
+    }
+
+    public function consultarPreciosDelivery()
+    {
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try {
+            $stmt = $co->query("SELECT * FROM precioDelivery LIMIT 1");
+            return $stmt->fetch(PDO::FETCH_ASSOC);
+        } catch (Exception $e) {
+            return array();
+        }
+    }
+
+    public function modificarPrecioDelivery($zona, $precio)
+    {
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $r = array();
+        try {
+            if ($precio <= 0) {
+                throw new Exception('El precio debe ser mayor a cero.');
+            }
+
+            $campo = "";
+            switch ($zona) {
+                case 'Este':
+                    $campo = 'precioEste';
+                    break;
+                case 'Oeste':
+                    $campo = 'precioOeste';
+                    break;
+                case 'Norte':
+                    $campo = 'precioNorte';
+                    break;
+                case 'Sur':
+                    $campo = 'precioSur';
+                    break;
+                case 'Centro':
+                    $campo = 'precioCentro';
+                    break;
+                default:
+                    throw new Exception('Zona no válida.');
+            }
+            $stmt = $co->prepare("UPDATE precioDelivery SET $campo = :precio WHERE idPrecioDelivery = 1");
+            $stmt->execute([':precio' => $precio]);
+            $r['resultado'] = 'modificar_precio';
+            $r['mensaje'] = 'Precio de delivery actualizado con éxito.';
+        } catch (Exception $e) {
+            $r['resultado'] = 'error';
+            $r['mensaje'] = $e->getMessage();
+        }
+        return $r;
+    }
 }
+
 ?>

@@ -8,7 +8,7 @@ if (!is_file("modelo/" . $pagina . ".php")) {
 require_once("modelo/" . $pagina . ".php");
 
 if (is_file("vista/" . $pagina . ".php")) {
-    $o = new menu();
+    $o = new catalogo();
 
     if (!empty($_POST)) {
         $accion = $_POST['accion'];
@@ -28,7 +28,7 @@ if (is_file("vista/" . $pagina . ".php")) {
                 break;
 
             case 'buscar':
-                $valor = trim($_POST['valorBusqueda']);
+                $valor = trim($_POST['valorBusqueda'] ?? '');
                 echo json_encode($o->buscar($valor));
                 break;
 

@@ -2,7 +2,7 @@
 
 require_once("modelo/datos.php");
 
-class menu extends datos
+class catalogo extends datos
 {
     function obtener_datos_categorias()
     {
