@@ -311,6 +311,44 @@ class catalogo extends datos
         return $r;
     }
 
+    public function obtenerPrecioDelivery($datos)
+    {
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $r = array();
+
+        try {
+            $zona = trim($datos['zona'] ?? '');
+
+            if ($zona === '') {
+                throw new Exception('Zona no especificada.');
+            }
+
+            $columnasPermitidas = array(
+                'Este' => 'precioEste',
+                'Oeste' => 'precioOeste',
+                'Norte' => 'precioNorte',
+                'Sur' => 'precioSur',
+                'Centro' => 'precioCentro'
+            );
+
+            $columnaPrecio = $columnasPermitidas[$zona];
+
+            $de = $co->prepare("SELECT $columnaPrecio FROM precioDelivery LIMIT 1");
+            $de->execute();
+            $resultado = $de->fetch(PDO::FETCH_ASSOC);
+
+            $precio = $resultado ? (float)$resultado[$columnaPrecio] : 0.00;
+
+            $r['resultado'] = 'precioDeliveryObtenido';
+            $r['precio'] = $precio;
+        } catch (Exception $e) {
+            $r['resultado'] = 'error';
+            $r['mensaje'] = $e->getMessage();
+        }
+        return $r;
+    }
+
     public function detalleCuenta($idCuenta, $montoTotal)
     {
         $co = $this->conecta();
@@ -357,10 +395,18 @@ class catalogo extends datos
         $r = array();
 
         try {
+            // Datos del cliente
             $nombre = trim($datos['nombreCli'] ?? '');
             $apellido = trim($datos['apellidoCli'] ?? '');
             $cedula = trim($datos['cedulaCli'] ?? '');
             $telefono = trim($datos['tlfCli'] ?? '');
+
+            // Datos de dirección
+            $zona = trim($datos['zona'] ?? '');
+            $calle = trim($datos['calle'] ?? '');
+            $numCasa = filter_var($datos['numCasa'] ?? null, FILTER_VALIDATE_INT);
+
+            // Datos de pago
             $tipoPago = trim($datos['tipoPago'] ?? '');
             $idCuenta = trim($datos['cuentaDestino'] ?? '');
             $referencia = trim($datos['refPago'] ?? '');
@@ -368,26 +414,9 @@ class catalogo extends datos
             $tlfPago = trim($datos['tlfPago'] ?? '');
             $carrito = json_decode($datos['carrito'] ?? '[]', true);
 
-            if ($nombre === '' || $apellido === '' || $cedula === '' || $telefono === '') {
-                throw new Exception('Complete todos los datos del cliente.');
-            }
-            if (!in_array($tipoPago, array('Efectivo', 'Pago Móvil', 'Tarjeta'), true)) {
-                throw new Exception('Seleccione un método de pago válido.');
-            }
-            if (!is_array($carrito) || count($carrito) === 0) {
-                throw new Exception('El carrito está vacío.');
-            }
-            if ($tipoPago === 'Pago Móvil') {
-                if ($idCuenta === '' || $referencia === '' || $cedulaPago === '' || $tlfPago === '') {
-                    throw new Exception('Para Pago Móvil debe indicar cuenta destino, referencia y datos del pagador.');
-                }
-                if (strlen($referencia) > 50 || strlen($cedulaPago) > 12 || strlen($tlfPago) > 12) {
-                    throw new Exception('Revise la longitud de los datos del pago.');
-                }
-            }
-
             $co->beginTransaction();
 
+            // 1. Gestionar Cliente (Insertar o Actualizar)
             $buscarCliente = $co->prepare('SELECT idCliente FROM clientes WHERE cedulaCli = :cedula LIMIT 1');
             $buscarCliente->execute(array(':cedula' => $cedula));
             $clienteExistente = $buscarCliente->fetch(PDO::FETCH_ASSOC);
@@ -402,6 +431,8 @@ class catalogo extends datos
                 $idCliente = $co->lastInsertId();
             }
 
+
+            // 2. Procesar Productos del Carrito y Calcular Total
             $lineas = array();
             $precioTotal = 0;
             $consultaProducto = $co->prepare('SELECT idProducto, precioProd FROM productos WHERE codigoProd = :codigo LIMIT 1');
@@ -421,6 +452,7 @@ class catalogo extends datos
                 $lineas[] = array('idProducto' => $producto['idProducto'], 'cantidad' => $cantidad, 'subtotal' => $subtotal);
             }
 
+            // 3. Registrar Pedido (Primero se guarda el pedido para generar el idPedido)
             $idCuentaGuardar = ($tipoPago === 'Pago Móvil' && $idCuenta !== '') ? $idCuenta : null;
             $referenciaGuardar = ($tipoPago === 'Efectivo') ? null : ($referencia !== '' ? $referencia : null);
             $cedulaPagoGuardar = ($tipoPago === 'Pago Móvil' && $cedulaPago !== '') ? $cedulaPago : null;
@@ -436,8 +468,19 @@ class catalogo extends datos
                 ':cedulaPago' => $cedulaPagoGuardar,
                 ':tlfPago' => $tlfPagoGuardar
             ));
+
             $idPedido = $co->lastInsertId();
 
+            // 4. Registrar la Dirección de Delivery vinculada al Pedido recién creado
+            $insertarDir = $co->prepare('INSERT INTO dirdelivery (idPedido, zona, calle, numCasa) VALUES (:idPedido, :zona, :calle, :numCasa)');
+            $insertarDir->execute(array(
+                ':idPedido' => $idPedido,
+                ':zona' => $zona,
+                ':calle' => $calle,
+                ':numCasa' => $numCasa
+            ));
+
+            // 5. Registrar Detalles del Pedido
             $insertarDetalle = $co->prepare('INSERT INTO pedidosproducto (idPedido, idProducto, cantidadProd, subTotal) VALUES (:idPedido, :idProducto, :cantidad, :subtotal)');
             foreach ($lineas as $linea) {
                 $insertarDetalle->execute(array(

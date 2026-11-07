@@ -32,9 +32,7 @@ $(document).ready(function () {
     $("#apellidoPer").on("keyup", function () {
         validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this), $("#sapellidoPer"), "Apellido Inválido - Solo letras entre 3 y 100 carácteres");
     });
-    // Fin de validación de datos
 
-    //Control de botones
     $("#btnGuardar").on("click", function () {
         // BOTÓN INCLUIR
         if ($(this).text() == 'incluir') {

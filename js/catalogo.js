@@ -1,4 +1,3 @@
-// FUNCIONES DEL CATÁLOGO
 $(document).ready(function () {
     try {
         cargarCategorias();
@@ -34,17 +33,12 @@ $(document).ready(function () {
         ejecutarBusqueda();
     });
 
-    // Evitar que el formulario de compra se envíe con Enter
     $("#f").on("submit", function (e) {
         e.preventDefault();
     });
-
-    // Limpiar formulario y spans cada vez que se abra el modal de pago
-    $("#pagoModal").on("show.bs.modal", function () {
-        limpia();
-    });
 });
 
+// Funciones CATÁLOGO
 function cargarCategorias() {
     var datos = new FormData();
     datos.append("accion", "obtener_datos_categorias");
@@ -71,12 +65,11 @@ function abrirModalDetalle(id, nombre, descripcion, precio, imagen) {
     $("#modal-titulo").text(nombre);
     $("#modal-descripcion").text(descripcion);
     $("#modal-precio").text("$ " + parseFloat(precio).toFixed(2));
-    // Se guarda el precio original en input oculto
     $("#modal-precio").attr("precioOriginal", precio);
     $("#modal-img").attr("src", imagen);
     $("#modal-cantidad").text("1");
 
-    // Calculo del precio en BS
+
     let tasaDolar = parseFloat(localStorage.getItem('tasaDolar')) || 0;
     let precioEnBs = parseFloat(precio) * tasaDolar;
 
@@ -101,7 +94,7 @@ function cambiarCantidadModal(cambio) {
     }
 }
 
-// FUNCIONES DE CARRITO
+// funciones de CARRITO
 function cargarCarritoLocal() {
     let carritoLocal = localStorage.getItem("carrito") || "[]";
     actualizarContadorCarrito();
@@ -131,7 +124,7 @@ $("#modal-btn-agregar").on("click", function () {
 
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
-    // Verificamos si el producto ya existe en el carrito
+
     let index = carrito.findIndex((p) => p.nombreProd === nuevoProd.nombreProd);
     if (index !== -1) {
         carrito[index].cantidad += nuevoProd.cantidad;
@@ -150,6 +143,7 @@ function agregarAlCarrito(idProducto, cantidad) {
     mostrarNotificacion("¡Producto agregado al carrito con éxito!");
 }
 
+
 function actualizarContadorCarrito() {
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     let totalUnidades = 0;
@@ -160,6 +154,7 @@ function actualizarContadorCarrito() {
 
     $("#contador-carrito").text(totalUnidades);
 }
+
 
 function actualizarPreciosEnBs() {
     let tasaDolar = parseFloat(localStorage.getItem('tasaDolar')) || 0;
@@ -181,13 +176,19 @@ function actualizarPreciosEnBs() {
 
     let subtotalTexto = $('#subtotalCompra').text().replace('$', '').trim();
     let subtotalUsd = parseFloat(subtotalTexto) || 0;
-    let totalGeneralBs = subtotalUsd * tasaDolar;
 
+    let precioDelivery = parseFloat($("#zonaDelivery").data("precioDelivery")) || 0;
+    let totalUsdFinal = subtotalUsd + precioDelivery;
+
+    $('#montoTotal').text("$" + totalUsdFinal.toFixed(2));
+
+    let totalGeneralBs = totalUsdFinal * tasaDolar;
     let formatoBs = `Bs. ${totalGeneralBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
     $('#subtotalCompraBs').text(formatoBs);
     $('#montoTotalBs').text(formatoBs);
 }
+
 
 function cambiarCantidadLocal(index, cambio) {
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
@@ -204,6 +205,7 @@ function cambiarCantidadLocal(index, cambio) {
     }
 }
 
+// Eliminar de carrito
 $(document).on("click", ".btn-eliminar", function () {
     let index = $(this).attr("data-index");
 
@@ -213,7 +215,38 @@ $(document).on("click", ".btn-eliminar", function () {
     cargarCarritoLocal();
 });
 
-// FUNCIONES DE LA CUENTA
+// Buscar precio delivery
+$("#zonaDelivery").on("change", function () {
+    var zonaSeleccionada = $(this).val();
+
+    if (!zonaSeleccionada) {
+        $("#zonaDelivery").data("precioDelivery", 0);
+        actualizarPreciosEnBs();
+        return;
+    }
+
+    var datos = new FormData();
+    datos.append("accion", "obtenerPrecioDelivery");
+    datos.append("zona", zonaSeleccionada);
+    enviaAjax(datos);
+});
+
+function actualizarTotalConDelivery(precioDelivery) {
+    let subtotalTexto = $('#subtotalCompra').text().replace('$', '').trim();
+    let subtotalUsd = parseFloat(subtotalTexto) || 0;
+    let totalUsdFinal = subtotalUsd + precioDelivery;
+
+    $('#montoTotal').text("$" + totalUsdFinal.toFixed(2));
+
+    let tasaDolar = parseFloat(localStorage.getItem('tasaDolar')) || 0;
+    if (tasaDolar > 0) {
+        let totalGeneralBs = totalUsdFinal * tasaDolar;
+        let formatoBs = `Bs. ${totalGeneralBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        $('#montoTotalBs').text(formatoBs);
+    }
+}
+
+// Funciones de PAGO
 $("#cuentaDestino").on("change", function () {
     let idCuenta = $(this).val();
     if (!idCuenta) return;
@@ -283,12 +316,28 @@ $("#tlfCli").on("keyup", function () {
     validarkeyup(/^[0-9\-+ ]{11,12}$/, $(this), $("#stlfCli"), "Teléfono Inválido - Formato: 0000-0000000");
 });
 
+// -- Calle de Delivery --
+$("#calleDelivery").on("keypress", function (e) {
+    validarkeypress(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC\-\#\.,]*$/, e);
+});
+$("#calleDelivery").on("keyup", function () {
+    validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC\-\#\.,]{3,100}$/, $(this), $("#scalleDelivery"), "Calle Inválida - Entre 3 y 100 caracteres");
+});
+
+// -- Número de Casa de Delivery --
+//$("#numCasaDelivery").on("keypress", function (e) {
+//    validarkeypress(/^[0-9]*$/, e);
+//});
+//$("#numCasaDelivery").on("keyup", function () {
+//   validarkeyup(/^[0-9]{1,6}$/, $(this), $("#snumCasaDelivery"), "Número Inválido - Solo números (1 a 6 dígitos)");
+//});
+
 // -- Referencia del pago --
 $("#refPago").on("keypress", function (e) {
     validarkeypress(/^[0-9\-+ ]*$/, e);
 });
 $("#refPago").on("keyup", function () {
-    validarkeyup(/^[0-9\-+ ]{4,12}$/, $(this), $("#srefPago"), "Referencia Inválida - Entre 4 y 12 dígitos");
+    validarkeyup(/^[0-9\-+ ]{4}$/, $(this), $("#srefPago"), "Referencia Inválida - Entre 4 y 12 dígitos");
 });
 
 // -- Cédula de quien realizó el Pago Móvil --
@@ -317,55 +366,11 @@ $("#tipoPago").on("change", function () {
     }
 });
 
-// CONTROLADOR DE BOTÓN GUARDAR (Hacer Pedido)
-$("#btnGuardar").on("click", function () {
-    if (validarEnvio()) {
-        var carrito = JSON.parse(localStorage.getItem("carrito") || "[]");
-        if (!carrito.length) {
-            mostrarMensaje("El carrito está vacío.");
-            return;
-        }
-        if (!$("#tipoPago").val()) {
-            mostrarMensaje("Seleccione un método de pago.");
-            return;
-        }
-        if (carrito.some(function (p) { return !p.codigoProd; })) {
-            mostrarMensaje("Hay productos antiguos en el carrito. Retírelos y agréguelos nuevamente para continuar.");
-            return;
-        }
-        var datos = new FormData($("#f")[0]);
-        datos.set("accion", "registrarPedidoCliente");
-        datos.append("carrito", JSON.stringify(carrito));
-        enviaAjax(datos);
-    }
-});
-
-// Función para limpiar
-function limpia() {
-    $("#nombreCli").val("");
-    $("#apellidoCli").val("");
-    $("#cedulaCli").val("");
-    $("#tlfCli").val("");
-    $("#tipoPago").val("");
-    $("#cuentaDestino").val("");
-    $("#refPago").val("");
-    $("#cedulaPago").val("");
-    $("#tlfPago").val("");
-    $("#datosPagoMovil").hide();
-
-    $("#snombreCli").text("");
-    $("#sapellidoCli").text("");
-    $("#scedulaCli").text("");
-    $("#stlfCli").text("");
-    $("#srefPago").text("");
-    $("#scedulaPago").text("");
-    $("#stlfPago").text("");
-}
-
 // Función para validar por keypress
 function validarkeypress(er, e) {
     key = e.keyCode;
     tecla = String.fromCharCode(key);
+
     a = er.test(tecla);
     if (!a) {
         e.preventDefault();
@@ -375,6 +380,7 @@ function validarkeypress(er, e) {
 // Función para validar por keyup
 function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
     a = er.test(etiqueta.val());
+
     if (a) {
         etiquetamensaje.text("");
         return 1;
@@ -403,13 +409,26 @@ function validarEnvio() {
         return false;
     }
 
-    if ($("#tipoPago").val() === "") {
+    if (!$("#zonaDelivery").val()) {
+        mostrarMensaje("Seleccione una zona de delivery.");
+        return false;
+    }
+    else if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC\-\#\.,]{3,100}$/, $("#calleDelivery"), $("#scalleDelivery"), "Calle Inválida") === 0) {
+        mostrarMensaje("Calle Inválida <br/>(Entre 3 y 100 caracteres)");
+        return false;
+    }
+    //else if (validarkeyup(/^[0-9]{1,6}$/, $("#numCasaDelivery"), $("#snumCasaDelivery"), "Número Inválido") === 0) {
+    //    mostrarMensaje("Número de Casa Inválido <br/>(Solo números enteros)");
+    //     return false;
+    //}
+
+    else if ($("#tipoPago").val() === "") {
         mostrarMensaje("Seleccione un método de pago.");
         return false;
     }
 
     if ($("#tipoPago").val() === "Pago Móvil") {
-        if (validarkeyup(/^[0-9\-+ ]{4,12}$/, $("#refPago"), $("#srefPago"), "Referencia Inválida") === 0) {
+        if (validarkeyup(/^[0-9\-+ ]{4}$/, $("#refPago"), $("#srefPago"), "Referencia Inválida") === 0) {
             mostrarMensaje("Referencia Inválida <br/>(Entre 4 y 12 caracteres)");
             return false;
         }
@@ -428,6 +447,57 @@ function validarEnvio() {
     }
 
     return true;
+}
+
+// Botón para HACER PEDIDO
+$("#btnGuardar").on("click", function () {
+    if (validarEnvio()) {
+        var carrito = JSON.parse(localStorage.getItem("carrito") || "[]");
+        if (!carrito.length) {
+            mostrarMensaje("El carrito está vacío.");
+            return;
+        }
+        if (!$("#tipoPago").val()) {
+            mostrarMensaje("Seleccione un método de pago.");
+            return;
+        }
+        if (carrito.some(function (p) { return !p.codigoProd; })) {
+            mostrarMensaje("Hay productos antiguos en el carrito. Retírelos y agréguelos nuevamente para continuar.");
+            return;
+        }
+        var datos = new FormData($("#f")[0]);
+        datos.set("accion", "registrarPedidoCliente");
+        datos.append("carrito", JSON.stringify(carrito));
+        enviaAjax(datos);
+    }
+});
+
+// Función para limpiar
+function limpia() {
+    $("#nombreCli").val("");
+    $("#apellidoCli").val("");
+    $("#cedulaCli").val("");
+    $("#tlfCli").val("");
+    $("#zonaDelivery").val("");
+    $("#numCasaDelivery").val("");
+    $("#calleDelivery").val("");
+    $("#tipoPago").val("");
+    $("#cuentaDestino").val("");
+    $("#refPago").val("");
+    $("#cedulaPago").val("");
+    $("#tlfPago").val("");
+    $("#datosPagoMovil").hide();
+
+    $("#snombreCli").text("");
+    $("#sapellidoCli").text("");
+    $("#scedulaCli").text("");
+    $("#stlfCli").text("");
+    $("#srefPago").text("");
+    $("#scedulaPago").text("");
+    $("#stlfPago").text("");
+
+    $("#scalleDelivery").text("");
+    $("#snumcasaDelivery").text("");
 }
 
 // Función para mostrar el modal de mensajes
@@ -484,6 +554,10 @@ function enviaAjax(datos) {
                         $("#subtotalCompra").text("$" + lee.subtotal);
                         $("#montoTotal").text("$" + lee.subtotal);
                     }
+                    actualizarPreciosEnBs();
+                } else if (lee.resultado == "precioDeliveryObtenido") {
+                    let precioDelivery = parseFloat(lee.precio) || 0;
+                    $("#zonaDelivery").data("precioDelivery", precioDelivery);
                     actualizarPreciosEnBs();
                 } else if (lee.resultado == "cuentasCargadas") {
                     $("#cuentaDestino").html(lee.mensaje);

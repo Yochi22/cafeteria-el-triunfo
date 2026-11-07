@@ -1,33 +1,30 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const sidebarMenu = document.getElementById('sidebarMenu');
-    const btnToggle = document.getElementById('btn-toggle-sidebar');
+$(function () {
+    const $sidebarMenu = $('#sidebarMenu');
+    const $btnToggle = $('#btn-toggle-sidebar');
 
-    document.addEventListener('click', function (event) {
-        if (sidebarMenu && btnToggle) {
-            if (sidebarMenu.classList.contains('show')) {
-                if (!sidebarMenu.contains(event.target) && !btnToggle.contains(event.target)) {
+    $(document).on('click', function (event) {
+        if ($sidebarMenu.length && $btnToggle.length) {
+            if ($sidebarMenu.hasClass('show')) {
+                if (!$sidebarMenu[0].contains(event.target) && !$btnToggle[0].contains(event.target)) {
                     ocultarMenuMovil();
                 }
             }
         }
     });
 
-    if (sidebarMenu) {
-        const enlacesNav = sidebarMenu.querySelectorAll('.nav-link');
-        enlacesNav.forEach(enlace => {
-            enlace.addEventListener('click', function () {
-                if (sidebarMenu.classList.contains('show')) {
-                    ocultarMenuMovil();
-                }
-            });
+    if ($sidebarMenu.length) {
+        $sidebarMenu.find('.nav-link').on('click', function () {
+            if ($sidebarMenu.hasClass('show')) {
+                ocultarMenuMovil();
+            }
         });
     }
 
     function ocultarMenuMovil() {
-        let bsCollapse = bootstrap.Collapse.getInstance(sidebarMenu);
+        let bsCollapse = bootstrap.Collapse.getInstance($sidebarMenu[0]);
 
         if (!bsCollapse) {
-            bsCollapse = new bootstrap.Collapse(sidebarMenu, { toggle: false });
+            bsCollapse = new bootstrap.Collapse($sidebarMenu[0], { toggle: false });
         }
 
         bsCollapse.hide();

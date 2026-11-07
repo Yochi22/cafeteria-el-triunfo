@@ -25,7 +25,6 @@ class cuentas extends datos
     function get_tipoCuenta() { return $this->tipoCuenta; }
     function get_numCuenta() { return $this->numCuenta; }
 
-
     // Función para verificar si la Cuenta ya está registrada
     function existe($numCuenta)
     {
@@ -99,7 +98,7 @@ class cuentas extends datos
                     $respuesta .= "<td>" . $fila['tipoCuenta'] . "</td>";
                     $respuesta .= "<td>" . $fila['numCuenta'] . "</td>";
                     $respuesta .= "<td>";
-                    $respuesta .= "<button type='button' class='btn btn-outline-info btn-sm d-inline-flex align-items-center gap-1 my-1' data-banco='" . $fila['nombreBanco'] . "' data-cedula='" . $fila['cedulaTitular'] . "' data-telefono='" . $fila['tlfCuenta'] . "' data-tipo='" . $fila['tipoCuenta'] . "' onclick='pone(this)'><i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span></button>";
+                    $respuesta .= "<button type='button' class='btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1 my-1' data-banco='" . $fila['nombreBanco'] . "' data-cedula='" . $fila['cedulaTitular'] . "' data-telefono='" . $fila['tlfCuenta'] . "' data-tipo='" . $fila['tipoCuenta'] . "' onclick='pone(this)'><i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span></button>";
                     $respuesta .= "<button type='button' class='btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1 m-1' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i><span class='d-none d-sm-inline'> Eliminar</span></button>";
                     $respuesta .= "</td>";
                     $respuesta .= "</tr>";

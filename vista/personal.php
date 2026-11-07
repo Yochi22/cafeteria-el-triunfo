@@ -41,7 +41,7 @@
                         <button class="btn p-0 border-0 link-secondary" type="button" id="btnBuscar">
                             <i class="bi bi-search"></i>
                         </button>
-                        <input type="text" id="valorBusqueda" name="valorBusqueda" class="form-control border-0 py-0 py-2 shadow-none" placeholder="Buscar cliente...">
+                        <input type="text" id="valorBusqueda" name="valorBusqueda" class="form-control border-0 py-0 py-2 shadow-none" placeholder="Buscar personal...">
                     </div>
                 </div>
             </div>

@@ -130,7 +130,7 @@ class pedidos extends datos
                                     <h4 class="text-success fw-bold mb-0">$' . number_format($fila['precioTotal'], 2) . '</h4>
                                 </div>
                                 <div style="width: 120px;">
-                                    <button type="button" class="btn btn-outline-secondary btn-sm d-flex align-items-center justify-content-center gap-2 mb-2 w-100" onclick="pone(' . $fila['idPedido'] . ')" title="Editar">
+                                    <button type="button" class="btn btn-outline-primary btn-sm d-flex align-items-center justify-content-center gap-2 mb-2 w-100" onclick="pone(' . $fila['idPedido'] . ')" title="Editar">
                                         <i class="bi bi-pencil-square"></i> Editar
                                     </button>
                                     <button type="button" class="btn btn-outline-danger btn-sm d-flex align-items-center justify-content-center gap-2 w-100" onclick="eliminar(' . $fila['idPedido'] . ')" title="Eliminar">

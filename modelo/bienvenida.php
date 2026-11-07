@@ -8,6 +8,7 @@ class bienvenida extends datos
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
         try {
             $stmt = $co->query("SELECT * FROM horario");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);

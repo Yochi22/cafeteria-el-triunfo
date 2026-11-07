@@ -28,7 +28,7 @@ $(document).ready(function () {
 
     $("#numComprobante").on("keypress", function (e) { validarkeypress(/^[0-9]*$/, e); });
     $("#numComprobante").on("keyup", function () {
-        validarkeyup(/^[0-9]{11,12}$/, $(this), $("#snumComprobante"), "Comprobante Inválido");
+        validarkeyup(/^[0-9]{4}$/, $(this), $("#snumComprobante"), "Comprobante Inválido");
     });
 
     $("#cedulaPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9\-\.]*$/, e); });
@@ -38,12 +38,12 @@ $(document).ready(function () {
 
     $("#tlfPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9\-+ ]*$/, e); });
     $("#tlfPagoPedido").on("keyup", function () {
-        validarkeyup(/^[0-9\-+ ]{11,12}$/, $(this), $("#stlfPagoPedido"), "Teléfono Inválido - Formato: 0000-0000000");
+        validarkeyup(/^[0-9\-+]{11,12}$/, $(this), $("#stlfPagoPedido"), "Teléfono Inválido - Formato: 0000-0000000");
     });
 
     $("#referenciaPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9\-+ ]*$/, e); });
     $("#referenciaPagoPedido").on("keyup", function () {
-        validarkeyup(/^[0-9\-+ ]{11,12}$/, $(this), $("#sreferenciaPagoPedido"), "Referencia Inválida");
+        validarkeyup(/^[0-9\-+]{4}$/, $(this), $("#sreferenciaPagoPedido"), "Referencia Inválida");
     });
 
     $("#btnBuscarCuentaPago").on("click", function () { $("#modal_cuentas").modal("show"); });
@@ -72,12 +72,14 @@ $(document).ready(function () {
         datos.set("cedulaPago", $("#cedulaPagoPedido").val());
         datos.set("tlfPago", $("#tlfPagoPedido").val());
         datos.set("referenciaPago", $("#referenciaPagoPedido").val());
-        if ($(this).data("accion") == "modificar") {
-            datos.append("accion", "modificar");
-        } else {
+
+        if ($(this).text() == 'incluir') {
             datos.append("accion", "incluir");
+            enviaAjax(datos);
+        } else if ($(this).text() == 'modificar') {
+            datos.append("accion", "modificar");
+            enviaAjax(datos);
         }
-        enviaAjax(datos);
     });
 
     $("#btnBuscarCliente").on("click", function () {
@@ -116,7 +118,7 @@ function validarEnvio() {
         return false;
     }
     if ($("#numComprobante").val().trim() !== "") {
-        if (validarkeyup(/^[0-9]{11,12}$/, $("#numComprobante"), $("#snumComprobante"), "Comprobante Inválido") === 0) {
+        if (validarkeyup(/^[0-9]{4}$/, $("#numComprobante"), $("#snumComprobante"), "Comprobante Inválido") === 0) {
             mostrarMensaje("Número de Comprobante Inválido");
             return false;
         }
@@ -131,7 +133,7 @@ function validarEnvio() {
                 mostrarMensaje("Seleccione la cuenta destino del Pago Móvil.");
                 return false;
             }
-            if (validarkeyup(/^[0-9\-+ ]{11,12}$/, $("#referenciaPagoPedido"), $("#sreferenciaPagoPedido"), "Referencia Inválida") === 0) {
+            if (validarkeyup(/^[0-9\-+ ]{4}$/, $("#referenciaPagoPedido"), $("#sreferenciaPagoPedido"), "Referencia Inválida") === 0) {
                 mostrarMensaje("Referencia inválida. Revise el formato indicado.");
                 return false;
             }
@@ -145,6 +147,7 @@ function validarEnvio() {
             }
         }
     }
+
     return true;
 }
 
@@ -194,7 +197,6 @@ function seleccionarProducto(id, codigo, nombre, precio) {
             "</td>" +
             "<td class='align-middle'><button type='button' class='btn btn-outline-danger btn-sm' onclick='eliminalineadetalle(this)'><i class='bi bi-x-lg'></i></button></td>" +
             "</tr>";
-
         $("#detallesdeventa").append(fila);
         calculaTotal();
     }
@@ -231,23 +233,36 @@ function calculaTotal() {
     $("#totalGeneral").text("$" + total.toFixed(2));
 }
 
-function limpia() {
-    $("#f")[0].reset();
-    $("#idPedido").val("");
-    $("#idCliente").val("");
-    $("#idCuenta").val("");
-    $("#numComprobante").val("");
-    $("#clienteInfo").val("");
-    $("#cuentaInfo").val("");
-    $("#detallesdeventa").empty();
-    $("#totalGeneral").text("$0.00");
-    $("#divEstadoPedido").hide();
-    $("#datosPagoPedido").hide();
-    $("#tipoPagoPedido, #cedulaPagoPedido, #tlfPagoPedido, #referenciaPagoPedido, #cuentaPagoPedidoInfo").val("");
-    $("#cuentaPagoPedidoCont, #cedulaPagoPedidoCont, #tlfPagoPedidoCont, #referenciaPagoPedidoCont").hide();
-    $("#snumComprobante, #scedulaPagoPedido, #stlfPagoPedido, #sreferenciaPagoPedido").text("");
-    $("#btnGuardar").data("accion", "incluir");
-    $("#btnGuardar").html('<i class="bi bi-check-circle"></i> Procesar Pedido');
+function validarkeypress(er, e) {
+    var key = e.keyCode;
+    var tecla = String.fromCharCode(key);
+    var permitido = er.test(tecla);
+
+    if (!permitido) e.preventDefault();
+}
+
+function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
+    var valido = er.test(etiqueta.val());
+
+    if (valido) {
+        etiquetamensaje.text("");
+        return 1;
+    } else {
+        etiquetamensaje.text(mensaje);
+        return 0;
+    }
+}
+
+function mostrarMensaje(mensaje) {
+    if ($("#mostrarModal").length) {
+        $(".modal").modal("hide");
+        $("#contenidoModal").text(mensaje);
+        setTimeout(function () {
+            $("#mostrarModal").modal("show");
+        }, 200);
+    } else {
+        alert(mensaje);
+    }
 }
 
 function pone(idPedido) {
@@ -301,8 +316,7 @@ function enviaAjax(datos) {
                     $("#detallesdeventa").html(lee.detalleHtml);
                     calculaTotal();
                     $("#divEstadoPedido").show();
-                    $("#btnGuardar").data("accion", "modificar");
-                    $("#btnGuardar").html('<i class="bi bi-check-circle"></i> Modificar Pedido');
+                    $("#btnGuardar").text("modificar");
                     $("#modal_pedido").modal("show");
                 } else if (lee.resultado == "incluir" || lee.resultado == "modificar") {
                     mostrarMensaje(lee.mensaje);
@@ -325,32 +339,20 @@ function enviaAjax(datos) {
     });
 }
 
-function validarkeypress(er, e) {
-    var key = e.keyCode;
-    var tecla = String.fromCharCode(key);
-    var permitido = er.test(tecla);
-    if (!permitido) e.preventDefault();
-}
-
-function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
-    var valido = er.test(etiqueta.val());
-    if (valido) {
-        etiquetamensaje.text("");
-        return 1;
-    } else {
-        etiquetamensaje.text(mensaje);
-        return 0;
-    }
-}
-
-function mostrarMensaje(mensaje) {
-    if ($("#mostrarModal").length) {
-        $(".modal").modal("hide");
-        $("#contenidoModal").text(mensaje);
-        setTimeout(function () {
-            $("#mostrarModal").modal("show");
-        }, 200);
-    } else {
-        alert(mensaje);
-    }
+function limpia() {
+    $("#f")[0].reset();
+    $("#idPedido").val("");
+    $("#idCliente").val("");
+    $("#idCuenta").val("");
+    $("#numComprobante").val("");
+    $("#clienteInfo").val("");
+    $("#cuentaInfo").val("");
+    $("#detallesdeventa").empty();
+    $("#totalGeneral").text("$0.00");
+    $("#divEstadoPedido").hide();
+    $("#datosPagoPedido").hide();
+    $("#tipoPagoPedido, #cedulaPagoPedido, #tlfPagoPedido, #referenciaPagoPedido, #cuentaPagoPedidoInfo").val("");
+    $("#cuentaPagoPedidoCont, #cedulaPagoPedidoCont, #tlfPagoPedidoCont, #referenciaPagoPedidoCont").hide();
+    $("#snumComprobante, #scedulaPagoPedido, #stlfPagoPedido, #sreferenciaPagoPedido").text("");
+    $("#btnGuardar").text("incluir");
 }
