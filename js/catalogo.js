@@ -325,19 +325,19 @@ $("#calleDelivery").on("keyup", function () {
 });
 
 // -- Número de Casa de Delivery --
-$("#numCasaDelivery").on("keypress", function (e) {
-    validarkeypress(/^[0-9]*$/, e);
-});
-$("#numCasaDelivery").on("keyup", function () {
-    validarkeyup(/^[0-9]{1,6}$/, $(this), $("#snumCasaDelivery"), "Número Inválido - Solo números (1 a 6 dígitos)");
-});
+//$("#numCasaDelivery").on("keypress", function (e) {
+//    validarkeypress(/^[0-9]*$/, e);
+//});
+//$("#numCasaDelivery").on("keyup", function () {
+//   validarkeyup(/^[0-9]{1,6}$/, $(this), $("#snumCasaDelivery"), "Número Inválido - Solo números (1 a 6 dígitos)");
+//});
 
 // -- Referencia del pago --
 $("#refPago").on("keypress", function (e) {
     validarkeypress(/^[0-9\-+ ]*$/, e);
 });
 $("#refPago").on("keyup", function () {
-    validarkeyup(/^[0-9\-+ ]{4,12}$/, $(this), $("#srefPago"), "Referencia Inválida - Entre 4 y 12 dígitos");
+    validarkeyup(/^[0-9\-+ ]{4}$/, $(this), $("#srefPago"), "Referencia Inválida - Entre 4 y 12 dígitos");
 });
 
 // -- Cédula de quien realizó el Pago Móvil --
@@ -415,18 +415,18 @@ function validarEnvio() {
         mostrarMensaje("Calle Inválida <br/>(Entre 3 y 100 caracteres)");
         return false;
     }
-    else if (validarkeyup(/^[0-9]{1,6}$/, $("#numCasaDelivery"), $("#snumCasaDelivery"), "Número Inválido") === 0) {
-        mostrarMensaje("Número de Casa Inválido <br/>(Solo números enteros)");
-        return false;
-    }
+    //else if (validarkeyup(/^[0-9]{1,6}$/, $("#numCasaDelivery"), $("#snumCasaDelivery"), "Número Inválido") === 0) {
+    //    mostrarMensaje("Número de Casa Inválido <br/>(Solo números enteros)");
+   //     return false;
+   //}
 
-    if ($("#tipoPago").val() === "") {
+    else if ($("#tipoPago").val() === "") {
         mostrarMensaje("Seleccione un método de pago.");
         return false;
     }
 
     if ($("#tipoPago").val() === "Pago Móvil") {
-        if (validarkeyup(/^[0-9\-+ ]{4,12}$/, $("#refPago"), $("#srefPago"), "Referencia Inválida") === 0) {
+        if (validarkeyup(/^[0-9\-+ ]{4}$/, $("#refPago"), $("#srefPago"), "Referencia Inválida") === 0) {
             mostrarMensaje("Referencia Inválida <br/>(Entre 4 y 12 caracteres)");
             return false;
         }

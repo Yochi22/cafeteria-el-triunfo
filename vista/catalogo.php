@@ -217,6 +217,7 @@
                         <!-- Direccion de Delivery -->
                         <div class="row">
                             <div class="col-md-12 mb-3">
+                                <p class="small mb-2" style="opacity: 0.5;">Introduzca su dirección de delivery.</p>
                                 <label for="zonaDelivery" class="form-label text-muted small fw-bold">Zona</label>
                                 <select class="form-select rounded-3" id="zonaDelivery" name="zonaDelivery" required>
                                     <option value="">Seleccione...</option>
@@ -312,8 +313,8 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label for="refPago" class="form-label text-muted small fw-bold">Referencia del pago (11-12 caracteres)</label>
-                                    <input type="text" class="form-control rounded-3" id="refPago" name="refPago" maxlength="12">
+                                    <label for="refPago" class="form-label text-muted small fw-bold">Referencia del pago (Ultimos 4 Numeros)</label>
+                                    <input type="text" class="form-control rounded-3" id="refPago" name="refPago" maxlength="4">
                                     <span id="srefPago" class="text-danger small"></span>
                                 </div>
                                 <div class="col-md-6 mb-3">

@@ -28,7 +28,7 @@ $(document).ready(function () {
 
     $("#numComprobante").on("keypress", function (e) { validarkeypress(/^[0-9]*$/, e); });
     $("#numComprobante").on("keyup", function () {
-        validarkeyup(/^[0-9]{11,12}$/, $(this), $("#snumComprobante"), "Comprobante Inválido");
+        validarkeyup(/^[0-9]{4}$/, $(this), $("#snumComprobante"), "Comprobante Inválido");
     });
 
     $("#cedulaPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9\-\.]*$/, e); });
@@ -43,7 +43,7 @@ $(document).ready(function () {
 
     $("#referenciaPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9\-+ ]*$/, e); });
     $("#referenciaPagoPedido").on("keyup", function () {
-        validarkeyup(/^[0-9\-+ ]{11,12}$/, $(this), $("#sreferenciaPagoPedido"), "Referencia Inválida");
+        validarkeyup(/^[0-9\-+ ]{4}$/, $(this), $("#sreferenciaPagoPedido"), "Referencia Inválida");
     });
 
     $("#btnBuscarCuentaPago").on("click", function () { $("#modal_cuentas").modal("show"); });
@@ -116,7 +116,7 @@ function validarEnvio() {
         return false;
     }
     if ($("#numComprobante").val().trim() !== "") {
-        if (validarkeyup(/^[0-9]{11,12}$/, $("#numComprobante"), $("#snumComprobante"), "Comprobante Inválido") === 0) {
+        if (validarkeyup(/^[0-9]{4}$/, $("#numComprobante"), $("#snumComprobante"), "Comprobante Inválido") === 0) {
             mostrarMensaje("Número de Comprobante Inválido");
             return false;
         }
@@ -131,7 +131,7 @@ function validarEnvio() {
                 mostrarMensaje("Seleccione la cuenta destino del Pago Móvil.");
                 return false;
             }
-            if (validarkeyup(/^[0-9\-+ ]{11,12}$/, $("#referenciaPagoPedido"), $("#sreferenciaPagoPedido"), "Referencia Inválida") === 0) {
+            if (validarkeyup(/^[0-9\-+ ]{4}$/, $("#referenciaPagoPedido"), $("#sreferenciaPagoPedido"), "Referencia Inválida") === 0) {
                 mostrarMensaje("Referencia inválida. Revise el formato indicado.");
                 return false;
             }
