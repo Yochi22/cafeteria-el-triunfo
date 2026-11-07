@@ -114,9 +114,9 @@ class Ventas extends datos
                     $respuesta .= "<td class='fw-semibold'>" . $nombrePersonal . "</td>";
                     $respuesta .= "<td class='fw-bold text-success'>$" . number_format($fila['totalVenta'], 2) . "</td>";
                     $respuesta .= "<td class='fw-semibold'>" . $fila['tipoPago'] . "</td>";
-                    $respuesta .= "<td><button type='button' class='btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1' onclick='consultarDetalle(" . $fila['idVenta'] . ")'><i class='bi bi-eye-fill'></i> Ver Detalle</button></td>";
+                    $respuesta .= "<td><button type='button' class='btn btn-outline-info btn-sm d-inline-flex align-items-center gap-1' onclick='consultarDetalle(" . $fila['idVenta'] . ")'><i class='bi bi-eye-fill'></i> Ver Detalle</button></td>";
                     $respuesta .= "<td>";
-                    $respuesta .= "<button type='button' class='btn btn-outline-info btn-sm d-inline-flex align-items-center gap-1' onclick='pone(" . $fila['idVenta'] . ")'><i class='bi bi-pencil-square'></i> Modificar</button> ";
+                    $respuesta .= "<button type='button' class='btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1' onclick='pone(" . $fila['idVenta'] . ")'><i class='bi bi-pencil-square'></i> Modificar</button> ";
                     $respuesta .= "<button type='button' class='btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1' onclick='eliminar(" . $fila['idVenta'] . ")'><i class='bi bi-trash-fill'></i> Eliminar</button>";
                     $respuesta .= "</td>";
                     $respuesta .= "</tr>";

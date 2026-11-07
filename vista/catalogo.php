@@ -107,9 +107,9 @@
 
     <!-- MODALES DE CARRITO Y PAGO -->
     <!-- Carrito -->
-    <div class="modal fade" id="carritoModal" tabindex="-1" aria-labelledby="carritoModalLabel" aria-hidden="true">
+    <div class="modal fade" id="carritoModal" tabindex="-1" aria-labelledby="carritoModalLabel" aria-hidden="true" style="height: 600px;">
         <div class="modal-dialog modal-xl modal-dialog-scrollable">
-            <div class="modal-content border-0 rounded-4 shadow-lg">
+            <div class="modal-content border-0 rounded-4 shadow-lg h-100">
 
                 <!-- Encabezado modal -->
                 <div class="modal-header border-bottom px-4 py-3">
@@ -120,7 +120,7 @@
                 </div>
 
                 <!-- Cuerpo del Modal -->
-                <div class="modal-body p-4 bg-light">
+                <div class="modal-body p-4 bg-light modal-dialog-scrollable">
                     <div class="row g-4">
 
                         <!-- Aquí van los productos -->
@@ -132,32 +132,24 @@
                         <!-- Aquí va el precio y detalles del pedido -->
                         <div class="col-lg-4">
                             <div class="card border-0 rounded-4 shadow-sm p-4 bg-white sticky-lg-top" style="top: 20px;">
-                                <h5 class="fw-bold mb-4">Resumen del Pedido</h5>
+                                <h5 class="fw-bold mb-2">Resumen del Pedido</h5>
+                                
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-exclamation me-2"></i>
+                                    <span class="text-muted small">Su costo total se calculará con el delivery.</span>
+                                </div>
 
                                 <div class="d-flex justify-content-between align-items-center mb-3">
-                                    <span class="text-muted fw-semibold">Subtotal</span>
-                                    <div class="text-end">
-                                        <span class="fw-bold text-dark fw-bold" id="subtotalCompraBs">Bs. 0,00</span>
-                                        <div class="small text-muted fw-bold" id="subtotalCompra">$0.00</div>
+                                    <span class="text-dark fw-bold">Subtotal</span>
+                                        <div class="text-end">
+                                            <span class="fw-bold text-dark fw-bold" id="subtotalCompraBs">Bs. 0,00</span>
+                                            <div class="small text-muted fw-bold" id="subtotalCompra">$0.00</div>
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-3">
-                                    <span class="text-muted fw-semibold">Costo de Envío (Delivery)</span>
-                                    <span class="fw-bold text-dark">$0.00</span>
-                                </div>
-
-                                <div class="d-flex justify-content-between align-items-center mb-4">
-                                    <span class="fw-bold fs-5 text-brown">Costo Total</span>
-                                    <div class="text-end">
-                                        <span class="fw-bold text-dark fw-bold" id="montoTotalBs">Bs. 0,00</span>
-                                        <div class="small text-muted fw-bold" id="montoTotal">$0.00</div>
-                                    </div>
-                                </div>
-
+                                
                                 <!-- Botón para pasar al siguiente modal -->
-                                <button class="btn btn-warning text-white btn-lg w-100 rounded-3 fw-bold shadow-sm" style="background-color: #ff8c00; border: none;" data-bs-toggle="modal" data-bs-target="#pagoModal">
-                                    Procesar Pago
+                                <button class="btn btn-warning text-white btn-lg w-100 rounded-3 fw-bold shadow-sm" style="background-color: #ff8c00; border: none;" data-bs-toggle="modal" data-bs-target="#infoClienteModal">
+                                    Pedir!
                                 </button>
                             </div>
                         </div>
@@ -168,24 +160,29 @@
         </div>
     </div>
 
-    <!-- Pago -->
-    <div class="modal fade" id="pagoModal" tabindex="-1" aria-labelledby="pagoModalLabel" aria-hidden="true">
+    <!-- Datos de cliente -->
+    <form id="f" autocomplete="off">
+    <input type="hidden" id="accion" name="accion">
+
+    <div class="modal fade" id="infoClienteModal" tabindex="-1" aria-labelledby="infoClienteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-scrollable">
             <div class="modal-content border-0 rounded-4 shadow-lg">
 
                 <!-- Encabezado modal -->
                 <div class="modal-header border-bottom px-4 py-3">
-                    <h5 class="modal-title fw-bold" id="pagoModalLabel">
-                        <i class="bi bi-cart-fill me-2 text-orange"></i>Procesar Compra
+                    <h5 class="modal-title fw-bold d-flex align-items-center" id="infoClienteModalLabel">
+                        <button type="button" class="btn p-0 border-0 bg-transparent text-dark me-2 text-decoration-none shadow-none" data-bs-toggle="modal" data-bs-target="#carritoModal" title="Volver al carrito">
+                            <i class="bi bi-arrow-left-circle fs-4 text-orange"></i>
+                        </button>
+                        Procesar Compra
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <!-- Cuerpo modal -->
                 <div class="modal-body px-4 px-md-5 pt-2 pb-4">
-                    <p class="small mb-4" style="opacity: 0.5;">Introduzca sus datos. Este es un registro único, te recordaremos en tu próxima compra. :)</p>
+                    <p class="small mb-4" style="opacity: 0.5;">Introduzca sus datos personales.</p>
                     <div class="row g-3"></div>
-                    <form id="f" autocomplete="off">
                         <input type="hidden" id="accion" name="accion">
 
                         <!-- Datos de cliente -->
@@ -215,11 +212,87 @@
                                 <input type="text" class="form-control rounded-3" id="tlfCli" name="tlfCli" required>
                                 <span id="stlfCli" class="text-danger small"></span>
                             </div>
-                        </div>
 
                         <hr>
+                        <!-- Direccion de Delivery -->
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="zonaDelivery" class="form-label text-muted small fw-bold">Zona</label>
+                                <select class="form-select rounded-3" id="zonaDelivery" name="zonaDelivery" required>
+                                    <option value="">Seleccione...</option>
+                                    <option value="Este">Este</option>
+                                    <option value="Oeste">Oeste</option>
+                                    <option value="Centro">Centro</option>
+                                    <option value="Norte">Norte</option>
+                                    <option value="Sur">Sur</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
+                                <label for="calleDelivery" class="form-label text-muted small fw-bold">Calle</label>
+                                <input type="text" class="form-control rounded-3" id="calleDelivery" name="calleDelivery" required>
+                                <span id="scalleDelivery" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="numCasaDelivery" class="form-label text-muted small fw-bold">Num. Casa</label>
+                                <input type="text" class="form-control rounded-3" id="numCasaDelivery" name="numCasaDelivery" required>
+                                <span id="snumCasaDelivery" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                            <button class="btn btn-warning text-white btn-lg w-100 rounded-3 fw-bold shadow-sm" style="background-color: #ff8c00; border: none;" data-bs-toggle="modal" data-bs-target="#pagoModal">
+                                    Procesar Pago
+                            </button>
+
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Pago -->
+    <div class="modal fade" id="pagoModal" tabindex="-1" aria-labelledby="pagoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content border-0 rounded-4 shadow-lg">
+
+                <!-- Encabezado modal -->
+                <div class="modal-header border-bottom px-4 py-3">
+                    <h5 class="modal-title fw-bold d-flex align-items-center" id="pagoModalLabel">
+                        <button type="button" class="btn p-0 border-0 bg-transparent text-dark me-2 text-decoration-none shadow-none" data-bs-toggle="modal" data-bs-target="#infoClienteModal" title="Volver a datos del cliente">
+                            <i class="bi bi-arrow-left-circle fs-4 text-orange"></i>
+                        </button>
+                        Procesar Compra
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <!-- Cuerpo modal -->
+                <div class="modal-body px-4 px-md-5 pt-2 pb-4">
+
+                    <div class="row justify-content-center mb-4">
+                        <div class="col-12 col-md-8">
+                            <div class="border border-success rounded-4 p-3 bg-white shadow-sm mt-3">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-success fw-bold fs-5">Monto Total</span>
+                                        <div class="text-end">
+                                            <span class="fw-bold text-success fs-5" id="montoTotalBs">Bs. 0,00</span>
+                                            <div class="small text-success fw-bold" id="montoTotal">$0.00</div>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="small mb-4" style="opacity: 0.5;">Elija su metodo de pago.</p>
+                    <div class="row g-3"></div>
+                        <input type="hidden" id="accion" name="accion">
+
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
                                 <label for="tipoPago" class="form-label text-muted small fw-bold">Método de pago</label>
                                 <select class="form-select rounded-3" id="tipoPago" name="tipoPago" required>
                                     <option value="">Seleccione...</option>
@@ -230,7 +303,7 @@
                             </div>
                         </div>
                         <div id="datosPagoMovil" style="display:none;">
-                            <p class="small mb-3 text-muted">Para Pago Móvil, seleccione la cuenta destino e indique los datos de la persona que realizó el pago. Puede ser distinta del cliente.</p>
+                            <p class="small mb-3 text-muted">Para Pago Móvil, seleccione la cuenta destino e indique los datos de la persona que realizó el pago.</p>
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="cuentaDestino" class="form-label">Cuenta destino</label>
@@ -258,11 +331,11 @@
                         <div class="d-grid mt-4">
                             <button type="button" class="btn btn-crear w-100 mt-3" id="btnGuardar">Hacer Pedido!</button>
                         </div>
-                    </form>
                 </div>
             </div>
         </div>
     </div>
+</form>
 
     <!-- Modal con info de cuenta -->
     <div class="modal fade" id="modalCuentaCli" aria-hidden="true">

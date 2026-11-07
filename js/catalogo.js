@@ -38,11 +38,6 @@ $(document).ready(function () {
     $("#f").on("submit", function (e) {
         e.preventDefault();
     });
-
-    // Limpiar formulario y spans cada vez que se abra el modal de pago
-    $("#pagoModal").on("show.bs.modal", function () {
-        limpia();
-    });
 });
 
 function cargarCategorias() {
@@ -181,8 +176,13 @@ function actualizarPreciosEnBs() {
 
     let subtotalTexto = $('#subtotalCompra').text().replace('$', '').trim();
     let subtotalUsd = parseFloat(subtotalTexto) || 0;
-    let totalGeneralBs = subtotalUsd * tasaDolar;
 
+    let precioDelivery = parseFloat($("#zonaDelivery").data("precioDelivery")) || 0;
+    let totalUsdFinal = subtotalUsd + precioDelivery;
+
+    $('#montoTotal').text("$" + totalUsdFinal.toFixed(2));
+
+    let totalGeneralBs = totalUsdFinal * tasaDolar;
     let formatoBs = `Bs. ${totalGeneralBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
     $('#subtotalCompraBs').text(formatoBs);
@@ -212,6 +212,37 @@ $(document).on("click", ".btn-eliminar", function () {
     localStorage.setItem("carrito", JSON.stringify(carrito));
     cargarCarritoLocal();
 });
+
+//buscar precio delivery
+$("#zonaDelivery").on("change", function () {
+    var zonaSeleccionada = $(this).val();
+
+    if (!zonaSeleccionada) {
+        $("#zonaDelivery").data("precioDelivery", 0);
+        actualizarPreciosEnBs();
+        return;
+    }
+
+    var datos = new FormData();
+    datos.append("accion", "obtenerPrecioDelivery");
+    datos.append("zona", zonaSeleccionada);
+    enviaAjax(datos);
+});
+
+function actualizarTotalConDelivery(precioDelivery) {
+    let subtotalTexto = $('#subtotalCompra').text().replace('$', '').trim();
+    let subtotalUsd = parseFloat(subtotalTexto) || 0;
+    let totalUsdFinal = subtotalUsd + precioDelivery;
+
+    $('#montoTotal').text("$" + totalUsdFinal.toFixed(2));
+
+    let tasaDolar = parseFloat(localStorage.getItem('tasaDolar')) || 0;
+    if (tasaDolar > 0) {
+        let totalGeneralBs = totalUsdFinal * tasaDolar;
+        let formatoBs = `Bs. ${totalGeneralBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        $('#montoTotalBs').text(formatoBs);
+    }
+}
 
 // FUNCIONES DE LA CUENTA
 $("#cuentaDestino").on("change", function () {
@@ -283,6 +314,22 @@ $("#tlfCli").on("keyup", function () {
     validarkeyup(/^[0-9\-+ ]{11,12}$/, $(this), $("#stlfCli"), "Teléfono Inválido - Formato: 0000-0000000");
 });
 
+// -- Calle de Delivery --
+$("#calleDelivery").on("keypress", function (e) {
+    validarkeypress(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC\-\#\.,]*$/, e);
+});
+$("#calleDelivery").on("keyup", function () {
+    validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC\-\#\.,]{3,100}$/, $(this), $("#scalleDelivery"), "Calle Inválida - Entre 3 y 100 caracteres");
+});
+
+// -- Número de Casa de Delivery --
+$("#numCasaDelivery").on("keypress", function (e) {
+    validarkeypress(/^[0-9]*$/, e);
+});
+$("#numCasaDelivery").on("keyup", function () {
+    validarkeyup(/^[0-9]{1,6}$/, $(this), $("#snumCasaDelivery"), "Número Inválido - Solo números (1 a 6 dígitos)");
+});
+
 // -- Referencia del pago --
 $("#refPago").on("keypress", function (e) {
     validarkeypress(/^[0-9\-+ ]*$/, e);
@@ -346,6 +393,9 @@ function limpia() {
     $("#apellidoCli").val("");
     $("#cedulaCli").val("");
     $("#tlfCli").val("");
+    $("#zonaDelivery").val("");
+    $("#numCasaDelivery").val("");
+    $("#calleDelivery").val("");
     $("#tipoPago").val("");
     $("#cuentaDestino").val("");
     $("#refPago").val("");
@@ -360,6 +410,9 @@ function limpia() {
     $("#srefPago").text("");
     $("#scedulaPago").text("");
     $("#stlfPago").text("");
+
+    $("#scalleDelivery").text("");
+    $("#snumcasaDelivery").text("");
 }
 
 // Función para validar por keypress
@@ -400,6 +453,19 @@ function validarEnvio() {
     }
     else if (validarkeyup(/^[0-9\-+ ]{11,12}$/, $("#tlfCli"), $("#stlfCli"), "Teléfono Inválido") === 0) {
         mostrarMensaje("Teléfono Inválido <br/>(Formato: 0000-0000000)");
+        return false;
+    }
+    
+    if (!$("#zonaDelivery").val()) {
+        mostrarMensaje("Seleccione una zona de delivery.");
+        return false;
+    }
+    else if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC\-\#\.,]{3,100}$/, $("#calleDelivery"), $("#scalleDelivery"), "Calle Inválida") === 0) {
+        mostrarMensaje("Calle Inválida <br/>(Entre 3 y 100 caracteres)");
+        return false;
+    }
+    else if (validarkeyup(/^[0-9]{1,6}$/, $("#numCasaDelivery"), $("#snumCasaDelivery"), "Número Inválido") === 0) {
+        mostrarMensaje("Número de Casa Inválido <br/>(Solo números enteros)");
         return false;
     }
 
@@ -484,6 +550,10 @@ function enviaAjax(datos) {
                         $("#subtotalCompra").text("$" + lee.subtotal);
                         $("#montoTotal").text("$" + lee.subtotal);
                     }
+                    actualizarPreciosEnBs();
+                } else if (lee.resultado == "precioDeliveryObtenido") {
+                    let precioDelivery = parseFloat(lee.precio) || 0;
+                    $("#zonaDelivery").data("precioDelivery", precioDelivery);
                     actualizarPreciosEnBs();
                 } else if (lee.resultado == "cuentasCargadas") {
                     $("#cuentaDestino").html(lee.mensaje);
