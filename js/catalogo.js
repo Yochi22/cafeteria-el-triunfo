@@ -1,4 +1,3 @@
-// FUNCIONES DEL CATÁLOGO
 $(document).ready(function () {
     try {
         cargarCategorias();
@@ -34,12 +33,12 @@ $(document).ready(function () {
         ejecutarBusqueda();
     });
 
-    // Evitar que el formulario de compra se envíe con Enter
     $("#f").on("submit", function (e) {
         e.preventDefault();
     });
 });
 
+//funciones CATALOGO
 function cargarCategorias() {
     var datos = new FormData();
     datos.append("accion", "obtener_datos_categorias");
@@ -66,12 +65,11 @@ function abrirModalDetalle(id, nombre, descripcion, precio, imagen) {
     $("#modal-titulo").text(nombre);
     $("#modal-descripcion").text(descripcion);
     $("#modal-precio").text("$ " + parseFloat(precio).toFixed(2));
-    // Se guarda el precio original en input oculto
     $("#modal-precio").attr("precioOriginal", precio);
     $("#modal-img").attr("src", imagen);
     $("#modal-cantidad").text("1");
 
-    // Calculo del precio en BS
+    
     let tasaDolar = parseFloat(localStorage.getItem('tasaDolar')) || 0;
     let precioEnBs = parseFloat(precio) * tasaDolar;
 
@@ -96,7 +94,7 @@ function cambiarCantidadModal(cambio) {
     }
 }
 
-// FUNCIONES DE CARRITO
+// funciones de CARRITO
 function cargarCarritoLocal() {
     let carritoLocal = localStorage.getItem("carrito") || "[]";
     actualizarContadorCarrito();
@@ -126,7 +124,7 @@ $("#modal-btn-agregar").on("click", function () {
 
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
-    // Verificamos si el producto ya existe en el carrito
+    
     let index = carrito.findIndex((p) => p.nombreProd === nuevoProd.nombreProd);
     if (index !== -1) {
         carrito[index].cantidad += nuevoProd.cantidad;
@@ -145,6 +143,7 @@ function agregarAlCarrito(idProducto, cantidad) {
     mostrarNotificacion("¡Producto agregado al carrito con éxito!");
 }
 
+
 function actualizarContadorCarrito() {
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
     let totalUnidades = 0;
@@ -155,6 +154,7 @@ function actualizarContadorCarrito() {
 
     $("#contador-carrito").text(totalUnidades);
 }
+
 
 function actualizarPreciosEnBs() {
     let tasaDolar = parseFloat(localStorage.getItem('tasaDolar')) || 0;
@@ -189,6 +189,7 @@ function actualizarPreciosEnBs() {
     $('#montoTotalBs').text(formatoBs);
 }
 
+
 function cambiarCantidadLocal(index, cambio) {
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
 
@@ -204,6 +205,7 @@ function cambiarCantidadLocal(index, cambio) {
     }
 }
 
+//elimiinar de carrito
 $(document).on("click", ".btn-eliminar", function () {
     let index = $(this).attr("data-index");
 
@@ -244,7 +246,7 @@ function actualizarTotalConDelivery(precioDelivery) {
     }
 }
 
-// FUNCIONES DE LA CUENTA
+// funciones de PAGO
 $("#cuentaDestino").on("change", function () {
     let idCuenta = $(this).val();
     if (!idCuenta) return;
@@ -364,57 +366,6 @@ $("#tipoPago").on("change", function () {
     }
 });
 
-// CONTROLADOR DE BOTÓN GUARDAR (Hacer Pedido)
-$("#btnGuardar").on("click", function () {
-    if (validarEnvio()) {
-        var carrito = JSON.parse(localStorage.getItem("carrito") || "[]");
-        if (!carrito.length) {
-            mostrarMensaje("El carrito está vacío.");
-            return;
-        }
-        if (!$("#tipoPago").val()) {
-            mostrarMensaje("Seleccione un método de pago.");
-            return;
-        }
-        if (carrito.some(function (p) { return !p.codigoProd; })) {
-            mostrarMensaje("Hay productos antiguos en el carrito. Retírelos y agréguelos nuevamente para continuar.");
-            return;
-        }
-        var datos = new FormData($("#f")[0]);
-        datos.set("accion", "registrarPedidoCliente");
-        datos.append("carrito", JSON.stringify(carrito));
-        enviaAjax(datos);
-    }
-});
-
-// Función para limpiar
-function limpia() {
-    $("#nombreCli").val("");
-    $("#apellidoCli").val("");
-    $("#cedulaCli").val("");
-    $("#tlfCli").val("");
-    $("#zonaDelivery").val("");
-    $("#numCasaDelivery").val("");
-    $("#calleDelivery").val("");
-    $("#tipoPago").val("");
-    $("#cuentaDestino").val("");
-    $("#refPago").val("");
-    $("#cedulaPago").val("");
-    $("#tlfPago").val("");
-    $("#datosPagoMovil").hide();
-
-    $("#snombreCli").text("");
-    $("#sapellidoCli").text("");
-    $("#scedulaCli").text("");
-    $("#stlfCli").text("");
-    $("#srefPago").text("");
-    $("#scedulaPago").text("");
-    $("#stlfPago").text("");
-
-    $("#scalleDelivery").text("");
-    $("#snumcasaDelivery").text("");
-}
-
 // Función para validar por keypress
 function validarkeypress(er, e) {
     key = e.keyCode;
@@ -494,6 +445,57 @@ function validarEnvio() {
     }
 
     return true;
+}
+
+// boton para HACER PEDIDO
+$("#btnGuardar").on("click", function () {
+    if (validarEnvio()) {
+        var carrito = JSON.parse(localStorage.getItem("carrito") || "[]");
+        if (!carrito.length) {
+            mostrarMensaje("El carrito está vacío.");
+            return;
+        }
+        if (!$("#tipoPago").val()) {
+            mostrarMensaje("Seleccione un método de pago.");
+            return;
+        }
+        if (carrito.some(function (p) { return !p.codigoProd; })) {
+            mostrarMensaje("Hay productos antiguos en el carrito. Retírelos y agréguelos nuevamente para continuar.");
+            return;
+        }
+        var datos = new FormData($("#f")[0]);
+        datos.set("accion", "registrarPedidoCliente");
+        datos.append("carrito", JSON.stringify(carrito));
+        enviaAjax(datos);
+    }
+});
+
+// Función para limpiar
+function limpia() {
+    $("#nombreCli").val("");
+    $("#apellidoCli").val("");
+    $("#cedulaCli").val("");
+    $("#tlfCli").val("");
+    $("#zonaDelivery").val("");
+    $("#numCasaDelivery").val("");
+    $("#calleDelivery").val("");
+    $("#tipoPago").val("");
+    $("#cuentaDestino").val("");
+    $("#refPago").val("");
+    $("#cedulaPago").val("");
+    $("#tlfPago").val("");
+    $("#datosPagoMovil").hide();
+
+    $("#snombreCli").text("");
+    $("#sapellidoCli").text("");
+    $("#scedulaCli").text("");
+    $("#stlfCli").text("");
+    $("#srefPago").text("");
+    $("#scedulaPago").text("");
+    $("#stlfPago").text("");
+
+    $("#scalleDelivery").text("");
+    $("#snumcasaDelivery").text("");
 }
 
 // Función para mostrar el modal de mensajes

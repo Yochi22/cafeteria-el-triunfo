@@ -469,7 +469,6 @@ public function obtenerPrecioDelivery($datos)
                 ':tlfPago' => $tlfPagoGuardar
             ));
             
-            // Aquí es donde se crea y obtiene oficialmente el idPedido
             $idPedido = $co->lastInsertId();
 
             // 4. Registrar la Dirección de Delivery vinculada al Pedido recién creado
