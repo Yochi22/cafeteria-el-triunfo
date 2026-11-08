@@ -3,6 +3,7 @@
 if (!is_file("modelo/" . $pagina . ".php")) {
     exit;
 }
+
 require_once("modelo/" . $pagina . ".php");
 
 if (is_file("vista/" . $pagina . ".php")) {
@@ -17,14 +18,17 @@ if (is_file("vista/" . $pagina . ".php")) {
                 $idCliente   = $_POST['idCliente'] ?? '';
                 $idCuenta    = $_POST['idCuenta'] ?? '';
                 $tipoPago    = $_POST['tipoPago'] ?? '';
-                $cedulaPago  = $_POST['cedulaTitular'] ?? '';
-                $tlfPago     = $_POST['telefonoTitular'] ?? '';
-                $referencia  = $_POST['referenciaBancaria'] ?? '';
+                $cedulaPago  = $_POST['cedulaPago'] ?? '';
+                $tlfPago     = $_POST['tlfPago'] ?? '';
+                $referencia  = $_POST['refPago'] ?? '';
                 $productos   = $_POST['idProducto'] ?? [];
                 $cantidades  = $_POST['cantidad'] ?? [];
                 $precios     = $_POST['precio'] ?? [];
+                $zonaDelivery    = $_POST['zonaDelivery'] ?? '';
+                $calleDelivery   = $_POST['calleDelivery'] ?? '';
+                $numCasaDelivery = $_POST['numCasaDelivery'] ?? '';
 
-                echo json_encode($o->incluir($idPersonal, $idCliente, $tipoPago, $cedulaPago, $tlfPago, $referencia, $idCuenta, $productos, $cantidades, $precios));
+                echo json_encode($o->incluir($idPersonal, $idCliente, $tipoPago, $cedulaPago, $tlfPago, $referencia, $idCuenta, $productos, $cantidades, $precios, $zonaDelivery, $calleDelivery, $numCasaDelivery));
                 break;
 
             case 'consultar':
@@ -47,14 +51,17 @@ if (is_file("vista/" . $pagina . ".php")) {
                 $idCliente   = $_POST['idCliente'] ?? '';
                 $idCuenta    = $_POST['idCuenta'] ?? '';
                 $tipoPago    = $_POST['tipoPago'] ?? '';
-                $cedulaPago  = $_POST['cedulaTitular'] ?? '';
-                $tlfPago     = $_POST['telefonoTitular'] ?? '';
-                $referencia  = $_POST['referenciaBancaria'] ?? '';
+                $cedulaPago  = $_POST['cedulaPago'] ?? '';
+                $tlfPago     = $_POST['tlfPago'] ?? '';
+                $referencia  = $_POST['refPago'] ?? '';
                 $productos   = $_POST['idProducto'] ?? [];
                 $cantidades  = $_POST['cantidad'] ?? [];
                 $precios     = $_POST['precio'] ?? [];
+                $zonaDelivery    = $_POST['zonaDelivery'] ?? '';
+                $calleDelivery   = $_POST['calleDelivery'] ?? '';
+                $numCasaDelivery = $_POST['numCasaDelivery'] ?? '';
 
-                echo json_encode($o->modificar($idVenta, $idPersonal, $idCliente, $tipoPago, $idDetalle, $idPedido, $cedulaPago, $tlfPago, $referencia, $idCuenta, $productos, $cantidades, $precios));
+                echo json_encode($o->modificar($idVenta, $idPersonal, $idCliente, $tipoPago, $idDetalle, $idPedido, $cedulaPago, $tlfPago, $referencia, $idCuenta, $productos, $cantidades, $precios, $zonaDelivery, $calleDelivery, $numCasaDelivery));
                 break;
 
             case 'eliminar':
@@ -87,6 +94,7 @@ if (is_file("vista/" . $pagina . ".php")) {
                 echo json_encode($o->buscarPorFecha($fecha));
                 break;
         }
+
         exit();
     }
 

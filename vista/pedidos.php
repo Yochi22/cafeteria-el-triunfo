@@ -3,8 +3,9 @@
 <?php require_once("comunes/encabezado.php"); ?>
 
 <body>
+    <?php require_once("comunes/sidebar.php"); ?>
+
     <div class="d-flex min-vh-100 position-relative bg-light">
-        <?php require_once("comunes/sidebar.php"); ?>
         <main class="main-content w-100 p-4">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
                 <div class="d-flex align-items-center gap-3">
@@ -206,6 +207,7 @@
             </div>
         </div>
     </div>
+
     <?php require_once("comunes/modal_eliminar.php"); ?>
     <?php require_once("comunes/modal.php"); ?>
     <script src="js/pedidos.js"></script>

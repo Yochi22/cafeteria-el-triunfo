@@ -3,8 +3,8 @@
 <?php require_once("comunes/encabezado.php"); ?>
 
 <body>
+    <?php require_once("comunes/sidebar.php"); ?>
     <div class="d-flex min-vh-100 position-relative bg-light">
-        <?php require_once("comunes/sidebar.php"); ?>
 
         <main class="main-content w-100 p-4">
 
@@ -26,12 +26,10 @@
                         <p class="text-muted">¡Bienvenido al apartado de clientes de la Cafetería El Triunfo!</p>
                     </div>
                 </div>
-                <div>
-                    <button class="btn btn-crear d-flex align-items-center gap-2 shadow-sm py-2 px-3" id="incluir" data-bs-toggle="modal" data-bs-target="#modal_cliente">
-                        <i class="bi bi-plus-circle fs-5"></i>
-                        <span class="d-none d-sm-inline"> Agregar Cliente</span>
-                    </button>
-                </div>
+                <button type="button" id="incluir" class="btn btn-crear" data-bs-toggle="modal" data-bs-target="#modal_cuentas">
+                    <i class="bi bi-plus-circle fs-5"></i>
+                    <span class="d-none d-sm-inline"> Agregar Cliente</span>
+                </button>
             </div>
 
            <hr class="text-secondary mb-4">

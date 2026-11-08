@@ -3,8 +3,8 @@
 <?php require_once("comunes/encabezado.php"); ?>
 
 <body>
+    <?php require_once("comunes/sidebar.php"); ?>
     <div class="d-flex min-vh-100 position-relative bg-light">
-        <?php require_once("comunes/sidebar.php"); ?>
 
         <main class="main-content w-100 p-4">
             <div class="d-flex align-items-center mb-4">

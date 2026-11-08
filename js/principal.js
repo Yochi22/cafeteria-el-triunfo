@@ -103,6 +103,7 @@ function cargarPreciosDelivery() {
 function actualizarInputPrecioZona() {
     var zona = $("#selectZona").val();
     var precio = 0;
+
     if (zona === "Centro") precio = preciosDeliveryGlobal.precioCentro || 0;
     if (zona === "Este") precio = preciosDeliveryGlobal.precioEste || 0;
     if (zona === "Oeste") precio = preciosDeliveryGlobal.precioOeste || 0;
@@ -131,16 +132,19 @@ function validarEnvioPrecio() {
         return false;
     }
     $("#sinputPrecioZona").text("");
+
     return true;
 }
 
 function validarEnvioHorario() {
     var ap = $("#editHoraApertura").val();
     var ci = $("#editHoraCierre").val();
+
     if (ap.trim() === "" || ci.trim() === "") {
         mostrarMensaje("Debe completar ambas horas.");
         return false;
     }
+
     return true;
 }
 

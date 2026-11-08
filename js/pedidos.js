@@ -166,6 +166,7 @@ function seleccionarCuenta(id, banco, numero) {
 
 function seleccionarProducto(id, codigo, nombre, precio) {
     var encontro = false;
+
     $("#detallesdeventa tr").each(function () {
         if (id == $(this).find("input[name='idProducto[]']").val()) {
             encontro = true;
@@ -207,10 +208,12 @@ function modificasubtotal(input) {
     var fila = $(input).closest("tr");
     var precio = parseFloat(fila.find("input[name='precio[]']").val());
     var cantidad = parseInt($(input).val());
+
     if (isNaN(cantidad) || cantidad < 1) {
         cantidad = 1;
         $(input).val(1);
     }
+
     var subtotal = precio * cantidad;
     fila.find(".subtotal-cell").text("$" + subtotal.toFixed(2));
     calculaTotal();
@@ -223,6 +226,7 @@ function eliminalineadetalle(btn) {
 
 function calculaTotal() {
     var total = 0;
+
     $("#detallesdeventa tr").each(function () {
         var precio = parseFloat($(this).find("input[name='precio[]']").val());
         var cantidad = parseInt($(this).find("input[name='cantidad[]']").val());

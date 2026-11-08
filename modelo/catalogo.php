@@ -308,6 +308,7 @@ class catalogo extends datos
             $r['resultado'] = 'error';
             $r['mensaje'] = 'Error al cargar cuentas: ' . $e->getMessage();
         }
+
         return $r;
     }
 
@@ -346,6 +347,7 @@ class catalogo extends datos
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }
+
         return $r;
     }
 
@@ -385,6 +387,7 @@ class catalogo extends datos
             $r['resultado'] = 'error';
             $r['mensaje'] = 'Error en base de datos: ' . $e->getMessage();
         }
+
         return $r;
     }
 
@@ -430,7 +433,6 @@ class catalogo extends datos
                 $insertarCliente->execute(array(':cedula' => $cedula, ':nombre' => $nombre, ':apellido' => $apellido, ':telefono' => $telefono));
                 $idCliente = $co->lastInsertId();
             }
-
 
             // 2. Procesar Productos del Carrito y Calcular Total
             $lineas = array();
@@ -501,6 +503,7 @@ class catalogo extends datos
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }
+
         return $r;
     }
 }

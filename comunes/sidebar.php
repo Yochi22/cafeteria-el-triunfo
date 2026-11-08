@@ -1,11 +1,11 @@
 <?php $nivel = $_SESSION['nivel'] ?? ''; ?>
 
 <aside class="sidebar">
-    <div class="collapse d-md-block" id="sidebarMenu">
-        <div class="text-center mb-4 d-none d-md-block">
-            <img src="img/principal.jpg" alt="Logo El Triunfo" class="sidebar-logo">
+    <div class="collapse d-md-block h-md-100" id="sidebarMenu">
+        <div class="text-center mb-4 d-none d-md-block pt-3">
+            <img src="img/principal.jpg" alt="Logo El Triunfo" class="sidebar-logo img-fluid">
         </div>
-        <nav class="nav flex-column">
+        <nav class="nav flex-column pb-5">
             <a class="nav-link py-1 <?= $pagina == 'principal' ? 'active' : '' ?>" href="?pagina=principal">
                 <i class="bi bi-house-door"></i> Inicio
             </a>
@@ -58,7 +58,7 @@
                     <i class="bi-person-lines-fill"></i> Usuarios
                 </a>
             <?php } ?>
-            <a class="nav-link py-1 logout-link text-black-50" href="?pagina=salida">
+            <a class="nav-link py-1 logout-link text-black-50 mt-3" href="?pagina=salida">
                 <i class="bi bi-box-arrow-left"></i> Cerrar Sesión
             </a>
         </nav>
