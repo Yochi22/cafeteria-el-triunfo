@@ -1,14 +1,26 @@
 var preciosDeliveryGlobal = {};
 
+function consultarHorarios() {
+    var datos = new FormData();
+    datos.append("accion", "consultar_horarios");
+    enviaAjax(datos);
+}
+
+function consultarPreciosDelivery() {
+    var datos = new FormData();
+    datos.append("accion", "consultar_precios");
+    enviaAjax(datos);
+}
+
 $(document).ready(function () {
     try {
-        cargarPreciosDelivery();
+        consultarPreciosDelivery();
     } catch (e) {
         console.error(e);
     }
 
     $("#btnAbrirModalHorarios").on("click", function () {
-        cargarHorariosTabla();
+        consultarHorarios();
         $("#modal_horarios").modal("show");
     });
 
@@ -88,27 +100,9 @@ $(document).ready(function () {
     });
 });
 
-function cargarHorariosTabla() {
-    var datos = new FormData();
-    datos.append("accion", "consultar_horarios");
-    enviaAjax(datos);
-}
-
-function cargarPreciosDelivery() {
-    var datos = new FormData();
-    datos.append("accion", "consultar_precios");
-    enviaAjax(datos);
-}
-
 function actualizarInputPrecioZona() {
     var zona = $("#selectZona").val();
-    var precio = 0;
-
-    if (zona === "Centro") precio = preciosDeliveryGlobal.precioCentro || 0;
-    if (zona === "Este") precio = preciosDeliveryGlobal.precioEste || 0;
-    if (zona === "Oeste") precio = preciosDeliveryGlobal.precioOeste || 0;
-    if (zona === "Norte") precio = preciosDeliveryGlobal.precioNorte || 0;
-    if (zona === "Sur") precio = preciosDeliveryGlobal.precioSur || 0;
+    var precio = preciosDeliveryGlobal[zona] || 0;
     $("#inputPrecioZona").val(parseFloat(precio).toFixed(2));
     $("#sinputPrecioZona").text("");
 }
@@ -220,9 +214,9 @@ function enviaAjax(datos) {
             try {
                 var lee = JSON.parse(respuesta);
 
-                if (Array.isArray(lee)) {
+                if (lee.resultado === 'consultar_horarios') {
                     var html = "";
-                    lee.forEach(function (h) {
+                    lee.mensaje.forEach(function (h) {
                         html += "<tr>";
                         html += "<td class='fw-bold text-capitalize'>" + h.dia + "</td>";
                         html += "<td>" + formatearHora12(h.horaApertura) + "</td>";
@@ -232,28 +226,33 @@ function enviaAjax(datos) {
                     });
                     $("#tablaHorariosBody").html(html);
                 }
-                else if (lee.precioCentro !== undefined) {
-                    preciosDeliveryGlobal = lee;
+                else if (lee.resultado === 'consultar_precios') {
+                    preciosDeliveryGlobal = {};
+                    lee.mensaje.forEach(function (p) {
+                        preciosDeliveryGlobal[p.nombreZona] = p.precio;
+                    });
+                    actualizarInputPrecioZona();
                 }
                 else if (lee.resultado === 'modificar_horario') {
                     mostrarMensaje(lee.mensaje);
                     if (lee.mensaje === 'Horario actualizado con éxito.') {
                         $("#modal_editar_horario").modal("hide");
                         $("#modal_horarios").modal("hide");
+                        consultarHorarios();
                     }
                 }
                 else if (lee.resultado === 'modificar_precio') {
                     mostrarMensaje(lee.mensaje);
                     if (lee.mensaje === 'Precio de delivery actualizado con éxito.') {
                         $("#modal_precios_delivery").modal("hide");
-                        cargarPreciosDelivery();
+                        consultarPreciosDelivery();
                     }
                 }
                 else if (lee.resultado === "error") {
                     mostrarMensaje(lee.mensaje);
                 }
             } catch (e) {
-                alert("Error en JSON " + e.name);
+                alert("Error en JSON: " + e.name);
             }
         },
         error: function (request, status, err) {

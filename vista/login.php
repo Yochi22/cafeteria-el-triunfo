@@ -13,7 +13,7 @@
                         <p class="text-uppercase" style="color: #9E5C31;">Ingresa tus Datos</p>
                         <hr class="border border-secundary">
                     </div>
-                    <form class="needs-validation small" action="?pagina=login" method="POST" novalidate style="color: #9E5C31;">
+                    <form id="f" class="small" action="?pagina=login" method="POST" style="color: #9E5C31;">
                         <?php if (!empty($mensaje)) { ?>
                             <div class="alert alert-danger text-center">
                                 <?php echo $mensaje; ?>
@@ -24,19 +24,15 @@
                             <label for="username" class="form-label fw-bold text-uppercase">
                                 <i class="bi bi-person-vcard"></i> Usuario
                             </label>
-                            <input type="text" class="form-control" id="username" name="username" required>
-                            <div class="invalid-feedback">
-                                Por favor, ingresa tu usuario.
-                            </div>
+                            <input type="text" class="form-control" id="username" name="username">
+                            <span id="susername" class="small text-danger"></span>
                         </div>
                         <div class="mb-4">
                             <label for="password" class="form-label fw-bold text-uppercase">
                                 <i class="bi bi-key-fill"></i> Contraseña
                             </label>
-                            <input type="password" class="form-control" id="password" name="password" required>
-                            <div class="invalid-feedback">
-                                Por favor, ingresa tu contraseña.
-                            </div>
+                            <input type="password" class="form-control" id="password" name="password">
+                            <span id="spassword" class="small text-danger"></span>
                         </div>
                         <div class="d-grid mt-5">
                             <button class="btn btn-crear" type="submit">INGRESAR</button>
@@ -45,6 +41,8 @@
                 </div>
             </div>
         </div>
+
+        <?php require_once("comunes/modal.php"); ?>
 
         <script src="js/login.js"></script>
     </div>

@@ -8,13 +8,19 @@ class principal extends datos
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $r = array();
 
         try {
             $stmt = $co->query("SELECT * FROM horarios");
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            $r['resultado'] = 'consultar_horarios';
+            $r['mensaje'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            return array();
+            $r['resultado'] = 'error';
+            $r['mensaje'] = $e->getMessage();
         }
+
+        return $r;
     }
 
     public function modificarHorario($idHorario, $horaApertura, $horaCierre)
@@ -45,13 +51,19 @@ class principal extends datos
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $r = array();
 
         try {
-            $stmt = $co->query("SELECT * FROM precioDelivery LIMIT 1");
-            return $stmt->fetch(PDO::FETCH_ASSOC);
+            $stmt = $co->query("SELECT * FROM preciosdelivery");
+
+            $r['resultado'] = 'consultar_precios';
+            $r['mensaje'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            return array();
+            $r['resultado'] = 'error';
+            $r['mensaje'] = $e->getMessage();
         }
+
+        return $r;
     }
 
     public function modificarPrecioDelivery($zona, $precio)
@@ -65,29 +77,15 @@ class principal extends datos
                 throw new Exception('El precio debe ser mayor a cero.');
             }
 
-            $campo = "";
-            switch ($zona) {
-                case 'Este':
-                    $campo = 'precioEste';
-                    break;
-                case 'Oeste':
-                    $campo = 'precioOeste';
-                    break;
-                case 'Norte':
-                    $campo = 'precioNorte';
-                    break;
-                case 'Sur':
-                    $campo = 'precioSur';
-                    break;
-                case 'Centro':
-                    $campo = 'precioCentro';
-                    break;
-                default:
-                    throw new Exception('Zona no válida.');
+            $stmtCheck = $co->prepare("SELECT COUNT(*) FROM preciosdelivery WHERE nombreZona = :zona");
+            $stmtCheck->execute([':zona' => $zona]);
+
+            if ($stmtCheck->fetchColumn() == 0) {
+                throw new Exception('Zona no válida.');
             }
 
-            $stmt = $co->prepare("UPDATE precioDelivery SET $campo = :precio WHERE idPrecioDelivery = 1");
-            $stmt->execute([':precio' => $precio]);
+            $stmt = $co->prepare("UPDATE preciosdelivery SET precio = :precio WHERE nombreZona = :zona");
+            $stmt->execute([':precio' => $precio, ':zona' => $zona]);
 
             $r['resultado'] = 'modificar_precio';
             $r['mensaje'] = 'Precio de delivery actualizado con éxito.';

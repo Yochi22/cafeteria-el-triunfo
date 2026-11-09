@@ -59,7 +59,6 @@
         </div>
     </main>
 
-    <!-- Modal para anadir a carrito -->
     <div class="modal fade" id="modalDetalleProducto" tabindex="-1" aria-labelledby="modalDetalleLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
@@ -105,13 +104,10 @@
         </div>
     </div>
 
-    <!-- MODALES DE CARRITO Y PAGO -->
-    <!-- Carrito -->
     <div class="modal fade" id="carritoModal" tabindex="-1" aria-labelledby="carritoModalLabel" aria-hidden="true" style="height: 600px;">
         <div class="modal-dialog modal-xl modal-dialog-scrollable">
             <div class="modal-content border-0 rounded-4 shadow-lg h-100">
 
-                <!-- Encabezado modal -->
                 <div class="modal-header border-bottom px-4 py-3">
                     <h5 class="modal-title fw-bold" id="carritoModalLabel">
                         <i class="bi bi-cart-fill me-2 text-orange"></i>Tu Carrito de Compras
@@ -119,17 +115,14 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <!-- Cuerpo del Modal -->
                 <div class="modal-body p-4 bg-light modal-dialog-scrollable">
                     <div class="row g-4">
 
-                        <!-- Aquí van los productos -->
                         <div class="col-lg-8">
                             <div class="row g-3" id="contenedorCarrito">
                             </div>
                         </div>
 
-                        <!-- Aquí va el precio y detalles del pedido -->
                         <div class="col-lg-4">
                             <div class="card border-0 rounded-4 shadow-sm p-4 bg-white sticky-lg-top" style="top: 20px;">
                                 <h5 class="fw-bold mb-2">Resumen del Pedido</h5>
@@ -147,7 +140,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Botón para pasar al siguiente modal -->
                                 <button class="btn btn-warning text-white btn-lg w-100 rounded-3 fw-bold shadow-sm" style="background-color: #ff8c00; border: none;" data-bs-toggle="modal" data-bs-target="#infoClienteModal">
                                     Pedir!
                                 </button>
@@ -160,7 +152,6 @@
         </div>
     </div>
 
-    <!-- Datos de cliente -->
     <form id="f" autocomplete="off">
         <input type="hidden" id="accion" name="accion">
 
@@ -168,7 +159,6 @@
             <div class="modal-dialog modal-xl modal-dialog-scrollable">
                 <div class="modal-content border-0 rounded-4 shadow-lg">
 
-                    <!-- Encabezado modal -->
                     <div class="modal-header border-bottom px-4 py-3">
                         <h5 class="modal-title fw-bold d-flex align-items-center" id="infoClienteModalLabel">
                             <button type="button" class="btn p-0 border-0 bg-transparent text-dark me-2 text-decoration-none shadow-none" data-bs-toggle="modal" data-bs-target="#carritoModal" title="Volver al carrito">
@@ -179,13 +169,10 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
-                    <!-- Cuerpo modal -->
                     <div class="modal-body px-4 px-md-5 pt-2 pb-4">
                         <p class="small mb-4" style="opacity: 0.5;">Introduzca sus datos personales.</p>
                         <div class="row g-3"></div>
-                        <input type="hidden" id="accion" name="accion">
 
-                        <!-- Datos de cliente -->
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="nombreCli" class="form-label text-muted small fw-bold">Nombre</label>
@@ -214,7 +201,6 @@
                             </div>
 
                             <hr>
-                            <!-- Direccion de Delivery -->
                             <div class="row">
                                 <div class="col-md-12 mb-3">
                                     <p class="small mb-2" style="opacity: 0.5;">Introduzca su dirección de delivery.</p>
@@ -239,7 +225,7 @@
 
                                 <div class="col-md-6 mb-3">
                                     <label for="numCasaDelivery" class="form-label text-muted small fw-bold">Num. Casa</label>
-                                    <input type="text" class="form-control rounded-3" id="numCasaDelivery" name="numCasaDelivery" required>
+                                    <input type="text" class="form-control rounded-3" id="numCasaDelivery" name="numCasa" required>
                                     <span id="snumCasaDelivery" class="text-danger small"></span>
                                 </div>
                             </div>
@@ -254,13 +240,10 @@
             </div>
         </div>
 
-
-        <!-- Pago -->
         <div class="modal fade" id="pagoModal" tabindex="-1" aria-labelledby="pagoModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl modal-dialog-scrollable">
                 <div class="modal-content border-0 rounded-4 shadow-lg">
 
-                    <!-- Encabezado modal -->
                     <div class="modal-header border-bottom px-4 py-3">
                         <h5 class="modal-title fw-bold d-flex align-items-center" id="pagoModalLabel">
                             <button type="button" class="btn p-0 border-0 bg-transparent text-dark me-2 text-decoration-none shadow-none" data-bs-toggle="modal" data-bs-target="#infoClienteModal" title="Volver a datos del cliente">
@@ -271,7 +254,6 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
-                    <!-- Cuerpo modal -->
                     <div class="modal-body px-4 px-md-5 pt-2 pb-4">
 
                         <div class="row justify-content-center mb-4">
@@ -290,7 +272,6 @@
 
                         <p class="small mb-4" style="opacity: 0.5;">Elija su metodo de pago.</p>
                         <div class="row g-3"></div>
-                        <input type="hidden" id="accion" name="accion">
 
                         <div class="row">
                             <div class="col-md-12 mb-3">
@@ -338,7 +319,6 @@
         </div>
     </form>
 
-    <!-- Modal con info de cuenta -->
     <div class="modal fade" id="modalCuentaCli" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-md">
             <div class="modal-content border-0 rounded-4 shadow text-center p-3 position-relative">
@@ -350,10 +330,7 @@
         </div>
     </div>
 
-    <!-- Llamada del modal de confirmación de eliminación -->
     <?php require_once("comunes/modal_eliminar.php"); ?>
-
-    <!-- Llamada a archivo modal.php, dentro de él hay una sección modal -->
     <?php require_once("comunes/modal.php"); ?>
 
     <script src="js/scriptTasa.js"></script>

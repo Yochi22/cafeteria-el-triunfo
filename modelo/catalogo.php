@@ -62,7 +62,6 @@ class catalogo extends datos
                     $nombreProd = $p['nombreProd'];
                     $descProd = $p['descProd'];
                     $precioProd = $p['precioProd'];
-                    $idCat = $p['idCategoria'];
                     $codigoProd = $p['codigoProd'];
 
                     $html .= '
@@ -79,7 +78,7 @@ class catalogo extends datos
                                 </div>
                             </div>
                             <div class="col-12 col-md-3 text-end mt-3 mt-md-0">
-                                <button class="btn btn-sm rounded-pill px-3 py-2 fw-bold w-100 shadow-sm" id="btnAbrirModalDetalle" style="color: #FF8C00; border: 1px solid #FF8C00;" onclick="abrirModalDetalle(\'' . $codigoProd . '\', \'' . $nombreProd . '\', \'' . $descProd . '\', ' . $precioProd . ', \'' . $fotoProd . '\')">
+                                <button class="btn btn-sm rounded-pill px-3 py-2 fw-bold w-100 shadow-sm" style="color: #FF8C00; border: 1px solid #FF8C00;" onclick="abrirModalDetalle(\'' . $codigoProd . '\', \'' . $nombreProd . '\', \'' . $descProd . '\', ' . $precioProd . ', \'' . $fotoProd . '\')">
                                     <i class="bi bi-cart2"></i> Agregar al carrito
                                 </button>
                             </div>
@@ -123,7 +122,6 @@ class catalogo extends datos
                     $nombreProd = $p['nombreProd'];
                     $descProd = $p['descProd'];
                     $precioProd = $p['precioProd'];
-                    $idCat = $p['idCategoria'];
                     $codigoProd = $p['codigoProd'];
 
                     $html .= '
@@ -186,7 +184,6 @@ class catalogo extends datos
                     $nombreProd = $p['nombreProd'];
                     $descProd = $p['descProd'];
                     $precioProd = $p['precioProd'];
-                    $idCat = $p['idCategoria'];
                     $codigoProd = $p['codigoProd'];
 
                     $html .= '
@@ -325,21 +322,16 @@ class catalogo extends datos
                 throw new Exception('Zona no especificada.');
             }
 
-            $columnasPermitidas = array(
-                'Este' => 'precioEste',
-                'Oeste' => 'precioOeste',
-                'Norte' => 'precioNorte',
-                'Sur' => 'precioSur',
-                'Centro' => 'precioCentro'
-            );
+            $zonasPermitidas = array('Este', 'Oeste', 'Norte', 'Sur', 'Centro');
+            if (!in_array($zona, $zonasPermitidas)) {
+                throw new Exception('Zona no válida.');
+            }
 
-            $columnaPrecio = $columnasPermitidas[$zona];
-
-            $de = $co->prepare("SELECT $columnaPrecio FROM precioDelivery LIMIT 1");
-            $de->execute();
+            $de = $co->prepare("SELECT precio FROM preciosdelivery WHERE nombreZona = :zona LIMIT 1");
+            $de->execute([':zona' => $zona]);
             $resultado = $de->fetch(PDO::FETCH_ASSOC);
 
-            $precio = $resultado ? (float)$resultado[$columnaPrecio] : 0.00;
+            $precio = $resultado ? (float)$resultado['precio'] : 0.00;
 
             $r['resultado'] = 'precioDeliveryObtenido';
             $r['precio'] = $precio;
@@ -398,18 +390,15 @@ class catalogo extends datos
         $r = array();
 
         try {
-            // Datos del cliente
             $nombre = trim($datos['nombreCli'] ?? '');
             $apellido = trim($datos['apellidoCli'] ?? '');
             $cedula = trim($datos['cedulaCli'] ?? '');
             $telefono = trim($datos['tlfCli'] ?? '');
 
-            // Datos de dirección
-            $zona = trim($datos['zona'] ?? '');
-            $calle = trim($datos['calle'] ?? '');
+            $zona = trim($datos['zonaDelivery'] ?? '');
+            $calle = trim($datos['calleDelivery'] ?? '');
             $numCasa = filter_var($datos['numCasa'] ?? null, FILTER_VALIDATE_INT);
 
-            // Datos de pago
             $tipoPago = trim($datos['tipoPago'] ?? '');
             $idCuenta = trim($datos['cuentaDestino'] ?? '');
             $referencia = trim($datos['refPago'] ?? '');
@@ -419,7 +408,6 @@ class catalogo extends datos
 
             $co->beginTransaction();
 
-            // 1. Gestionar Cliente (Insertar o Actualizar)
             $buscarCliente = $co->prepare('SELECT idCliente FROM clientes WHERE cedulaCli = :cedula LIMIT 1');
             $buscarCliente->execute(array(':cedula' => $cedula));
             $clienteExistente = $buscarCliente->fetch(PDO::FETCH_ASSOC);
@@ -434,7 +422,6 @@ class catalogo extends datos
                 $idCliente = $co->lastInsertId();
             }
 
-            // 2. Procesar Productos del Carrito y Calcular Total
             $lineas = array();
             $precioTotal = 0;
             $consultaProducto = $co->prepare('SELECT idProducto, precioProd FROM productos WHERE codigoProd = :codigo LIMIT 1');
@@ -454,7 +441,18 @@ class catalogo extends datos
                 $lineas[] = array('idProducto' => $producto['idProducto'], 'cantidad' => $cantidad, 'subtotal' => $subtotal);
             }
 
-            // 3. Registrar Pedido (Primero se guarda el pedido para generar el idPedido)
+            // Sumar el precio del delivery al total del pedido
+            $precioDelivery = 0.00;
+            if ($zona !== '') {
+                $stmtDeliv = $co->prepare("SELECT precio FROM preciosdelivery WHERE nombreZona = :zona LIMIT 1");
+                $stmtDeliv->execute([':zona' => $zona]);
+                $resDeliv = $stmtDeliv->fetch(PDO::FETCH_ASSOC);
+                if ($resDeliv) {
+                    $precioDelivery = (float)$resDeliv['precio'];
+                }
+            }
+            $precioTotal += $precioDelivery;
+
             $idCuentaGuardar = ($tipoPago === 'Pago Móvil' && $idCuenta !== '') ? $idCuenta : null;
             $referenciaGuardar = ($tipoPago === 'Efectivo') ? null : ($referencia !== '' ? $referencia : null);
             $cedulaPagoGuardar = ($tipoPago === 'Pago Móvil' && $cedulaPago !== '') ? $cedulaPago : null;
@@ -473,7 +471,6 @@ class catalogo extends datos
 
             $idPedido = $co->lastInsertId();
 
-            // 4. Registrar la Dirección de Delivery vinculada al Pedido recién creado
             $insertarDir = $co->prepare('INSERT INTO dirdelivery (idPedido, zona, calle, numCasa) VALUES (:idPedido, :zona, :calle, :numCasa)');
             $insertarDir->execute(array(
                 ':idPedido' => $idPedido,
@@ -482,7 +479,6 @@ class catalogo extends datos
                 ':numCasa' => $numCasa
             ));
 
-            // 5. Registrar Detalles del Pedido
             $insertarDetalle = $co->prepare('INSERT INTO pedidosproducto (idPedido, idProducto, cantidadProd, subTotal) VALUES (:idPedido, :idProducto, :cantidad, :subtotal)');
             foreach ($lineas as $linea) {
                 $insertarDetalle->execute(array(
