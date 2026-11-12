@@ -239,7 +239,12 @@ function actualizarTotalConDelivery(precioDelivery) {
 
 $("#cuentaDestino").on("change", function () {
     let idCuenta = $(this).val();
-    if (!idCuenta) return;
+    let $btnCopiar = $("#btnCopiarDatos");
+
+    if (!idCuenta) {
+        $btnCopiar.prop("disabled", true).removeAttr("data-copiar");
+        return;
+    }
 
     let montoTotal = $("#montoTotalBs").text() || "0.00";
 
@@ -256,14 +261,16 @@ function cargarCuentas() {
     enviaAjax(datos);
 }
 
+// copiar con API
 $(document).on("click", "#btnCopiarDatos", function () {
-    let banco = $("#copiarBanco").text();
-    let cedula = $("#copiarCedula").text();
-    let telefono = $("#copiarTlfn").text();
-    let cuenta = $("#copiarNum").text();
-    let montoTotal = $("#copiarMonto").text();
+    let textoACopiar = $(this).attr("data-copiar");
 
-    navigator.clipboard.writeText(banco + "\n" + cedula + "\n" + telefono + "\n" + cuenta + "\n" + montoTotal)
+    if (!textoACopiar) {
+        mostrarNotificacion("Por favor seleccione una cuenta destino primero.");
+        return;
+    }
+
+    navigator.clipboard.writeText(textoACopiar)
         .then(() => {
             mostrarNotificacion("¡Texto copiado al portapapeles!");
             $("#modalCuentaCli").modal("hide");
@@ -519,8 +526,10 @@ function enviaAjax(datos) {
                     lee.resultado == "buscar"
                 ) {
                     $("#cuadricula_items").html(lee.mensaje);
+                
                 } else if (lee.resultado == "categorias_cargadas") {
                     $("#contenedor_categorias").html(lee.mensaje);
+                
                 } else if (lee.resultado == "cargarCarrito") {
                     $("#contenedorCarrito").html(lee.mensaje);
                     if (lee.subtotal !== undefined) {
@@ -528,15 +537,18 @@ function enviaAjax(datos) {
                         $("#montoTotal").text("$" + lee.subtotal);
                     }
                     actualizarPreciosEnBs();
+                
                 } else if (lee.resultado == "precioDeliveryObtenido") {
                     let precioDelivery = parseFloat(lee.precio) || 0;
                     $("#zonaDelivery").data("precioDelivery", precioDelivery);
                     actualizarPreciosEnBs();
+                
                 } else if (lee.resultado == "cuentasCargadas") {
                     $("#cuentaDestino").html(lee.mensaje);
+                
                 } else if (lee.resultado == "mostrarDetalleCuenta") {
-                    $("#modalCuentaCliCont").html(lee.mensaje);
-                    $("#modalCuentaCli").modal("show");
+                    $("#btnCopiarDatos").attr("data-copiar", lee.mensaje).prop("disabled", false);
+                
                 } else if (lee.resultado == "pedidoClienteRegistrado") {
                     $("#pagoModal").modal("hide");
                     localStorage.removeItem("carrito");
@@ -544,6 +556,7 @@ function enviaAjax(datos) {
                     limpia();
                     cargarCarritoLocal();
                     mostrarNotificacion(lee.mensaje);
+                
                 } else if (lee.resultado == "error") {
                     mostrarMensaje(lee.mensaje);
                 }

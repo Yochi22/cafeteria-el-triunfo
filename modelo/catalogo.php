@@ -344,44 +344,32 @@ class catalogo extends datos
     }
 
     public function detalleCuenta($idCuenta, $montoTotal)
-    {
-        $co = $this->conecta();
-        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $r = array();
+{
+    $co = $this->conecta();
+    $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $r = array();
 
-        try {
-            $cc = $co->prepare("SELECT * FROM cuentas WHERE idCuenta = ?");
-            $cc->execute([$idCuenta]);
-            $cuenta = $cc->fetch(PDO::FETCH_ASSOC);
+    try {
+        $cc = $co->prepare("SELECT * FROM cuentas WHERE idCuenta = ?");
+        $cc->execute([$idCuenta]);
+        $cuenta = $cc->fetch(PDO::FETCH_ASSOC);
 
-            if ($cuenta) {
-                $html = '
-                <div class="alert alert-light border p-3 rounded-3 mb-3">
-                    <button type="button" class="btn btn-secondary-sm position-absolute top-0 end-0 m-2" id="btnCopiarDatos" title="Copiar datos">
-                        <i class="bi bi-copy"></i>
-                    </button>
-                    <p class="mb-1" id="copiarBanco"><strong>Banco:</strong> ' . $cuenta['nombreBanco'] . '</p>
-                    <p class="mb-1" id="copiarCedula"><strong>Cédula:</strong> ' . $cuenta['cedulaTitular'] . '</p>
-                    <p class="mb-0" id="copiarTlfn"><strong>Teléfono:</strong> ' . $cuenta['tlfCuenta'] . '</p>
-                    <p class="mb-1" id="copiarNum"><strong>Nro. de Cuenta:</strong> <span class="text-dark fw-bold">' . $cuenta['numCuenta'] . '</span></p>
-                </div>
-                    <span class="text-muted small d-block">Monto a pagar:</span>
-                    <h4 class="text-success fw-bold mb-0" id="copiarMonto">' . $montoTotal . '</h4>
-                </div>';
+        if ($cuenta) {
+            $textoACopiar = "Banco: " . $cuenta['nombreBanco'] . "\n" .
+                           "Cédula: " . $cuenta['cedulaTitular'] . "\n" .
+                           "Teléfono: " . $cuenta['tlfCuenta'] . "\n" .
+                           "Nro. de Cuenta: " . $cuenta['numCuenta'] . "\n" .
+                           "Monto a pagar: " . $montoTotal;
 
-                $r['resultado'] = 'mostrarDetalleCuenta';
-                $r['mensaje'] = $html;
-            } else {
-                $r['resultado'] = 'error';
-                $r['mensaje'] = 'No se encontró la información de la cuenta.';
-            }
-        } catch (Exception $e) {
+            $r['resultado'] = 'mostrarDetalleCuenta';
+            $r['mensaje'] = $textoACopiar;
+        }} catch (Exception $e) {
             $r['resultado'] = 'error';
-            $r['mensaje'] = 'Error en base de datos: ' . $e->getMessage();
+            $r['mensaje'] = $e->getMessage();
         }
 
-        return $r;
-    }
+    return $r; 
+}
 
     public function registrarPedidoCliente($datos)
     {
