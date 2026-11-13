@@ -4,7 +4,59 @@ require_once("modelo/datos.php");
 
 class principal extends datos
 {
-    public function consultarHorarios()
+    // Función para ver si la Tasa ya existe
+    public function existe($fechaTasa)
+    {
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        try {
+            $resultado = $co->prepare("SELECT * FROM tasadiaria WHERE fechaTasa = :fechaTasa");
+            $resultado->bindParam(':fechaTasa', $fechaTasa);
+            $resultado->execute();
+            $fila = $resultado->fetchAll(PDO::FETCH_BOTH);
+
+            if ($fila) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+    // Función para guardar Tasa
+    public function guardarTasa($precioTasa)
+    {
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $r = array();
+        try {
+            $fecha = date('Y-m-d');
+                    if ($this->existe($fecha)) {
+                    $r['resultado'] = 'error';
+                    $r['mensaje'] = '¡La tasa del día de hoy ya está registrada!';
+                    return $r; 
+                }
+            
+            $inc = $co->prepare("INSERT INTO tasadiaria(precioTasa, fechaTasa) 
+            VALUES (:precioTasa, :fecha)");
+
+            $inc->bindParam(':precioTasa', $precioTasa);
+            $inc->bindParam(':fecha', $fecha);
+            $inc->execute();
+
+                $r['resultado'] = 'guardarTasa';
+                $r['mensaje'] = 'Cuenta registrada con éxito.';
+            } catch (Exception $e) {
+                $r['resultado'] = 'error';
+                $r['mensaje'] = $e->getMessage();
+            }
+
+        return $r;
+    }
+
+public function consultarHorarios()
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

@@ -26,11 +26,6 @@
                 </div>
                 
                 <div class="d-flex flex-wrap gap-2 justify-content-md-end">
-                <button class="btn btn-crear btn-sm d-flex align-items-center gap-2" id="btnTasa">
-                    <i class="bi bi-cash-coin fs-6"></i>
-                    <span class="d-none d-sm-inline">Tasa del día</span>
-                </button>
-                
                     <button class="btn btn-crear d-flex align-items-center gap-2" onclick="nuevoProducto()" id="btn_agregar_prod">
                         <i class="bi bi-plus-circle fs-5"></i>
                         <span class="d-none d-sm-inline">Agregar Producto</span>
@@ -118,7 +113,6 @@
     <?php require_once("comunes/modal.php"); ?>
     <?php require_once("comunes/modal_eliminar.php"); ?>
     <script src="js/productos.js"></script>
-    <script src="js/scriptTasa.js"></script>
 </body>
 
 </html>

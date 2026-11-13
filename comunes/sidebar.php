@@ -39,7 +39,7 @@
                     Finanzas
                 </span>
                 <a class="nav-link py-1 <?= $pagina == 'cuentas' ? 'active' : '' ?>" href="?pagina=cuentas">
-                    <i class="bi bi-cash-stack"></i> Cuentas
+                    <i class="bi bi-bank"></i> Cuentas
                 </a>
             <?php } ?>
             <?php if ($nivel == 'Administrador' || $nivel == 'Cajero' || $nivel == 'Mesero') { ?>

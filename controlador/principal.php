@@ -26,6 +26,9 @@ if (is_file("vista/" . $pagina . ".php")) {
             case 'modificar_precio':
                 echo json_encode($o->modificarPrecioDelivery($_POST['zona'], $_POST['precio']));
                 break;
+            case 'guardarTasa':
+                echo json_encode($o->guardarTasa($_POST['precioTasa']));
+                break;
         }
 
         exit;

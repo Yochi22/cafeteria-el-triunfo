@@ -20,7 +20,7 @@
                     </button>
                     <div>
                         <h2 class="text-dashboard">
-                            <i class="bi bi-people"></i> Usuarios
+                            <i class="bi-person-lines-fill"></i> Usuarios
                         </h2>
                         <p class="text-muted">
                             ¡Bienvenido al apartado de usuarios de la Cafetería El Triunfo!

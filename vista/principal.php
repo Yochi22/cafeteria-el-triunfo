@@ -23,11 +23,11 @@
                 <div class="col-12 col-md-6">
                     <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
                         <div class="card-body text-center d-flex flex-column justify-content-center align-items-center">
-                            <i class="bi bi-clock-history fs-1 text-warning mb-3"></i>
+                            <i class="bi bi-clock-history fs-1 text-danger mb-3"></i>
                             <h4 class="fw-bold text-dashboard mb-2">Gestión de Horarios</h4>
                             <p class="text-muted small mb-4">Consulte y modifique los horarios de atención para cada día de la semana.</p>
                             <button type="button" class="btn btn-crear px-4 py-2" id="btnAbrirModalHorarios">
-                                <i class="bi bi-calendar-week"></i> Consultar Horarios
+                                <i class="bi bi-calendar-week"></i> Consultar
                             </button>
                         </div>
                     </div>
@@ -40,14 +40,28 @@
                             <h4 class="fw-bold text-dashboard mb-2">Gestión de Precios Delivery</h4>
                             <p class="text-muted small mb-4">Actualice las tarifas de envío por zona de forma rápida.</p>
                             <button type="button" class="btn btn-crear px-4 py-2" id="btnAbrirModalPrecios">
-                                <i class="bi bi-bicycle"></i> Gestionar Precios
+                                <i class="bi bi-bicycle"></i> Gestionar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-12 col-md-6 offset-md-3 mt-4">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+                        <div class="card-body text-center d-flex flex-column justify-content-center align-items-center">
+                            <i class="bi bi-cash-coin fs-1 text-warning mb-3"></i>
+                            <h4 class="fw-bold text-dashboard mb-2">Tasa del día</h4>
+                            <p class="text-muted small mb-4">Consulte la tasa oficial del dólar BCV.</p>
+                            <button type="button" class="btn btn-crear px-4 py-2" id="btnTasa">
+                                <i class="bi bi-coin"></i> Consultar
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
-        </main>
-    </div>
+        </div>
+    </main>
+
 
     <div class="modal fade" id="modal_horarios" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">

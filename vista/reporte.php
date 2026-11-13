@@ -21,7 +21,7 @@
                     </button>
 
                     <div>
-                        <h2 class="text-dashboard mb-1"><i class="bi bi-chart-bar-fill text-primary"></i> Panel de Reportes</h2>
+                        <h2 class="text-dashboard mb-1"><i class="bi bi-file-earmark-bar-graph"></i> Panel de Reportes</h2>
                     </div>
                 </div>
 
