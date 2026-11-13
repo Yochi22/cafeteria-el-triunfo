@@ -26,13 +26,13 @@
                         <p class="text-muted">¡Bienvenido al apartado de clientes de la Cafetería El Triunfo!</p>
                     </div>
                 </div>
-                <button type="button" id="incluir" class="btn btn-crear" data-bs-toggle="modal" data-bs-target="#modal_cuentas">
+                <button type="button" id="incluir" class="btn btn-crear" data-bs-toggle="modal" data-bs-target="#modal_cliente">
                     <i class="bi bi-plus-circle fs-5"></i>
                     <span class="d-none d-sm-inline"> Agregar Cliente</span>
                 </button>
             </div>
 
-           <hr class="text-secondary mb-4">
+            <hr class="text-secondary mb-4">
 
             <div class="col-12 d-flex justify-content mb-3">
                 <!-- Botón de búsqueda -->
@@ -47,17 +47,17 @@
             </div>
 
             <!-- Lista de Clientes -->
-            <div class="table-responsive rounded-3 shadow-sm">
-                <table class="table table-hover align-items-center text-center">
+            <div class="table-responsive rounded-3 shadow-sm bg-white p-3">
+                <table id="tblClientes" class="table table-hover align-middle text-center w-100">
                     <thead class="text-dashboard border-bottom">
                         <tr>
-                            <th>Cédula</th>
-                            <th>Nombre y Apellido</th>
-                            <th>Teléfono</th>
-                            <th>Acciones</th>
+                            <th class="text-center">Cédula</th>
+                            <th class="text-center">Nombre y Apellido</th>
+                            <th class="text-center">Teléfono</th>
+                            <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="listaClientes" class="text-center">
+                    <tbody>
                     </tbody>
                 </table>
             </div>
@@ -114,17 +114,13 @@
                 </div>
             </div>
             <!-- Fin de sección modal -->
-
-            <!-- Llamada del modal de confirmación de eliminación -->
-            <?php require_once("comunes/modal_eliminar.php"); ?>
-
-            <!-- Llamada a archivo modal.php, dentro de él hay una sección modal -->
-            <?php require_once("comunes/modal.php"); ?>
         </main>
     </div>
 
     <!-- Llamada del archivo JavaScript -->
     <script src="js/clientes.js"></script>
+    <script src="js/datatables.js"></script>
+    <script src="js/sweetalert.js"></script>
 </body>
 
 </html>

@@ -106,7 +106,7 @@
                                 </div>
 
                                 <div class="d-grid mt-2">
-                                    <button type="button" class="btn btn-crear py-2 fw-semibold rounded-3 w-150" id="btnGuardar">
+                                    <button type="button" class="btn btn-crear py-2 fw-semibold rounded-3 w-100" id="btnGuardar">
                                         Guardar Categoría
                                     </button>
                                 </div>
@@ -116,17 +116,12 @@
                 </div>
             </div>
             <!-- Fin de sección modal -->
-
-            <!-- Llamada del modal de confirmación de eliminación -->
-            <?php require_once("comunes/modal_eliminar.php"); ?>
-
-            <!-- Llamada a archivo modal.php, dentro de él hay una sección modal -->
-            <?php require_once("comunes/modal.php"); ?>
         </main>
     </div>
 
     <!-- Llamada del archivo JavaScript -->
     <script src="js/categorias.js"></script>
+    <script src="js/sweetalert.js"></script>
 </body>
 
 </html>

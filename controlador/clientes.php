@@ -38,11 +38,6 @@ if (is_file("vista/" . $pagina . ".php")) {
                 $o->set_cedulaCli(trim($_POST['cedulaCli']));
                 echo json_encode($o->eliminar());
                 break;
-
-            case 'buscar':
-                $valor = trim($_POST['valorBusqueda'] ?? '');
-                echo json_encode($o->buscar($valor));
-                break;
         }
 
         exit();
