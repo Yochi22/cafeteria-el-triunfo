@@ -7,6 +7,8 @@
 
     <div class="d-flex min-vh-100 position-relative bg-light">
         <main class="main-content w-100 p-4">
+
+            <!-- Encabezado principal -->
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3 gap-3">
                 <div class="d-flex align-items-center gap-3">
                     <button class="btn btn-outline-dark d-md-none border-0 p-1" id="btn-toggle-sidebar" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-expanded="false"><i class="bi bi-list" style="font-size: 2rem;"></i></button>
@@ -15,6 +17,8 @@
                         <p class="text-muted mb-0">Revisa, registra y modifica los pedidos de tus clientes.</p>
                     </div>
                 </div>
+
+                <!-- Filtros y Botón de Creación -->
                 <div class="d-flex align-items-center gap-2">
                     <label class="form-label mb-0 text-muted small fw-bold">Filtrar:</label>
                     <select class="form-select form-select-sm w-auto bg-light border-secondary-subtle" id="filtroEstado">
@@ -29,11 +33,16 @@
                     </button>
                 </div>
             </div>
+
             <hr class="text-secondary mb-4">
+
+            <!-- Contenedor dinámico de pedidos -->
             <div class="d-flex flex-column gap-3" id="contenedor_pedidos">
             </div>
         </main>
     </div>
+
+    <!-- Modal Principal del Pedido -->
     <div class="modal fade" id="modal_pedido" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content border-0 rounded-4 shadow">
@@ -44,6 +53,8 @@
                 <div class="modal-body pt-3">
                     <form id="f" autocomplete="off">
                         <input type="hidden" id="idPedido" name="idPedido">
+
+                        <!-- Selección de Cliente y Cuenta -->
                         <div class="row mb-3">
                             <div class="col-md-6 mb-3 mb-md-0">
                                 <label class="form-label text-muted small fw-bold">Cliente</label>
@@ -63,6 +74,8 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Comprobante y Estado -->
                         <div class="row mb-3">
                             <div class="col-md-6 mb-3 mb-md-0">
                                 <label class="form-label text-muted small fw-bold">Número de Comprobante / Referencia (Opcional)</label>
@@ -78,6 +91,8 @@
                                 </select>
                             </div>
                         </div>
+
+                        <!-- Datos de Pago -->
                         <div class="row mb-3" id="datosPagoPedido" style="display:none;">
                             <div class="col-12">
                                 <hr>
@@ -95,17 +110,37 @@
                             </div>
                             <div class="col-md-6 mb-2" id="cuentaPagoPedidoCont">
                                 <label class="form-label small fw-bold">Cuenta destino (Pago Móvil)</label>
-                                <div class="input-group"><input type="text" class="form-control bg-light" id="cuentaPagoPedidoInfo" readonly><button class="btn btn-outline-secondary" type="button" id="btnBuscarCuentaPago">Buscar</button><button class="btn btn-outline-danger" type="button" id="btnQuitarCuentaPago">×</button></div>
+                                <div class="input-group">
+                                    <input type="text" class="form-control bg-light" id="cuentaPagoPedidoInfo" readonly>
+                                    <button class="btn btn-outline-secondary" type="button" id="btnBuscarCuentaPago">Buscar</button>
+                                    <button class="btn btn-outline-danger" type="button" id="btnQuitarCuentaPago">×</button>
+                                </div>
                             </div>
-                            <div class="col-md-4 mb-2" id="cedulaPagoPedidoCont"><label for="cedulaPagoPedido" class="form-label small fw-bold">Cédula del pagador</label><input type="text" class="form-control" id="cedulaPagoPedido" name="cedulaPago" maxlength="12"><span id="scedulaPagoPedido" class="text-danger small"></span></div>
-                            <div class="col-md-4 mb-2" id="tlfPagoPedidoCont"><label for="tlfPagoPedido" class="form-label small fw-bold">Teléfono del pagador</label><input type="text" class="form-control" id="tlfPagoPedido" name="tlfPago" maxlength="12"><span id="stlfPagoPedido" class="text-danger small"></span></div>
-                            <div class="col-md-4 mb-2" id="referenciaPagoPedidoCont"><label for="referenciaPagoPedido" class="form-label small fw-bold">Referencia del pago</label><input type="text" class="form-control" id="referenciaPagoPedido" name="referenciaPago" maxlength="12"><span id="sreferenciaPagoPedido" class="text-danger small"></span></div>
+                            <div class="col-md-4 mb-2" id="cedulaPagoPedidoCont">
+                                <label for="cedulaPagoPedido" class="form-label small fw-bold">Cédula del pagador</label>
+                                <input type="text" class="form-control" id="cedulaPagoPedido" name="cedulaPago" maxlength="12">
+                                <span id="scedulaPagoPedido" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4 mb-2" id="tlfPagoPedidoCont">
+                                <label for="tlfPagoPedido" class="form-label small fw-bold">Teléfono del pagador</label>
+                                <input type="text" class="form-control" id="tlfPagoPedido" name="tlfPago" maxlength="12">
+                                <span id="stlfPagoPedido" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4 mb-2" id="referenciaPagoPedidoCont">
+                                <label for="referenciaPagoPedido" class="form-label small fw-bold">Referencia del pago</label>
+                                <input type="text" class="form-control" id="referenciaPagoPedido" name="referenciaPago" maxlength="12">
+                                <span id="sreferenciaPagoPedido" class="text-danger small"></span>
+                            </div>
                         </div>
+
+                        <!-- Botón Añadir Producto -->
                         <div class="row mb-4">
                             <div class="col-12 d-flex justify-content-end">
                                 <button class="btn btn-success py-2" type="button" id="btnBuscarProducto"><i class="bi bi-cart-plus"></i> Añadir Producto al Pedido</button>
                             </div>
                         </div>
+
+                        <!-- Tabla de Detalles -->
                         <div class="table-responsive border rounded-3 mb-3 shadow-sm">
                             <table class="table table-hover mb-0 text-center align-middle">
                                 <thead class="table-light text-dashboard">
@@ -122,9 +157,13 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        <!-- Total General -->
                         <div class="d-flex justify-content-end mb-3">
                             <h4 class="text-dashboard fw-bold mb-0">Total: <span id="totalGeneral" class="text-success">$0.00</span></h4>
                         </div>
+
+                        <!-- Botón Guardar / Procesar -->
                         <div class="d-grid mt-4">
                             <button type="button" class="btn btn-crear py-2 fw-semibold" id="btnGuardar" data-accion="incluir">
                                 <i class="bi bi-check-circle"></i> Procesar Pedido
@@ -135,6 +174,8 @@
             </div>
         </div>
     </div>
+
+    <!-- Modales Auxiliares de Selección -->
     <div class="modal fade" id="modal_clientes" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content rounded-4 shadow">
@@ -159,6 +200,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="modal_cuentas" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content rounded-4 shadow">
@@ -183,6 +225,7 @@
             </div>
         </div>
     </div>
+
     <div class="modal fade" id="modal_productos" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content rounded-4 shadow">
@@ -208,9 +251,9 @@
         </div>
     </div>
 
-    <?php require_once("comunes/modal_eliminar.php"); ?>
-    <?php require_once("comunes/modal.php"); ?>
+    <!-- Llamada del archivo JavaScript -->
     <script src="js/pedidos.js"></script>
+    <script src="js/sweetalert.js"></script>
 </body>
 
 </html>

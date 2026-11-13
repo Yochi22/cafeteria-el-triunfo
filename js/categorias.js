@@ -42,7 +42,7 @@ $(document).ready(function () {
     // Control de Botones
     $("#btnGuardar").on("click", function () {
         // Botón de Incluir
-        if ($(this).text() == 'incluir') {
+        if ($(this).text().trim() === 'Guardar Categoría' || $(this).text().trim() === 'incluir') {
             if (validarEnvio()) {
                 var datos = new FormData();
                 datos.append('accion', 'incluir');
@@ -54,7 +54,7 @@ $(document).ready(function () {
             }
         }
         // Botón de Modificar
-        else if ($(this).text() == 'modificar') {
+        else if ($(this).text().trim() === 'modificar') {
             if (validarEnvio()) {
                 var datos = new FormData();
                 datos.append('accion', 'modificar');
@@ -90,20 +90,11 @@ $(document).ready(function () {
         ejecutarBusqueda();
     });
 
-    // BOTÓN CONFIRMAR ELIMINACIÓN DE CATEGORÍA
-    $("#btnEliminar").on("click", function () {
-        var codigoEliminado = $("#eliminar").val();
-        var datos = new FormData();
-        datos.append('accion', 'eliminar');
-        datos.append('codigoCat', codigoEliminado);
-        enviaAjax(datos);
-    });
-
     $("#incluir").on("click", function () {
         limpia();
         $("#codigoOriginal").val("");
         $("#codigoCat").prop('readonly', false);
-        $("#btnGuardar").text("incluir");
+        $("#btnGuardar").text("Guardar Categoría");
         $("#modal_categoria").modal("show");
     });
 });
@@ -111,26 +102,33 @@ $(document).ready(function () {
 // Validación de los datos antes de enviarlos
 function validarEnvio() {
     if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{5,50}$/, $("#codigoCat"), $("#scodigoCat"), "Código Inválido") === 0) {
-        mostrarMensaje("Código Inválido <br/>(Entre 5 y 50 caracteres)");
+        mostrarAlerta("Atención", "Código Inválido <br/>(Entre 5 y 50 caracteres)", "warning");
         return false;
     }
     else if (validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{5,50}$/, $("#nombreCat"), $("#snombreCat"), "Nombre Inválido") === 0) {
-        mostrarMensaje("Nombre Inválido <br/>(Solo letras entre 5 y 50 caracteres)");
+        mostrarAlerta("Atención", "Nombre Inválido <br/>(Solo letras entre 5 y 50 caracteres)", "warning");
         return false;
     }
     else if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{5,150}$/, $("#descCat"), $("#sdescCat"), "Descripción Inválida") === 0) {
-        mostrarMensaje("Descripción Inválida <br/>(Entre 5 y 150 caracteres)");
+        mostrarAlerta("Atención", "Descripción Inválida <br/>(Entre 5 y 150 caracteres)", "warning");
         return false;
     }
 
     return true;
 }
 
-// Función para mostrar el modal de mensajes
-function mostrarMensaje(mensaje) {
-    $("#contenidoModal").html(mensaje);
-    $("#mostrarModal").modal("show");
-    setTimeout(function () { $("#mostrarModal").modal("hide") }, 5000);
+// Función para mostrar alertas
+function mostrarAlerta(titulo, mensaje, icono) {
+    Swal.fire({
+        title: titulo,
+        html: mensaje,
+        icon: icono,
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#FF8C00',
+        customClass: {
+            popup: 'rounded-4 shadow'
+        }
+    });
 }
 
 // Función para validar por keypress
@@ -138,6 +136,7 @@ function validarkeypress(er, e) {
     key = e.keyCode;
     tecla = String.fromCharCode(key);
     a = er.test(tecla);
+
     if (!a) {
         e.preventDefault();
     }
@@ -146,6 +145,7 @@ function validarkeypress(er, e) {
 // Función para validar por keyup
 function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
     a = er.test(etiqueta.val());
+
     if (a) {
         etiquetamensaje.text("");
         return 1;
@@ -155,7 +155,7 @@ function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
     }
 }
 
-// Función para llenar el formulario con los datos de la categoría (usando atributos data-* en el botón)
+// Función para llenar el formulario con los datos de la categoría
 function pone(pos) {
     var btn = $(pos);
 
@@ -169,16 +169,35 @@ function pone(pos) {
     $("#modal_categoria").modal("show");
 }
 
+// Función Eliminar 
 function eliminar(pos) {
     var btn = $(pos);
-    // Buscamos el botón de editar hermano o extraemos el código directamente del botón de edición de la tarjeta
     var card = btn.closest('.card');
     var codigo = card.find('button.btn-outline-primary').data('codigo');
 
-    $("#eliminar").val(codigo);
-    $("#modal_eliminar").modal("show");
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡Deseas eliminar esta categoría del sistema!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: 'red',
+        cancelButtonColor: 'darkgray',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        customClass: {
+            popup: 'rounded-4 shadow'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var datos = new FormData();
+            datos.append('accion', 'eliminar');
+            datos.append('codigoCat', codigo);
+            enviaAjax(datos);
+        }
+    });
 }
 
+// Función AJAX
 function enviaAjax(datos) {
     $.ajax({
         async: true,
@@ -199,41 +218,46 @@ function enviaAjax(datos) {
                     $("#cuadricula_categorias").html(lee.mensaje);
                 }
                 else if (lee.resultado === 'incluir') {
-                    mostrarMensaje(lee.mensaje);
                     if (lee.mensaje === 'Categoría registrada con éxito.') {
+                        mostrarAlerta("¡Éxito!", lee.mensaje, "success");
                         $("#modal_categoria").modal("hide");
                         consultar();
+                    } else {
+                        mostrarAlerta("Información", lee.mensaje, "info");
                     }
                 }
                 else if (lee.resultado === 'modificar') {
-                    mostrarMensaje(lee.mensaje);
                     if (lee.mensaje === 'Categoría modificada con éxito.') {
+                        mostrarAlerta("¡Éxito!", lee.mensaje, "success");
                         $("#modal_categoria").modal("hide");
                         consultar();
+                    } else {
+                        mostrarAlerta("Información", lee.mensaje, "info");
                     }
                 }
                 else if (lee.resultado === 'eliminar') {
-                    mostrarMensaje(lee.mensaje);
                     if (lee.mensaje === 'Categoría eliminada con éxito.') {
-                        $("#modal_eliminar").modal("hide");
+                        mostrarAlerta("¡Éxito!", lee.mensaje, "success");
                         consultar();
+                    } else {
+                        mostrarAlerta("Atención", lee.mensaje, "warning");
                     }
                 }
                 else if (lee.resultado === 'buscar') {
                     $('#cuadricula_categorias').html(lee.mensaje);
                 }
                 else if (lee.resultado === "error") {
-                    mostrarMensaje(lee.mensaje);
+                    mostrarAlerta("Error", lee.mensaje, "error");
                 }
             } catch (e) {
-                alert("Error en JSON: " + e.name);
+                mostrarAlerta("Error de sistema", "Error en formato JSON: " + e.name, "error");
             }
         },
         error: function (request, status, err) {
             if (status === "timeout") {
-                mostrarMensaje("Servidor ocupado, intente de nuevo.");
+                mostrarAlerta("Servidor Ocupado", "El servidor tardó demasiado, intente de nuevo.", "warning");
             } else {
-                mostrarMensaje("ERROR: <br/>" + request + status + err);
+                mostrarAlerta("Error crítico", "Ocurrió un error de comunicación.", "error");
             }
         },
         complete: function () { },

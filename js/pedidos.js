@@ -1,3 +1,4 @@
+// Función para la lista de pedidos
 function consultar(estado = "Todos") {
     var datos = new FormData();
     datos.append("accion", "consultar");
@@ -8,14 +9,17 @@ function consultar(estado = "Todos") {
 $(document).ready(function () {
     consultar("Todos");
 
+    // Filtrar pedidos por estado
     $("#filtroEstado").on("change", function () {
         consultar($(this).val());
     });
 
+    // Control de visibilidad de datos de pago según estado del pedido
     $("#estadoPedido").on("change", function () {
         $("#datosPagoPedido").toggle($(this).val() === "Finalizado");
     });
 
+    // Control de campos según método de pago
     $("#tipoPagoPedido").on("change", function () {
         var esMovil = $(this).val() === "Pago Móvil";
         $("#cuentaPagoPedidoCont, #cedulaPagoPedidoCont, #tlfPagoPedidoCont, #referenciaPagoPedidoCont").toggle(esMovil);
@@ -26,29 +30,37 @@ $(document).ready(function () {
         }
     });
 
+    // VALIDACIÓN DE DATOS
+    // -- Validación de comprobante --
     $("#numComprobante").on("keypress", function (e) { validarkeypress(/^[0-9]*$/, e); });
     $("#numComprobante").on("keyup", function () {
         validarkeyup(/^[0-9]{4}$/, $(this), $("#snumComprobante"), "Comprobante Inválido");
     });
 
+    // -- Validación de cédula de pago --
     $("#cedulaPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9\-\.]*$/, e); });
     $("#cedulaPagoPedido").on("keyup", function () {
         validarkeyup(/^[0-9\.]{7,12}$/, $(this), $("#scedulaPagoPedido"), "Cédula Inválida - Formato: 999999999");
     });
 
+    // -- Validación de teléfono de pago --
     $("#tlfPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9\-+ ]*$/, e); });
     $("#tlfPagoPedido").on("keyup", function () {
         validarkeyup(/^[0-9\-+]{11,12}$/, $(this), $("#stlfPagoPedido"), "Teléfono Inválido - Formato: 0000-0000000");
     });
 
+    // -- Validación de referencia de pago --
     $("#referenciaPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9\-+ ]*$/, e); });
     $("#referenciaPagoPedido").on("keyup", function () {
         validarkeyup(/^[0-9\-+]{4}$/, $(this), $("#sreferenciaPagoPedido"), "Referencia Inválida");
     });
+    // Fin de Validaciones de datos
 
+    // Control de botones auxiliares de cuentas
     $("#btnBuscarCuentaPago").on("click", function () { $("#modal_cuentas").modal("show"); });
     $("#btnQuitarCuentaPago").on("click", function () { $("#idCuenta").val(""); $("#cuentaInfo, #cuentaPagoPedidoInfo").val(""); });
 
+    // Carga inicial de datos para los modales de selección
     var datosCli = new FormData();
     datosCli.append("accion", "modalclientes");
     enviaAjax(datosCli);
@@ -61,10 +73,12 @@ $(document).ready(function () {
     datosProd.append("accion", "modalproductos");
     enviaAjax(datosProd);
 
+    // Evitar envío por Enter
     $("#f").on("submit", function (e) {
         e.preventDefault();
     });
 
+    // Control de Botones Guardar (Incluir / Modificar)
     $("#btnGuardar").on("click", function () {
         if (!validarEnvio()) return;
         var datos = new FormData($("#f")[0]);
@@ -73,15 +87,16 @@ $(document).ready(function () {
         datos.set("tlfPago", $("#tlfPagoPedido").val());
         datos.set("referenciaPago", $("#referenciaPagoPedido").val());
 
-        if ($(this).text() == 'incluir') {
+        if ($(this).text().trim() === 'incluir' || $(this).text().trim() === 'Procesar Pedido') {
             datos.append("accion", "incluir");
             enviaAjax(datos);
-        } else if ($(this).text() == 'modificar') {
+        } else if ($(this).text().trim() === 'modificar') {
             datos.append("accion", "modificar");
             enviaAjax(datos);
         }
     });
 
+    // Control de modales de búsqueda
     $("#btnBuscarCliente").on("click", function () {
         $("#modal_clientes").modal("show");
     });
@@ -94,55 +109,49 @@ $(document).ready(function () {
         $("#modal_productos").modal("show");
     });
 
-    $("#btnEliminar").on("click", function () {
-        var idPedido = $("#eliminar").val();
-        var datos = new FormData();
-        datos.append("accion", "eliminar");
-        datos.append("idPedido", idPedido);
-        enviaAjax(datos);
-    });
-
+    // Abrir modal de inclusión
     $("#incluir").on("click", function () {
         limpia();
         $("#modal_pedido").modal("show");
     });
 });
 
+// Validación de los datos antes de enviarlos
 function validarEnvio() {
     if ($("#idCliente").val() == "") {
-        mostrarMensaje("Debe seleccionar un cliente antes de procesar.");
+        mostrarAlerta("Atención", "Debe seleccionar un cliente antes de procesar.", "warning");
         return false;
     }
     if ($("#detallesdeventa tr").length == 0) {
-        mostrarMensaje("Debe agregar al menos un producto al pedido.");
+        mostrarAlerta("Atención", "Debe agregar al menos un producto al pedido.", "warning");
         return false;
     }
     if ($("#numComprobante").val().trim() !== "") {
         if (validarkeyup(/^[0-9]{4}$/, $("#numComprobante"), $("#snumComprobante"), "Comprobante Inválido") === 0) {
-            mostrarMensaje("Número de Comprobante Inválido");
+            mostrarAlerta("Atención", "Número de Comprobante Inválido", "warning");
             return false;
         }
     }
     if ($("#estadoPedido").val() === "Finalizado") {
         if (!$("#tipoPagoPedido").val()) {
-            mostrarMensaje("Confirme el método de pago para finalizar el pedido.");
+            mostrarAlerta("Atención", "Confirme el método de pago para finalizar el pedido.", "warning");
             return false;
         }
         if ($("#tipoPagoPedido").val() === "Pago Móvil") {
             if (!$("#idCuenta").val()) {
-                mostrarMensaje("Seleccione la cuenta destino del Pago Móvil.");
+                mostrarAlerta("Atención", "Seleccione la cuenta destino del Pago Móvil.", "warning");
                 return false;
             }
             if (validarkeyup(/^[0-9\-+ ]{4}$/, $("#referenciaPagoPedido"), $("#sreferenciaPagoPedido"), "Referencia Inválida") === 0) {
-                mostrarMensaje("Referencia inválida. Revise el formato indicado.");
+                mostrarAlerta("Atención", "Referencia inválida. Revise el formato indicado.", "warning");
                 return false;
             }
             if (validarkeyup(/^[0-9\.]{7,12}$/, $("#cedulaPagoPedido"), $("#scedulaPagoPedido"), "Cédula Inválida") === 0) {
-                mostrarMensaje("Cédula inválida del pagador.");
+                mostrarAlerta("Atención", "Cédula inválida del pagador.", "warning");
                 return false;
             }
             if (validarkeyup(/^[0-9\-+ ]{11,12}$/, $("#tlfPagoPedido"), $("#stlfPagoPedido"), "Teléfono Inválido") === 0) {
-                mostrarMensaje("Teléfono inválido del pagador.");
+                mostrarAlerta("Atención", "Teléfono inválido del pagador.", "warning");
                 return false;
             }
         }
@@ -151,6 +160,21 @@ function validarEnvio() {
     return true;
 }
 
+// Función para mostrar alertas
+function mostrarAlerta(titulo, mensaje, icono) {
+    Swal.fire({
+        title: titulo,
+        html: mensaje,
+        icon: icono,
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#FF8C00',
+        customClass: {
+            popup: 'rounded-4 shadow'
+        }
+    });
+}
+
+// Funciones de selección desde modales auxiliares
 function seleccionarCliente(id, cedula, nombre) {
     $("#idCliente").val(id);
     $("#clienteInfo").val(cedula + " - " + nombre);
@@ -204,6 +228,7 @@ function seleccionarProducto(id, codigo, nombre, precio) {
     $("#modal_productos").modal("hide");
 }
 
+// Gestión de subtotales y total general
 function modificasubtotal(input) {
     var fila = $(input).closest("tr");
     var precio = parseFloat(fila.find("input[name='precio[]']").val());
@@ -237,6 +262,7 @@ function calculaTotal() {
     $("#totalGeneral").text("$" + total.toFixed(2));
 }
 
+// Función keypress
 function validarkeypress(er, e) {
     var key = e.keyCode;
     var tecla = String.fromCharCode(key);
@@ -245,6 +271,7 @@ function validarkeypress(er, e) {
     if (!permitido) e.preventDefault();
 }
 
+// Función keyup
 function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
     var valido = er.test(etiqueta.val());
 
@@ -257,18 +284,7 @@ function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
     }
 }
 
-function mostrarMensaje(mensaje) {
-    if ($("#mostrarModal").length) {
-        $(".modal").modal("hide");
-        $("#contenidoModal").text(mensaje);
-        setTimeout(function () {
-            $("#mostrarModal").modal("show");
-        }, 200);
-    } else {
-        alert(mensaje);
-    }
-}
-
+// Consultar un pedido específico para modificar
 function pone(idPedido) {
     var datos = new FormData();
     datos.append("accion", "consultar_uno");
@@ -276,11 +292,31 @@ function pone(idPedido) {
     enviaAjax(datos);
 }
 
+// Función Eliminar
 function eliminar(idPedido) {
-    $("#eliminar").val(idPedido);
-    $("#modal_eliminar").modal("show");
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡Deseas eliminar este pedido del sistema!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: 'red',
+        cancelButtonColor: 'darkgray',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        customClass: {
+            popup: 'rounded-4 shadow'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var datos = new FormData();
+            datos.append("accion", "eliminar");
+            datos.append("idPedido", idPedido);
+            enviaAjax(datos);
+        }
+    });
 }
 
+// Función AJAX
 function enviaAjax(datos) {
     $.ajax({
         async: true,
@@ -293,6 +329,7 @@ function enviaAjax(datos) {
         success: function (respuesta) {
             try {
                 var lee = JSON.parse(respuesta);
+
                 if (lee.resultado == "consultar") {
                     $("#contenedor_pedidos").html(lee.mensaje);
                 } else if (lee.resultado == "modalclientes") {
@@ -322,27 +359,43 @@ function enviaAjax(datos) {
                     $("#divEstadoPedido").show();
                     $("#btnGuardar").text("modificar");
                     $("#modal_pedido").modal("show");
-                } else if (lee.resultado == "incluir" || lee.resultado == "modificar") {
-                    mostrarMensaje(lee.mensaje);
+                } else if (lee.resultado == "incluir") {
+                    if (lee.mensaje.toLowerCase().includes("éxito") || lee.mensaje.toLowerCase().includes("exito")) {
+                        mostrarAlerta("¡Éxito!", lee.mensaje, "success");
+                    } else {
+                        mostrarAlerta("Información", lee.mensaje, "info");
+                    }
+                    $("#modal_pedido").modal("hide");
+                    consultar($("#filtroEstado").val());
+                } else if (lee.resultado == "modificar") {
+                    if (lee.mensaje.toLowerCase().includes("éxito") || lee.mensaje.toLowerCase().includes("exito")) {
+                        mostrarAlerta("¡Éxito!", lee.mensaje, "success");
+                    } else {
+                        mostrarAlerta("Información", lee.mensaje, "info");
+                    }
                     $("#modal_pedido").modal("hide");
                     consultar($("#filtroEstado").val());
                 } else if (lee.resultado == "eliminar") {
-                    mostrarMensaje(lee.mensaje);
-                    $("#modal_eliminar").modal("hide");
+                    if (lee.mensaje.toLowerCase().includes("éxito") || lee.mensaje.toLowerCase().includes("exito")) {
+                        mostrarAlerta("¡Éxito!", lee.mensaje, "success");
+                    } else {
+                        mostrarAlerta("Atención", lee.mensaje, "warning");
+                    }
                     consultar($("#filtroEstado").val());
                 } else if (lee.resultado == "error") {
-                    mostrarMensaje(lee.mensaje);
+                    mostrarAlerta("Error", lee.mensaje, "error");
                 }
             } catch (e) {
-                console.error("Error al procesar JSON: ", e);
+                mostrarAlerta("Error de sistema", "Error al procesar JSON: " + e.name, "error");
             }
         },
         error: function (request, status, error) {
-            mostrarMensaje("Error de conexión: " + request.responseText);
+            mostrarAlerta("Error de conexión", "No se pudo comunicar con el servidor.", "error");
         },
     });
 }
 
+// Función para limpiar formulario y campos
 function limpia() {
     $("#f")[0].reset();
     $("#idPedido").val("");
@@ -358,5 +411,5 @@ function limpia() {
     $("#tipoPagoPedido, #cedulaPagoPedido, #tlfPagoPedido, #referenciaPagoPedido, #cuentaPagoPedidoInfo").val("");
     $("#cuentaPagoPedidoCont, #cedulaPagoPedidoCont, #tlfPagoPedidoCont, #referenciaPagoPedidoCont").hide();
     $("#snumComprobante, #scedulaPagoPedido, #stlfPagoPedido, #sreferenciaPagoPedido").text("");
-    $("#btnGuardar").text("incluir");
+    $("#btnGuardar").text("Procesar Pedido");
 }

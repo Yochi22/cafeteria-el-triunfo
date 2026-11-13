@@ -11,6 +11,7 @@ $nivel = "";
 if (is_file("modelo/verifica.php")) {
     require_once("modelo/verifica.php");
     $v = new verifica();
+
     if ($pagina == 'salida') {
         $v->destruyesesion();
     } else {
@@ -19,7 +20,7 @@ if (is_file("modelo/verifica.php")) {
 }
 
 if (is_file("controlador/" . $pagina . ".php")) {
-    if ($pagina == 'login' or $pagina == 'catalogo') {
+    if ($pagina == 'login' or $pagina == 'catalogo' or $pagina == 'bienvenida') {
         if ($pagina == 'login' and !empty($nivel)) {
             header("Location: ?pagina=principal");
             exit;

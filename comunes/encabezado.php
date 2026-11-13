@@ -5,6 +5,8 @@
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/bootstrap-icons.min.css">
     <link rel="stylesheet" href="css/estilos.css">
+    <link rel="stylesheet" href="css/datatables.css">
+    <link rel="stylesheet" href="css/sweetalert.css">
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

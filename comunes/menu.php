@@ -2,13 +2,11 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
         <img src="img/principal.jpg" alt="Logo" style="width:45px; margin-right:10px; border-radius: 50%;">
         <label class="navbar-brand">Cafetería El Triunfo</label>
-
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
             data-bs-target="#menuPrincipal" aria-controls="menuPrincipal"
             aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-
         <div class="collapse navbar-collapse" id="menuPrincipal">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item dropdown">

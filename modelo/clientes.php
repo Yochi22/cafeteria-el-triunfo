@@ -80,45 +80,13 @@ class clientes extends datos
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $r = array();
 
         try {
-            $resultado = $co->query("SELECT * FROM clientes");
-            if ($resultado) {
-                $respuesta = '';
-                foreach ($resultado as $fila) {
-                    $respuesta .= "<tr>";
-                    $respuesta .= "<td>" . $fila['cedulaCli'] . "</td>";
-                    $respuesta .= "<td>" . $fila['nombreCli'] . " " . $fila['apellidoCli'] . "</td>";
-                    $respuesta .= "<td>" . $fila['tlfCli'] . "</td>";
-                    $respuesta .= "<td>";
-                    $respuesta .= "<button type='button' class='btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1 my-1' data-nombre='" . $fila['nombreCli'] . "' data-apellido='" . $fila['apellidoCli'] . "' onclick='pone(this)'><i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span></button>";
-                    $respuesta .= "<button type='button' class='btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1 m-1' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i><span class='d-none d-sm-inline'> Eliminar</span></button>";
-                    $respuesta .= "</td>";
-                    $respuesta .= "</tr>";
-                }
-
-                if ($respuesta == "") {
-                    $respuesta .= "<tr>";
-                    $respuesta .= "<td colspan='5' class='text-center text-muted py-4'>";
-                    $respuesta .= "<span><i class='bi bi-person-fill fs-1' style='color: #FF8C00'></i></span>";
-                    $respuesta .= "<h5 class='text-dashboard'>No tienes clientes registrados.</h5>";
-                    $respuesta .= "</td>";
-                    $respuesta .= "</tr>";
-                }
-
-                $r['resultado'] = 'consultar';
-                $r['mensaje'] = $respuesta;
-            } else {
-                $r['resultado'] = 'consultar';
-                $r['mensaje'] = '';
-            }
+            $resultado = $co->query("SELECT cedulaCli, nombreCli, apellidoCli, tlfCli FROM clientes");
+            return $resultado->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            $r['resultado'] = 'error';
-            $r['mensaje'] = $e->getMessage();
+            return array();
         }
-
-        return $r;
     }
 
     // Función para Modificar Cliente
@@ -176,65 +144,6 @@ class clientes extends datos
         } else {
             $r['resultado'] = 'eliminar';
             $r['mensaje'] = 'La cédula no existe.';
-        }
-
-        return $r;
-    }
-
-    // Función para Buscar
-    function buscar($valor)
-    {
-        $co = $this->conecta();
-        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $valor = trim($valor);
-        $busqueda = "%" . $valor . "%";
-        $r = array();
-
-        try {
-            if ($busqueda) {
-                $bus = $co->prepare("SELECT cedulaCli, nombreCli, apellidoCli, tlfCli 
-                                    FROM clientes
-                                    WHERE cedulaCli LIKE :busqueda
-                                    OR nombreCli LIKE :busqueda
-                                    OR apellidoCli LIKE :busqueda
-                                    OR tlfCli LIKE :busqueda");
-
-                $bus->bindParam(':busqueda', $busqueda);
-                $bus->execute();
-                $resultado = $bus->fetchAll();
-
-                $respuesta = "";
-                foreach ($resultado as $fila) {
-                    $respuesta .= "<tr>";
-                    $respuesta .= "<td>" . $fila['cedulaCli'] . "</td>";
-                    $respuesta .= "<td>" . $fila['nombreCli'] . " " . $fila['apellidoCli'] . "</td>";
-                    $respuesta .= "<td>" . $fila['tlfCli'] . "</td>";
-                    $respuesta .= "<td>";
-                    $respuesta .= "<button type='button' class='btn btn-outline-info btn-sm d-inline-flex align-items-center gap-1 my-1' data-nombre='" . $fila['nombreCli'] . "' data-apellido='" . $fila['apellidoCli'] . "' onclick='pone(this)'><i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span></button>";
-                    $respuesta .= "<button type='button' class='btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1 m-1' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i> Eliminar</button>";
-                    $respuesta .= "</td>";
-                    $respuesta .= "</tr>";
-                }
-
-                if ($respuesta == "") {
-                    $respuesta .= "<tr>";
-                    $respuesta .= "<td colspan='5' class='text-center text-muted py-4'>";
-                    $respuesta .= "<span><i class='bi bi-person-fill-slash fs-1' style='color: #FF8C00'></i></span>";
-                    $respuesta .= "<h5 class='text-dashboard'>No se encontraron registros</h5>";
-                    $respuesta .= "<h6 class='text-secondary'>Intenta de nuevo.</h6>";
-                    $respuesta .= "</td>";
-                    $respuesta .= "</tr>";
-                }
-
-                $r['resultado'] = 'buscar';
-                $r['mensaje'] = $respuesta;
-            } else {
-                $r['resultado'] = 'consultar';
-                $r['mensaje'] = '';
-            }
-        } catch (Exception $e) {
-            $r['resultado'] = 'error';
-            $r['mensaje'] = $e->getMessage();
         }
 
         return $r;
