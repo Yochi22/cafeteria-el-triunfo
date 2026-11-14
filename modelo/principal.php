@@ -25,38 +25,118 @@ class principal extends datos
         }
     }
 
-    // Función para guardar Tasa
+    // Funcion para consultar si ya se registro una tasa del dia
+    public function obtenerTasaHoy()
+    {
+    $co = $this->conecta();
+    $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $r = array();
+    try {
+        date_default_timezone_set('America/Caracas');
+        $fechaDb = date('Y-m-d');
+        $fechaMostrar = date('d-m-Y');
+
+        $resultado = $co->prepare("SELECT * FROM tasadiaria WHERE fechaTasa = :fechaTasa");
+        $resultado->bindParam(':fechaTasa', $fechaDb);
+        $resultado->execute();
+        $fila = $resultado->fetch(PDO::FETCH_ASSOC);
+
+        if ($fila) {
+            $precioTasa = $fila['precioTasa'];
+            $precioFormateado = number_format($precioTasa, 2, ',', '.');
+            
+            $html = '';
+            $html .= '
+                <div class="fs-4 text-success mb-2">Bs. ' . $precioFormateado . '</div>
+                <div class="fs-6 text-muted fw-normal" style="font-size: 0.8rem;">Actualizado el: ' . $fechaMostrar . '</div>';
+            
+            $r['resultado'] = 'mostrarTasa';
+            $r['mensaje'] = $html;
+        } else {
+
+            $html = '';
+            $html .= '
+            <h5 class="text-danger mb-2">¡API no disponible!</h5>
+            <p class="text-muted small mb-3">No hay conexión a internet y no se ha registrado ninguna tasa hoy. Por favor, ingresar manualmente:</p>
+                        
+                    <form id="formTasaManual">
+                    <div class="mb-3 text-start">
+                        <label for="tasaManual" class="form-label small fw-bold">Tasa del Dólar (Bs):</label>
+                        <input type="number" step="0.01" class="form-control rounded-3" id="tasaManual" name="tasaManual" placeholder="00.00 Bs." required>
+                        <span id="stasaManual" class="text-danger small"></span>
+                    </div>
+                        <button type="submit" class="btn btn-crear btn-sm d-block mx-auto">Guardar Tasa</button>
+                    </form>';
+
+            $r['resultado'] = 'noExisteTasa';
+            $r['mensaje'] = $html;
+        }
+    } catch (Exception $e) {
+        $r['resultado'] = 'error';
+        $r['mensaje'] = $e->getMessage();
+    }
+    return $r;
+}
+
+    // Funcion para Guardar Tasa
     public function guardarTasa($precioTasa)
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $r = array();
+        
         try {
-            $fecha = date('Y-m-d');
-                    if ($this->existe($fecha)) {
-                    $r['resultado'] = 'error';
-                    $r['mensaje'] = '¡La tasa del día de hoy ya está registrada!';
-                    return $r; 
-                }
+            date_default_timezone_set('America/Caracas');
             
+            $fechaDb = date('Y-m-d');      
+            $fechaMostrar = date('d-m-Y'); 
+                
+            $stmt = $co->prepare("SELECT precioTasa FROM tasadiaria WHERE fechaTasa = :fechaDb");
+            $stmt->bindParam(':fechaDb', $fechaDb);
+            $stmt->execute();
+            $fila = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($fila) {
+                $precioRegistrado = $fila['precioTasa'];
+                $precioFormateado = number_format($precioRegistrado, 2, ',', '.');
+                
+                $html = '
+                    <div class="fs-4 text-success mb-2">Bs. ' . $precioFormateado . '</div>
+                    <div class="fs-6 text-muted fw-normal" style="font-size: 0.8rem;">Actualizado el: ' . $fechaMostrar . '</div>
+                ';
+                $r['resultado'] = 'guardarTasa';
+                $r['mensaje'] = $html;
+                return $r; 
+            }
+        
             $inc = $co->prepare("INSERT INTO tasadiaria(precioTasa, fechaTasa) 
-            VALUES (:precioTasa, :fecha)");
+            VALUES (:precioTasa, :fechaDb)");
 
             $inc->bindParam(':precioTasa', $precioTasa);
-            $inc->bindParam(':fecha', $fecha);
+            $inc->bindParam(':fechaDb', $fechaDb);
             $inc->execute();
 
-                $r['resultado'] = 'guardarTasa';
-                $r['mensaje'] = 'Cuenta registrada con éxito.';
-            } catch (Exception $e) {
-                $r['resultado'] = 'error';
-                $r['mensaje'] = $e->getMessage();
-            }
+            $precioFormateado = number_format($precioTasa, 2, ',', '.');
+            $html = '
+                <div class="fs-4 text-success mb-2">Bs. ' . $precioFormateado . '</div>
+                <div class="fs-6 text-muted fw-normal" style="font-size: 0.8rem;">Actualizado el: ' . $fechaMostrar . '</div>
+            ';
+
+            $r['resultado'] = 'guardarTasa';
+            $r['mensaje'] = $html;
+
+        } catch (Exception $e) {
+            $r['resultado'] = 'error';
+            $r['mensaje'] = '
+                <h5 class="text-danger mb-2">¡Error en la Base de Datos!</h5>
+                <p class="text-muted small">' . $e->getMessage() . '</p>
+            ';
+        }
 
         return $r;
     }
 
-public function consultarHorarios()
+    public function consultarHorarios()
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

@@ -226,6 +226,35 @@ class catalogo extends datos
         return $r;
     }
 
+    public function obtenerTasaHoy()
+    {
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $r = array();
+        try {
+            date_default_timezone_set('America/Caracas');
+            
+            $fecha = date('Y-m-d');
+            
+            $resultado = $co->prepare("SELECT precioTasa FROM tasadiaria WHERE fechaTasa = :fechaTasa");
+            $resultado->bindParam(':fechaTasa', $fecha);
+            $resultado->execute();
+            $precioTasa = $resultado->fetchColumn();
+
+        if ($precioTasa !== false) {
+            $r['resultado'] = 'tasaActual';
+            $r['precio'] = floatval($precioTasa);
+            } else {
+                $r['resultado'] = 'error';
+                $r['mensaje'] = 'No hay tasas registradas en el sistema.';
+            }
+        } catch (Exception $e) {
+            $r['resultado'] = 'error';
+            $r['mensaje'] = $e->getMessage();
+        }
+        return $r;
+    }
+
     public function cargarCarrito($productos)
     {
         $r = array();

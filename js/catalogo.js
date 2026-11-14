@@ -1,7 +1,11 @@
+let tasaDolar = 0;
+
 $(document).ready(function () {
+
     try {
         cargarCategorias();
         cargarProductos();
+        obtenerTasaActual()
         cargarCarritoLocal();
         cargarCuentas();
         actualizarContadorCarrito();
@@ -51,11 +55,18 @@ function cargarProductos() {
     enviaAjax(datos);
 }
 
+
 function listar_productos(idCategoria, nombreCat) {
     var datos = new FormData();
     datos.append("accion", "listar_productos");
     datos.append("idCategoria", idCategoria);
     $("#titulo_categoria_activo").text(nombreCat);
+    enviaAjax(datos);
+}
+
+function obtenerTasaActual() {
+    let datos = new FormData();
+    datos.append("accion", "obtenerTasaHoy");
     enviaAjax(datos);
 }
 
@@ -68,7 +79,6 @@ function abrirModalDetalle(id, nombre, descripcion, precio, imagen) {
     $("#modal-img").attr("src", imagen);
     $("#modal-cantidad").text("1");
 
-    let tasaDolar = parseFloat(localStorage.getItem('tasaDolar')) || 0;
     let precioEnBs = parseFloat(precio) * tasaDolar;
 
     if (tasaDolar > 0) {
@@ -92,6 +102,7 @@ function cambiarCantidadModal(cambio) {
     }
 }
 
+//FUNCIONES DE CARRITO
 function cargarCarritoLocal() {
     let carritoLocal = localStorage.getItem("carrito") || "[]";
     actualizarContadorCarrito();
@@ -150,7 +161,6 @@ function actualizarContadorCarrito() {
 }
 
 function actualizarPreciosEnBs() {
-    let tasaDolar = parseFloat(localStorage.getItem('tasaDolar')) || 0;
 
     let subtotalTexto = $('#subtotalCompra').text().replace('$', '').trim();
     let subtotalUsd = parseFloat(subtotalTexto) || 0;
@@ -229,7 +239,6 @@ function actualizarTotalConDelivery(precioDelivery) {
 
     $('#montoTotal').text("$" + totalUsdFinal.toFixed(2));
 
-    let tasaDolar = parseFloat(localStorage.getItem('tasaDolar')) || 0;
     if (tasaDolar > 0) {
         let totalGeneralBs = totalUsdFinal * tasaDolar;
         let formatoBs = `Bs. ${totalGeneralBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -536,6 +545,10 @@ function enviaAjax(datos) {
                         $("#subtotalCompra").text("$" + lee.subtotal);
                         $("#montoTotal").text("$" + lee.subtotal);
                     }
+                    actualizarPreciosEnBs();
+
+                } else if (lee.resultado == "tasaActual") {
+                    tasaDolar = parseFloat(lee.precio) || 0;
                     actualizarPreciosEnBs();
                 
                 } else if (lee.resultado == "precioDeliveryObtenido") {

@@ -29,6 +29,9 @@ if (is_file("vista/" . $pagina . ".php")) {
             case 'guardarTasa':
                 echo json_encode($o->guardarTasa($_POST['precioTasa']));
                 break;
+            case 'tasaHoy':
+                echo json_encode($o->obtenerTasaHoy());
+            break;
         }
 
         exit;
