@@ -19,6 +19,11 @@ $(document).ready(function () {
         $("#datosPagoPedido").toggle($(this).val() === "Finalizado");
     });
 
+    // Recalcular total al cambiar la zona de delivery
+    $("#zonaDelivery").on("change", function () {
+        calculaTotal();
+    });
+
     // Control de campos según método de pago
     $("#tipoPagoPedido").on("change", function () {
         var esMovil = $(this).val() === "Pago Móvil";
@@ -31,30 +36,25 @@ $(document).ready(function () {
     });
 
     // VALIDACIÓN DE DATOS
-    // -- Validación de comprobante --
     $("#numComprobante").on("keypress", function (e) { validarkeypress(/^[0-9]*$/, e); });
     $("#numComprobante").on("keyup", function () {
         validarkeyup(/^[0-9]{4}$/, $(this), $("#snumComprobante"), "Comprobante Inválido");
     });
 
-    // -- Validación de cédula de pago --
     $("#cedulaPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9\-\.]*$/, e); });
     $("#cedulaPagoPedido").on("keyup", function () {
         validarkeyup(/^[0-9\.]{7,12}$/, $(this), $("#scedulaPagoPedido"), "Cédula Inválida - Formato: 999999999");
     });
 
-    // -- Validación de teléfono de pago --
     $("#tlfPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9\-+ ]*$/, e); });
     $("#tlfPagoPedido").on("keyup", function () {
         validarkeyup(/^[0-9\-+]{11,12}$/, $(this), $("#stlfPagoPedido"), "Teléfono Inválido - Formato: 0000-0000000");
     });
 
-    // -- Validación de referencia de pago --
     $("#referenciaPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9\-+ ]*$/, e); });
     $("#referenciaPagoPedido").on("keyup", function () {
         validarkeyup(/^[0-9\-+]{4}$/, $(this), $("#sreferenciaPagoPedido"), "Referencia Inválida");
     });
-    // Fin de Validaciones de datos
 
     // Control de botones auxiliares de cuentas
     $("#btnBuscarCuentaPago").on("click", function () { $("#modal_cuentas").modal("show"); });
@@ -62,15 +62,15 @@ $(document).ready(function () {
 
     // Carga inicial de datos para los modales de selección
     var datosCli = new FormData();
-    datosCli.append("accion", "modalclientes");
+    datosCli.append("accion", "listarClientes");
     enviaAjax(datosCli);
 
     var datosCue = new FormData();
-    datosCue.append("accion", "modalcuentas");
+    datosCue.append("accion", "listarCuentas");
     enviaAjax(datosCue);
 
     var datosProd = new FormData();
-    datosProd.append("accion", "modalproductos");
+    datosProd.append("accion", "listarProductos");
     enviaAjax(datosProd);
 
     // Evitar envío por Enter
@@ -120,6 +120,18 @@ $(document).ready(function () {
 function validarEnvio() {
     if ($("#idCliente").val() == "") {
         mostrarAlerta("Atención", "Debe seleccionar un cliente antes de procesar.", "warning");
+        return false;
+    }
+    if ($("#zonaDelivery").val() == "") {
+        mostrarAlerta("Atención", "Debe seleccionar una zona de delivery.", "warning");
+        return false;
+    }
+    if ($("#calleDelivery").val().trim() == "") {
+        mostrarAlerta("Atención", "Debe indicar la calle del delivery.", "warning");
+        return false;
+    }
+    if ($("#numCasaDelivery").val().trim() == "") {
+        mostrarAlerta("Atención", "Debe indicar el número de casa o local.", "warning");
         return false;
     }
     if ($("#detallesdeventa tr").length == 0) {
@@ -250,16 +262,25 @@ function eliminalineadetalle(btn) {
 }
 
 function calculaTotal() {
-    var total = 0;
+    var subtotalProductos = 0;
 
     $("#detallesdeventa tr").each(function () {
         var precio = parseFloat($(this).find("input[name='precio[]']").val());
         var cantidad = parseInt($(this).find("input[name='cantidad[]']").val());
         if (!isNaN(precio) && !isNaN(cantidad)) {
-            total += precio * cantidad;
+            subtotalProductos += precio * cantidad;
         }
     });
-    $("#totalGeneral").text("$" + total.toFixed(2));
+
+    // Obtener precio de delivery
+    var optionSelected = $("#zonaDelivery").find("option:selected");
+    var costoDelivery = optionSelected.length > 0 && optionSelected.data("precio") ? parseFloat(optionSelected.data("precio")) : 0.00;
+
+    var totalGeneral = subtotalProductos + costoDelivery;
+
+    $("#subtotalProductos").text("$" + subtotalProductos.toFixed(2));
+    $("#costoDelivery").text("$" + costoDelivery.toFixed(2));
+    $("#totalGeneral").text("$" + totalGeneral.toFixed(2));
 }
 
 // Función keypress
@@ -287,7 +308,7 @@ function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
 // Consultar un pedido específico para modificar
 function pone(idPedido) {
     var datos = new FormData();
-    datos.append("accion", "consultar_uno");
+    datos.append("accion", "consultarUno");
     datos.append("idPedido", idPedido);
     enviaAjax(datos);
 }
@@ -327,18 +348,19 @@ function enviaAjax(datos) {
         processData: false,
         cache: false,
         success: function (respuesta) {
+            console.log(respuesta);
             try {
                 var lee = JSON.parse(respuesta);
 
                 if (lee.resultado == "consultar") {
                     $("#contenedor_pedidos").html(lee.mensaje);
-                } else if (lee.resultado == "modalclientes") {
+                } else if (lee.resultado == "listarClientes") {
                     $("#listaClientesModal").html(lee.mensaje);
-                } else if (lee.resultado == "modalcuentas") {
+                } else if (lee.resultado == "listarCuentas") {
                     $("#listaCuentasModal").html(lee.mensaje);
-                } else if (lee.resultado == "modalproductos") {
+                } else if (lee.resultado == "listarProductos") {
                     $("#listaProductosModal").html(lee.mensaje);
-                } else if (lee.resultado == "consultar_uno") {
+                } else if (lee.resultado == "consultarUno") {
                     limpia();
                     $("#idPedido").val(lee.idPedido);
                     $("#idCliente").val(lee.idCliente);
@@ -352,6 +374,11 @@ function enviaAjax(datos) {
                     $("#tlfPagoPedido").val(lee.tlfPago || "");
                     $("#referenciaPagoPedido").val(lee.numComprobante || "");
                     $("#cuentaPagoPedidoInfo").val(lee.cuentaInfo || "");
+
+                    $("#zonaDelivery").val(lee.zonaDelivery || "");
+                    $("#calleDelivery").val(lee.calleDelivery || "");
+                    $("#numCasaDelivery").val(lee.numCasaDelivery || "");
+
                     if (lee.estadoPedido === "Finalizado") $("#datosPagoPedido").show();
                     $("#tipoPagoPedido").trigger("change");
                     $("#detallesdeventa").html(lee.detalleHtml);
@@ -377,7 +404,7 @@ function enviaAjax(datos) {
                     consultar($("#filtroEstado").val());
                 } else if (lee.resultado == "eliminar") {
                     if (lee.mensaje.toLowerCase().includes("éxito") || lee.mensaje.toLowerCase().includes("exito")) {
-                        mostrarAlerta("¡Éxito!", lee.mensaje, "success");
+                        mostrarAlerta("Atención", lee.mensaje, "warning");
                     } else {
                         mostrarAlerta("Atención", lee.mensaje, "warning");
                     }
@@ -404,7 +431,12 @@ function limpia() {
     $("#numComprobante").val("");
     $("#clienteInfo").val("");
     $("#cuentaInfo").val("");
+    $("#zonaDelivery").val("");
+    $("#calleDelivery").val("");
+    $("#numCasaDelivery").val("");
     $("#detallesdeventa").empty();
+    $("#subtotalProductos").text("$0.00");
+    $("#costoDelivery").text("$0.00");
     $("#totalGeneral").text("$0.00");
     $("#divEstadoPedido").hide();
     $("#datosPagoPedido").hide();

@@ -4,7 +4,7 @@ require_once("modelo/datos.php");
 
 class catalogo extends datos
 {
-    function obtener_datos_categorias()
+    function obtenerCategorias()
     {
         $r = array();
         $co = $this->conecta();
@@ -26,7 +26,7 @@ class catalogo extends datos
                     $nombreCat = $c['nombreCat'];
 
                     $html .= '
-                    <a href="#" class="list-group-item list-group-item-action rounded-3 border-0 text-secondary mb-1" onclick="listar_productos(' . $idCat . ', \'' . $nombreCat . '\'); return false;">
+                    <a href="#" class="list-group-item list-group-item-action rounded-3 border-0 text-secondary mb-1" onclick="listarProductos(' . $idCat . ', \'' . $nombreCat . '\'); return false;">
                         <i class="bi bi-tag me-2"></i> ' . $nombreCat . '
                     </a>';
                 }
@@ -103,7 +103,7 @@ class catalogo extends datos
         return $r;
     }
 
-    function listar_productos($idCategoria)
+    function listarProductos($idCategoria)
     {
         $r = array();
         $co = $this->conecta();
@@ -153,7 +153,7 @@ class catalogo extends datos
                 </div>';
             }
 
-            $r['resultado'] = 'listar_productos';
+            $r['resultado'] = 'listarProductos';
             $r['mensaje'] = $html;
         } catch (Exception $e) {
             $r['resultado'] = 'error';
@@ -218,6 +218,37 @@ class catalogo extends datos
 
             $r['resultado'] = 'buscar';
             $r['mensaje'] = $html;
+        } catch (Exception $e) {
+            $r['resultado'] = 'error';
+            $r['mensaje'] = $e->getMessage();
+        }
+
+        return $r;
+    }
+
+    public function obtenerTasaHoy()
+    {
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $r = array();
+
+        try {
+            date_default_timezone_set('America/Caracas');
+
+            $fecha = date('Y-m-d');
+
+            $resultado = $co->prepare("SELECT precioTasa FROM tasadiaria WHERE fechaTasa = :fechaTasa");
+            $resultado->bindParam(':fechaTasa', $fecha);
+            $resultado->execute();
+            $precioTasa = $resultado->fetchColumn();
+
+            if ($precioTasa !== false) {
+                $r['resultado'] = 'tasaActual';
+                $r['precio'] = floatval($precioTasa);
+            } else {
+                $r['resultado'] = 'error';
+                $r['mensaje'] = 'No hay tasas registradas en el sistema.';
+            }
         } catch (Exception $e) {
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
@@ -355,29 +386,18 @@ class catalogo extends datos
             $cuenta = $cc->fetch(PDO::FETCH_ASSOC);
 
             if ($cuenta) {
-                $html = '
-                <div class="alert alert-light border p-3 rounded-3 mb-3">
-                    <button type="button" class="btn btn-secondary-sm position-absolute top-0 end-0 m-2" id="btnCopiarDatos" title="Copiar datos">
-                        <i class="bi bi-copy"></i>
-                    </button>
-                    <p class="mb-1" id="copiarBanco"><strong>Banco:</strong> ' . $cuenta['nombreBanco'] . '</p>
-                    <p class="mb-1" id="copiarCedula"><strong>Cédula:</strong> ' . $cuenta['cedulaTitular'] . '</p>
-                    <p class="mb-0" id="copiarTlfn"><strong>Teléfono:</strong> ' . $cuenta['tlfCuenta'] . '</p>
-                    <p class="mb-1" id="copiarNum"><strong>Nro. de Cuenta:</strong> <span class="text-dark fw-bold">' . $cuenta['numCuenta'] . '</span></p>
-                </div>
-                    <span class="text-muted small d-block">Monto a pagar:</span>
-                    <h4 class="text-success fw-bold mb-0" id="copiarMonto">' . $montoTotal . '</h4>
-                </div>';
+                $textoACopiar = "Banco: " . $cuenta['nombreBanco'] . "\n" .
+                    "Cédula: " . $cuenta['cedulaTitular'] . "\n" .
+                    "Teléfono: " . $cuenta['tlfCuenta'] . "\n" .
+                    "Nro. de Cuenta: " . $cuenta['numCuenta'] . "\n" .
+                    "Monto a pagar: " . $montoTotal;
 
                 $r['resultado'] = 'mostrarDetalleCuenta';
-                $r['mensaje'] = $html;
-            } else {
-                $r['resultado'] = 'error';
-                $r['mensaje'] = 'No se encontró la información de la cuenta.';
+                $r['mensaje'] = $textoACopiar;
             }
         } catch (Exception $e) {
             $r['resultado'] = 'error';
-            $r['mensaje'] = 'Error en base de datos: ' . $e->getMessage();
+            $r['mensaje'] = $e->getMessage();
         }
 
         return $r;

@@ -14,17 +14,23 @@ if (is_file("vista/" . $pagina . ".php")) {
         $accion = $_POST['accion'];
 
         switch ($accion) {
-            case 'consultar_horarios':
+            case 'consultarHorarios':
                 echo json_encode($o->consultarHorarios());
                 break;
-            case 'modificar_horario':
+            case 'modificarHorario':
                 echo json_encode($o->modificarHorario($_POST['idHorario'], $_POST['horaApertura'], $_POST['horaCierre']));
                 break;
-            case 'consultar_precios':
+            case 'consultarPrecios':
                 echo json_encode($o->consultarPreciosDelivery());
                 break;
-            case 'modificar_precio':
+            case 'modificarPrecio':
                 echo json_encode($o->modificarPrecioDelivery($_POST['zona'], $_POST['precio']));
+                break;
+            case 'guardarTasa':
+                echo json_encode($o->guardarTasa($_POST['precioTasa']));
+                break;
+            case 'tasaHoy':
+                echo json_encode($o->obtenerTasaHoy());
                 break;
         }
 

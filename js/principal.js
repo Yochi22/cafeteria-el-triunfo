@@ -2,13 +2,13 @@ var preciosDeliveryGlobal = {};
 
 function consultarHorarios() {
     var datos = new FormData();
-    datos.append("accion", "consultar_horarios");
+    datos.append("accion", "consultarHorarios");
     enviaAjax(datos);
 }
 
 function consultarPreciosDelivery() {
     var datos = new FormData();
-    datos.append("accion", "consultar_precios");
+    datos.append("accion", "consultarPrecios");
     enviaAjax(datos);
 }
 
@@ -80,7 +80,7 @@ $(document).ready(function () {
         e.preventDefault();
         if (validarEnvioPrecio()) {
             var datos = new FormData();
-            datos.append("accion", "modificar_precio");
+            datos.append("accion", "modificarPrecio");
             datos.append("zona", $("#selectZona").val());
             datos.append("precio", $("#inputPrecioZona").val());
             enviaAjax(datos);
@@ -91,13 +91,19 @@ $(document).ready(function () {
         e.preventDefault();
         if (validarEnvioHorario()) {
             var datos = new FormData();
-            datos.append("accion", "modificar_horario");
+            datos.append("accion", "modificarHorario");
             datos.append("idHorario", $("#editIdHorario").val());
             datos.append("horaApertura", $("#editHoraApertura").val());
             datos.append("horaCierre", $("#editHoraCierre").val());
             enviaAjax(datos);
         }
     });
+
+    $("#btnTasa").on("click", function (e) {
+        e.preventDefault();
+        cargarTasa();
+    });
+
 });
 
 function actualizarInputPrecioZona() {
@@ -198,6 +204,73 @@ function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
     }
 }
 
+// FUNCIONES DE TASA
+let tasaDolar;
+
+function guardarTasa(precio) {
+    tasaDolar = precio;
+    let datos = new FormData();
+    datos.append('accion', 'guardarTasa');
+    datos.append('precioTasa', precio);
+    enviaAjax(datos);
+}
+
+function actualizarTasaCatalogo() {
+    $.ajax({
+        url: "https://ve.dolarapi.com/v1/dolares/oficial",
+        method: "GET",
+        dataType: "json",
+        timeout: 10000,
+        success: function (R) {
+            var precio = Number(R && R.promedio);
+            if (Number.isFinite(precio) && precio > 0) {
+                guardarTasa(precio);
+                if (typeof actualizarPreciosEnBs === "function") {
+                    actualizarPreciosEnBs();
+                }
+            } else {
+                console.warn("La API de tasa respondió sin un promedio válido.");
+            }
+        },
+        error: function (request, status, err) {
+            console.warn("No se pudo actualizar la tasa automáticamente:", status, err);
+            if (typeof actualizarPreciosEnBs === "function") {
+                actualizarPreciosEnBs();
+            }
+        }
+    });
+}
+
+function cargarTasa() {
+    $.ajax({
+        url: "https://ve.dolarapi.com/v1/dolares/oficial",
+        method: "GET",
+        dataType: "json",
+        success: function (R) {
+            const precio = R.promedio;
+            guardarTasa(precio);
+            if (typeof actualizarPreciosEnBs === "function") actualizarPreciosEnBs();
+        },
+        error: function (request, status, err) {
+            console.warn("API externa no disponible. Consultando tasa en la Base de Datos...");
+
+            let datos = new FormData();
+            datos.append('accion', 'tasaHoy');
+            enviaAjax(datos);
+        }
+    });
+}
+
+// Envío del formulario manual
+$(document).on("submit", "#formTasaManual", function (e) {
+    e.preventDefault();
+    let tasaManual = parseFloat($("#tasaManual").val());
+    if (tasaManual > 0) {
+        guardarTasa(tasaManual);
+    }
+});
+
+
 function enviaAjax(datos) {
     $.ajax({
         async: true,
@@ -214,7 +287,7 @@ function enviaAjax(datos) {
             try {
                 var lee = JSON.parse(respuesta);
 
-                if (lee.resultado === 'consultar_horarios') {
+                if (lee.resultado === 'consultarHorarios') {
                     var html = "";
                     lee.mensaje.forEach(function (h) {
                         html += "<tr>";
@@ -226,14 +299,14 @@ function enviaAjax(datos) {
                     });
                     $("#tablaHorariosBody").html(html);
                 }
-                else if (lee.resultado === 'consultar_precios') {
+                else if (lee.resultado === 'consultarPrecios') {
                     preciosDeliveryGlobal = {};
                     lee.mensaje.forEach(function (p) {
                         preciosDeliveryGlobal[p.nombreZona] = p.precio;
                     });
                     actualizarInputPrecioZona();
                 }
-                else if (lee.resultado === 'modificar_horario') {
+                else if (lee.resultado === 'modificarHorario') {
                     mostrarMensaje(lee.mensaje);
                     if (lee.mensaje === 'Horario actualizado con éxito.') {
                         $("#modal_editar_horario").modal("hide");
@@ -241,14 +314,32 @@ function enviaAjax(datos) {
                         consultarHorarios();
                     }
                 }
-                else if (lee.resultado === 'modificar_precio') {
+                else if (lee.resultado === 'modificarPrecio') {
                     mostrarMensaje(lee.mensaje);
                     if (lee.mensaje === 'Precio de delivery actualizado con éxito.') {
                         $("#modal_precios_delivery").modal("hide");
                         consultarPreciosDelivery();
                     }
+                } else if (lee.resultado === 'guardarTasa') {
+                    $('#contenidoModal').html(lee.mensaje);
+                    console.log("Tasa guardada en la BD exitosamente.");
+                    $("#mostrarModal").modal("show");
+
+                    if (typeof actualizarPreciosEnBs === "function") {
+                        actualizarPreciosEnBs();
+                    }
+                } else if (lee.resultado === 'mostrarTasa') {
+                    $('#contenidoModal').html(lee.mensaje);
+                    $("#mostrarModal").modal("show");
+                    if (typeof actualizarPreciosEnBs === "function") {
+                        actualizarPreciosEnBs();
+                    }
                 }
-                else if (lee.resultado === "error") {
+                else if (lee.resultado === 'noExisteTasa') {
+                    $('#contenidoModal').html(lee.mensaje);
+                    $("#mostrarModal").modal("show");
+
+                } else if (lee.resultado === "error") {
                     mostrarMensaje(lee.mensaje);
                 }
             } catch (e) {

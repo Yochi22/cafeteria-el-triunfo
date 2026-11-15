@@ -139,7 +139,7 @@ function cargarDatosCategorias() {
     $("#subtitulo_seccion").text("Categorías:");
 
     let datos = new FormData();
-    datos.append("accion", "obtener_datos_categorias");
+    datos.append("accion", "consultarCategorias");
     enviaAjax(datos);
 }
 
@@ -149,7 +149,7 @@ function verCategoria(id, nombre) {
     $("#subtitulo_seccion").text("Productos de esta categoría:");
 
     let datos = new FormData();
-    datos.append("accion", "listar_productos");
+    datos.append("accion", "consultarProductos");
     datos.append("idCategoria", id);
     enviaAjax(datos);
 }
@@ -291,7 +291,7 @@ function enviaAjax(datos) {
                     $("#cuadricula_items").html(lee.cards);
                     $("#idCategoria_select").html(lee.select);
                     $("#contenedor_botones_header").html(lee.boton);
-                } else if (lee.resultado == "listar_productos") {
+                } else if (lee.resultado == "consultarProductos") {
                     $("#cuadricula_items").html(lee.mensaje);
                     $("#contenedor_botones_header").html(lee.boton);
                 } else if (lee.resultado == "incluir") {

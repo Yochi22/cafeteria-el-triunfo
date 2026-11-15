@@ -5,7 +5,7 @@ require_once("modelo/datos.php");
 class pedidos extends datos
 {
     // INCLUIR PEDIDO
-    function incluir($idCliente, $idCuenta, $idProducto, $cantidad, $precio, $numComprobante)
+    function incluir($idCliente, $idCuenta, $idProducto, $cantidad, $precio, $numComprobante, $zonaDelivery, $calleDelivery, $numCasaDelivery)
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -14,11 +14,19 @@ class pedidos extends datos
         try {
             $co->beginTransaction();
 
-            // Calcular precio total sumando las líneas
-            $precioTotal = 0;
+            // Calcular precio total de los productos
+            $precioProductos = 0;
             for ($i = 0; $i < count($idProducto); $i++) {
-                $precioTotal += ($cantidad[$i] * $precio[$i]);
+                $precioProductos += ($cantidad[$i] * $precio[$i]);
             }
+
+            // Obtener precio del delivery según la zona
+            $stmtZona = $co->prepare("SELECT precio FROM preciosdelivery WHERE nombreZona = :zona LIMIT 1");
+            $stmtZona->execute([':zona' => $zonaDelivery]);
+            $resZona = $stmtZona->fetch(PDO::FETCH_ASSOC);
+            $precioDelivery = $resZona ? (float)$resZona['precio'] : 0.00;
+
+            $precioTotal = $precioProductos + $precioDelivery;
 
             // Insertar cabecera del pedido
             $sqlPedido = "INSERT INTO pedidos (idCliente, idCuenta, precioTotal, numComprobante, estadoPedido) VALUES (:idCliente, :idCuenta, :precioTotal, :numComprobante, 'En Proceso')";
@@ -31,6 +39,16 @@ class pedidos extends datos
             ]);
 
             $idPedido = $co->lastInsertId();
+
+            // Insertar dirección de delivery
+            $sqlDir = "INSERT INTO dirdelivery (idPedido, zona, calle, numCasa) VALUES (:idPedido, :zona, :calle, :numCasa)";
+            $stmtDir = $co->prepare($sqlDir);
+            $stmtDir->execute([
+                ':idPedido' => $idPedido,
+                ':zona' => $zonaDelivery,
+                ':calle' => $calleDelivery,
+                ':numCasa' => $numCasaDelivery
+            ]);
 
             // Insertar los productos del detalle
             $sqlDetalle = "INSERT INTO pedidosproducto (idPedido, idProducto, cantidadProd, subTotal) VALUES (:idPedido, :idProducto, :cantidad, :subTotal)";
@@ -70,10 +88,13 @@ class pedidos extends datos
         $r = array();
 
         try {
-            $sql = "SELECT p.*, c.nombreCli, c.apellidoCli, c.cedulaCli, c.tlfCli, cu.nombreBanco, cu.numCuenta, cu.tipoCuenta 
+            $sql = "SELECT p.*, c.nombreCli, c.apellidoCli, c.cedulaCli, c.tlfCli, cu.nombreBanco, cu.numCuenta, cu.tipoCuenta, 
+                           d.zona, d.calle, d.numCasa, pd.precio AS precioDelivery
                     FROM pedidos p 
                     JOIN clientes c ON p.idCliente = c.idCliente 
-                    LEFT JOIN cuentas cu ON p.idCuenta = cu.idCuenta";
+                    LEFT JOIN cuentas cu ON p.idCuenta = cu.idCuenta
+                    LEFT JOIN dirdelivery d ON p.idPedido = d.idPedido
+                    LEFT JOIN preciosdelivery pd ON d.zona = pd.nombreZona";
 
             $params = array();
             if (!empty($estado) && $estado != 'Todos') {
@@ -112,6 +133,8 @@ class pedidos extends datos
                 $comprobanteTexto = !empty($fila['numComprobante']) ? $fila['numComprobante'] : 'N/A';
                 $tipoPagoTexto = !empty($fila['tipoPago']) ? $fila['tipoPago'] : 'Por confirmar';
                 $pagadorTexto = !empty($fila['cedulaPago']) ? 'Pagador: ' . $fila['cedulaPago'] . ' / ' . $fila['tlfPago'] : '';
+                $deliveryTexto = !empty($fila['zona']) ? 'Zona: ' . $fila['zona'] . ' | Calle: ' . $fila['calle'] . ' | N° Casa: ' . $fila['numCasa'] : 'Sin dirección registrada';
+                $precioDeliv = isset($fila['precioDelivery']) ? (float)$fila['precioDelivery'] : 0.00;
 
                 $borderClass = $fila['estadoPedido'] == 'En Proceso' ? 'border-warning' : ($fila['estadoPedido'] == 'Cancelado' ? 'border-danger' : 'border-success');
 
@@ -137,6 +160,13 @@ class pedidos extends datos
                                     </div>
                                     <div class="col-md-4">
                                         <div class="p-3 bg-light rounded-3 h-100">
+                                            <p class="mb-2 text-muted small fw-bold text-uppercase"><i class="bi bi-geo-alt-fill text-secondary me-1"></i> Delivery</p>
+                                            <p class="mb-1 fw-semibold text-dark">' . htmlspecialchars($fila['zona'] ?? 'N/A', ENT_QUOTES, 'UTF-8') . ' ($' . number_format($precioDeliv, 2) . ')</p>
+                                            <p class="mb-0 small text-muted">' . htmlspecialchars($deliveryTexto, ENT_QUOTES, 'UTF-8') . '</p>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="p-3 bg-light rounded-3 h-100">
                                             <p class="mb-2 text-muted small fw-bold text-uppercase"><i class="bi bi-wallet2 text-secondary me-1"></i> Pago / Banco</p>
                                             <p class="mb-1 fw-semibold text-dark">' . $bancoTexto . '</p>';
                 if ($fila['idCuenta']) {
@@ -149,10 +179,12 @@ class pedidos extends datos
                 }
                 $html .= '          </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="p-3 bg-light rounded-3 h-100">
-                                            <p class="mb-2 text-muted small fw-bold text-uppercase"><i class="bi bi-box-seam text-secondary me-1"></i> Productos</p>
-                                            <p class="mb-0 small text-muted lh-sm" title="' . $listaDetallesPlain . '">' . $listaDetallesHtml . '</p>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col-12">
+                                        <div class="p-2 bg-light rounded-3">
+                                            <span class="small fw-bold text-secondary text-uppercase"><i class="bi bi-box-seam me-1"></i> Productos: </span>
+                                            <span class="small text-muted" title="' . $listaDetallesPlain . '">' . $listaDetallesHtml . '</span>
                                         </div>
                                     </div>
                                 </div>
@@ -198,7 +230,14 @@ class pedidos extends datos
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         try {
-            $stmt = $co->prepare("SELECT p.idPedido, p.idCliente, p.idCuenta, p.numComprobante, p.tipoPago, p.cedulaPago, p.tlfPago, p.estadoPedido, c.cedulaCli, c.nombreCli, c.apellidoCli, cu.nombreBanco, cu.numCuenta FROM pedidos p INNER JOIN clientes c ON p.idCliente = c.idCliente LEFT JOIN cuentas cu ON p.idCuenta = cu.idCuenta WHERE p.idPedido = :idPedido");
+            $stmt = $co->prepare("SELECT p.idPedido, p.idCliente, p.idCuenta, p.numComprobante, p.tipoPago, p.cedulaPago, p.tlfPago, p.estadoPedido, 
+                                         c.cedulaCli, c.nombreCli, c.apellidoCli, cu.nombreBanco, cu.numCuenta,
+                                         d.zona AS zonaDelivery, d.calle AS calleDelivery, d.numCasa AS numCasaDelivery
+                                  FROM pedidos p 
+                                  INNER JOIN clientes c ON p.idCliente = c.idCliente 
+                                  LEFT JOIN cuentas cu ON p.idCuenta = cu.idCuenta 
+                                  LEFT JOIN dirdelivery d ON p.idPedido = d.idPedido
+                                  WHERE p.idPedido = :idPedido");
             $stmt->execute([':idPedido' => $idPedido]);
             $datosPedido = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -207,6 +246,7 @@ class pedidos extends datos
             $resultadosProductos = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
             $detalleHtml = "";
+
             foreach ($resultadosProductos as $fila) {
                 $nombreProd = !empty($fila['nombreProd']) ? $fila['nombreProd'] : 'Producto eliminado del catálogo';
                 $precioProd = !empty($fila['precioProd']) ? $fila['precioProd'] : 0;
@@ -228,7 +268,7 @@ class pedidos extends datos
             }
 
             return array(
-                "resultado" => "consultar_uno",
+                "resultado" => "consultarUno",
                 "idPedido" => $datosPedido['idPedido'],
                 "idCliente" => $datosPedido['idCliente'],
                 "clienteInfo" => $datosPedido['cedulaCli'] . " - " . $datosPedido['nombreCli'] . " " . $datosPedido['apellidoCli'],
@@ -239,6 +279,9 @@ class pedidos extends datos
                 "cedulaPago" => $datosPedido['cedulaPago'],
                 "tlfPago" => $datosPedido['tlfPago'],
                 "estadoPedido" => $datosPedido['estadoPedido'],
+                "zonaDelivery" => $datosPedido['zonaDelivery'],
+                "calleDelivery" => $datosPedido['calleDelivery'],
+                "numCasaDelivery" => $datosPedido['numCasaDelivery'],
                 "detalleHtml" => $detalleHtml
             );
         } catch (Exception $e) {
@@ -258,6 +301,7 @@ class pedidos extends datos
             $resultado = $co->query("SELECT * FROM clientes");
             if ($resultado) {
                 $html = '';
+
                 foreach ($resultado as $fila) {
                     $html .= "<tr style='cursor:pointer' class='bg-light-hover' onclick='seleccionarCliente(" . $fila['idCliente'] . ", \"" . $fila['cedulaCli'] . "\", \"" . $fila['nombreCli'] . " " . $fila['apellidoCli'] . "\")'>";
                     $html .= "<td>" . $fila['cedulaCli'] . "</td>";
@@ -265,7 +309,8 @@ class pedidos extends datos
                     $html .= "<td>" . $fila['tlfCli'] . "</td>";
                     $html .= "</tr>";
                 }
-                $r['resultado'] = 'modalclientes';
+
+                $r['resultado'] = 'listarClientes';
                 $r['mensaje'] = $html;
             }
         } catch (Exception $e) {
@@ -286,6 +331,7 @@ class pedidos extends datos
             $resultado = $co->query("SELECT * FROM cuentas");
             if ($resultado) {
                 $html = '';
+
                 foreach ($resultado as $fila) {
                     $html .= "<tr style='cursor:pointer' class='bg-light-hover' onclick='seleccionarCuenta(" . $fila['idCuenta'] . ", \"" . $fila['nombreBanco'] . "\", \"" . $fila['numCuenta'] . "\")'>";
                     $html .= "<td>" . $fila['nombreBanco'] . "</td>";
@@ -293,7 +339,8 @@ class pedidos extends datos
                     $html .= "<td>" . $fila['tipoCuenta'] . "</td>";
                     $html .= "</tr>";
                 }
-                $r['resultado'] = 'modalcuentas';
+
+                $r['resultado'] = 'listarCuentas';
                 $r['mensaje'] = $html;
             }
         } catch (Exception $e) {
@@ -314,6 +361,7 @@ class pedidos extends datos
             $resultado = $co->query("SELECT * FROM productos");
             if ($resultado) {
                 $html = '';
+
                 foreach ($resultado as $fila) {
                     $html .= "<tr style='cursor:pointer' class='bg-light-hover' onclick='seleccionarProducto(" . $fila['idProducto'] . ", \"" . $fila['codigoProd'] . "\", \"" . $fila['nombreProd'] . "\", " . $fila['precioProd'] . ")'>";
                     $html .= "<td>" . $fila['codigoProd'] . "</td>";
@@ -321,7 +369,8 @@ class pedidos extends datos
                     $html .= "<td class='text-success fw-bold'>$" . number_format($fila['precioProd'], 2) . "</td>";
                     $html .= "</tr>";
                 }
-                $r['resultado'] = 'modalproductos';
+
+                $r['resultado'] = 'listarProductos';
                 $r['mensaje'] = $html;
             }
         } catch (Exception $e) {
@@ -334,7 +383,7 @@ class pedidos extends datos
 
 
     // MODIFICAR PEDIDO (CON TRANSACCIÓN Y VENTA)
-    function modificar($idPedido, $idCliente, $idCuenta, $estadoPedido, $idProducto, $cantidad, $precio, $numComprobante, $tipoPago = '', $cedulaPago = '', $tlfPago = '')
+    function modificar($idPedido, $idCliente, $idCuenta, $estadoPedido, $idProducto, $cantidad, $precio, $numComprobante, $zonaDelivery, $calleDelivery, $numCasaDelivery, $tipoPago = '', $cedulaPago = '', $tlfPago = '')
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -367,9 +416,9 @@ class pedidos extends datos
                 throw new Exception('El pedido debe contener al menos un producto válido.');
             }
 
-            // Procesar líneas y calcular totales
+            // Procesar líneas y calcular totales de productos
             $lineas = array();
-            $precioTotal = 0;
+            $precioProductos = 0;
             $cantidadTotal = 0;
             $buscarProducto = $co->prepare('SELECT precioProd FROM productos WHERE idProducto = :idProducto LIMIT 1');
 
@@ -388,10 +437,18 @@ class pedidos extends datos
                 $precioReal = (float)$producto['precioProd'];
                 $subtotal = $precioReal * $cant;
 
-                $precioTotal += $subtotal;
+                $precioProductos += $subtotal;
                 $cantidadTotal += $cant;
                 $lineas[] = array('idProducto' => $idProd, 'cantidad' => $cant, 'subtotal' => $subtotal);
             }
+
+            // Obtener precio del delivery según la zona
+            $stmtZona = $co->prepare("SELECT precio FROM preciosdelivery WHERE nombreZona = :zona LIMIT 1");
+            $stmtZona->execute([':zona' => $zonaDelivery]);
+            $resZona = $stmtZona->fetch(PDO::FETCH_ASSOC);
+            $precioDelivery = $resZona ? (float)$resZona['precio'] : 0.00;
+
+            $precioTotal = $precioProductos + $precioDelivery;
 
             // Validar pagos si pasa a Finalizado
             $tipoPagoGuardar = trim($tipoPago) !== '' ? trim($tipoPago) : ($pedidoActual['tipoPago'] ?? '');
@@ -429,6 +486,19 @@ class pedidos extends datos
                 ':idPedido' => $idPedido
             ));
 
+            // Actualizar o reinsertar dirección de delivery
+            $delDir = $co->prepare('DELETE FROM dirdelivery WHERE idPedido = :idPedido');
+            $delDir->execute([':idPedido' => $idPedido]);
+
+            $sqlDir = "INSERT INTO dirdelivery (idPedido, zona, calle, numCasa) VALUES (:idPedido, :zona, :calle, :numCasa)";
+            $stmtDir = $co->prepare($sqlDir);
+            $stmtDir->execute([
+                ':idPedido' => $idPedido,
+                ':zona' => $zonaDelivery,
+                ':calle' => $calleDelivery,
+                ':numCasa' => $numCasaDelivery
+            ]);
+
             // Reinsertar detalles del pedido
             $delD = $co->prepare('DELETE FROM pedidosproducto WHERE idPedido = :idPedido');
             $delD->execute(array(':idPedido' => $idPedido));
@@ -464,6 +534,7 @@ class pedidos extends datos
                 ));
                 $idVenta = $co->lastInsertId();
 
+                // Registrar también en pedidosventa
                 $relacion = $co->prepare('INSERT INTO pedidosventa (idPedido, idVenta) VALUES (:idPedido, :idVenta)');
                 $relacion->execute(array(':idPedido' => $idPedido, ':idVenta' => $idVenta));
             }
@@ -492,6 +563,9 @@ class pedidos extends datos
 
         try {
             $co->beginTransaction();
+
+            $delDir = $co->prepare("DELETE FROM dirdelivery WHERE idPedido = :idPedido");
+            $delDir->execute([':idPedido' => $idPedido]);
 
             $delDetalle = $co->prepare("DELETE FROM pedidosproducto WHERE idPedido = :idPedido");
             $delDetalle->execute([':idPedido' => $idPedido]);

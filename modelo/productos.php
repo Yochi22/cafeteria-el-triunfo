@@ -171,7 +171,7 @@ class productos extends datos
         return $r;
     }
 
-    function obtener_datos_categorias()
+    function consultarCategorias()
     {
         $r = array();
         $co = $this->conecta();
@@ -217,7 +217,7 @@ class productos extends datos
         return $r;
     }
 
-    function listar_productos()
+    function consultarProductos()
     {
         $r = array();
         $co = $this->conecta();
@@ -277,7 +277,7 @@ class productos extends datos
                 <span class="d-none d-sm-inline">Regresar</span>
             </button>';
 
-            $r['resultado'] = 'listar_productos';
+            $r['resultado'] = 'consultarProductos';
             $r['mensaje'] = $html;
             $r['boton'] = $btnRegresar;
         } catch (Exception $e) {

@@ -22,7 +22,7 @@
 
                     <!-- Encabezado de bienvenida -->
                     <div>
-                        <h2 class="text-dashboard"><i class="bi bi-file-person"></i> Clientes</h2>
+                        <h2 class="text-dashboard"><i class="bi bi-people"></i> Clientes</h2>
                         <p class="text-muted">¡Bienvenido al apartado de clientes de la Cafetería El Triunfo!</p>
                     </div>
                 </div>

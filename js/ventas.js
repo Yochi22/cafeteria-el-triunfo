@@ -3,26 +3,25 @@ $(document).ready(function () {
 	cargarModales();
 	actualizarFechaHoy();
 
-	// VALIDACIONES DE PAGO
 	$("#cedulaPago").on("keypress", function (e) {
 		validarkeypress(/^[0-9\-\.]*$/, e);
 	});
 	$("#cedulaPago").on("keyup", function () {
-		validarkeyup(/^[0-9\.]{7,12}$/, $(this), $("#scedulaPago"), "Cédula Inválida - El formato debe ser: 99999999",);
+		validarkeyup(/^[0-9\.]{7,12}$/, $(this), $("#scedulaPago"), "Cédula Inválida - El formato debe ser: 99999999");
 	});
 
 	$("#tlfPago").on("keypress", function (e) {
 		validarkeypress(/^[0-9\-+ ]*$/, e);
 	});
 	$("#tlfPago").on("keyup", function () {
-		validarkeyup(/^[0-9\-+ ]{11,12}$/, $(this), $("#stlfPago"), "Teléfono Inválido - Formato: 0000-0000000",);
+		validarkeyup(/^[0-9\-+ ]{11,12}$/, $(this), $("#stlfPago"), "Teléfono Inválido - Formato: 0000-0000000");
 	});
 
 	$("#refPago").on("keypress", function (e) {
 		validarkeypress(/^[A-Za-z0-9]*$/, e);
 	});
 	$("#refPago").on("keyup", function () {
-		validarkeyup(/^[A-Za-z0-9]{4}$/, $(this), $("#srefPago"), "Referencia Inválida - Solo letras y números (mín. 4 caracteres)",);
+		validarkeyup(/^[A-Za-z0-9]{4}$/, $(this), $("#srefPago"), "Referencia Inválida - Solo letras y números (mín. 4 caracteres)");
 	});
 
 	$("#tipoPago").on("change", function () {
@@ -51,7 +50,6 @@ $(document).ready(function () {
 		e.preventDefault();
 	});
 
-	// CONTROL DE BOTONES Y MODALES
 	$("#listarpersonal").on("click", function () {
 		$("#modal_personal").modal("show");
 	});
@@ -131,7 +129,7 @@ $(document).ready(function () {
 		var fecha = $(this).val();
 		if (fecha) {
 			var datos = new FormData();
-			datos.append("accion", "buscar_fecha");
+			datos.append("accion", "buscarFecha");
 			datos.append("fecha", fecha);
 			enviaAjax(datos);
 		} else {
@@ -140,7 +138,7 @@ $(document).ready(function () {
 	});
 
 	$("#tipoPago").on("change", function () {
-		var esPagoMovil = $(this).val() === "Pago Movil";
+		var esPagoMovil = $(this).val() === "Pago Móvil";
 		$("#datosPagoMovil").toggle(esPagoMovil);
 		$("#cuentaDestino, #refPago, #cedulaPago, #tlfPago").prop(
 			"required",
@@ -166,7 +164,7 @@ function eliminar(idVenta) {
 
 function consultarDetalle(idVenta) {
 	var datos = new FormData();
-	datos.append("accion", "consultar_detalle");
+	datos.append("accion", "consultarDetalle");
 	datos.append("idVenta", idVenta);
 	enviaAjax(datos);
 }
@@ -186,19 +184,19 @@ function ejecutarBusquedaVenta() {
 
 function cargarModales() {
 	var datosPer = new FormData();
-	datosPer.append("accion", "modal_personal");
+	datosPer.append("accion", "listarPersonal");
 	enviaAjax(datosPer);
 
 	var datosCli = new FormData();
-	datosCli.append("accion", "modal_clientes");
+	datosCli.append("accion", "listarClientes");
 	enviaAjax(datosCli);
 
 	var datosProd = new FormData();
-	datosProd.append("accion", "modal_productos");
+	datosProd.append("accion", "listarProductos");
 	enviaAjax(datosProd);
 
 	var datosCuen = new FormData();
-	datosCuen.append("accion", "modal_cuentas");
+	datosCuen.append("accion", "listarCuentas");
 	enviaAjax(datosCuen);
 }
 
@@ -318,7 +316,7 @@ function calcularTotalGeneral() {
 function pone(idVenta) {
 	limpia();
 	var datos = new FormData();
-	datos.append("accion", "consultar_uno");
+	datos.append("accion", "consultarUno");
 	datos.append("idVenta", idVenta);
 	enviaAjax(datos);
 }
@@ -335,27 +333,27 @@ function validarEnvioVenta() {
 	}
 
 	if (validarSelect($("#tipoPago"), $("#stipoPago"), "Seleccione una opción") === 0) {
-		mostrarMensaje("Tipo de Pago Inválido <br>(Debe seleccionar un método de pago)",);
+		mostrarMensaje("Tipo de Pago Inválido <br>(Debe seleccionar un método de pago)");
 		return false;
 	}
 
 	var tipo = $("#tipoPago").val();
 
-	if (tipo === "Pago Movil") {
+	if (tipo === "Pago Móvil") {
 		if ($("#idcuenta").val() == "") {
 			mostrarMensaje("Debe seleccionar una cuenta destino.");
 			return false;
 		}
-		if (validarkeyup(/^[0-9\.]{7,12}$/, $("#cedulaPago"), $("#scedulaPago"), "Cédula Inválida",) === 0) {
-			mostrarMensaje("Cédula de Titular Inválida <br>(El formato debe ser: 99999999)",);
+		if (validarkeyup(/^[0-9\.]{7,12}$/, $("#cedulaPago"), $("#scedulaPago"), "Cédula Inválida") === 0) {
+			mostrarMensaje("Cédula de Titular Inválida <br>(El formato debe ser: 99999999)");
 			return false;
 		}
-		if (validarkeyup(/^[0-9\-+ ]{11,12}$/, $("#tlfPago"), $("#stlfPago"), "Teléfono Inválido",) === 0) {
-			mostrarMensaje("Teléfono de Titular Inválido <br>(Formato: 0414-0000000)",);
+		if (validarkeyup(/^[0-9\-+ ]{11,12}$/, $("#tlfPago"), $("#stlfPago"), "Teléfono Inválido") === 0) {
+			mostrarMensaje("Teléfono de Titular Inválido <br>(Formato: 0414-0000000)");
 			return false;
 		}
-		if (validarkeyup(/^[A-Za-z0-9]{4}$/, $("#refPago"), $("#srefPago"), "Referencia Inválida",) === 0) {
-			mostrarMensaje("Número de Referencia Inválido <br>(Debe contener solo letras y números)",);
+		if (validarkeyup(/^[A-Za-z0-9]{4}$/, $("#refPago"), $("#srefPago"), "Referencia Inválida") === 0) {
+			mostrarMensaje("Número de Referencia Inválido <br>(Debe contener solo letras y números)");
 			return false;
 		}
 	}
@@ -363,7 +361,6 @@ function validarEnvioVenta() {
 	return true;
 }
 
-// Función para rellenar los datos de la venta al modificar
 function cargarDatosVenta(v, prods) {
 	$("#idVenta").val(v.idVenta);
 	$("#idDetalle").val(v.idDetalle);
@@ -394,7 +391,7 @@ function cargarDatosVenta(v, prods) {
 	$("#tlfPago").val(v.tlfPago);
 	$("#refPago").val(v.referencia);
 
-	if (v.tipoPago === "Pago Movil") {
+	if (v.tipoPago === "Pago Móvil") {
 		$("#datosPagoMovil").show();
 		$("#cuentaDestino, #refPago, #cedulaPago, #tlfPago").prop("required", true);
 	} else {
@@ -433,7 +430,7 @@ function cargarDatosVenta(v, prods) {
 			sub.toFixed(2) +
 			"</td>" +
 			"<td class='align-middle'>" +
-			"<button type='button' class='btn btn-outline-danger btn-sm' onclick='eliminalineadetalle(this)'><i class='bi bi-x-lg</i></button>" +
+			"<button type='button' class='btn btn-outline-danger btn-sm' onclick='eliminalineadetalle(this)'><i class='bi bi-x-lg'></i></button>" +
 			"</td>" +
 			"</tr>";
 		$("#detallesdeventa").append(l);
@@ -513,24 +510,24 @@ function enviaAjax(datos) {
 		data: datos,
 		processData: false,
 		cache: false,
-
 		success: function (respuesta) {
 			try {
+				console.log(respuesta);
 				var lee = JSON.parse(respuesta);
 
 				if (lee.resultado == "consultar") {
 					$("#listaVentas").html(lee.mensaje);
 				}
-				else if (lee.resultado == "modal_personal") {
+				else if (lee.resultado == "listarPersonal") {
 					$("#listaPersonalModal").html(lee.mensaje);
 				}
-				else if (lee.resultado == "modal_clientes") {
+				else if (lee.resultado == "listarClientes") {
 					$("#listaClientesModal").html(lee.mensaje);
 				}
-				else if (lee.resultado == "modal_productos") {
+				else if (lee.resultado == "listarProductos") {
 					$("#listaProductosModal").html(lee.mensaje);
 				}
-				else if (lee.resultado == "modal_cuentas") {
+				else if (lee.resultado == "listarCuentas") {
 					$("#listaCuentasModal").html(lee.mensaje);
 				}
 				else if (lee.resultado == "incluir" || lee.resultado == "modificar" || lee.resultado == "eliminar") {
@@ -542,10 +539,10 @@ function enviaAjax(datos) {
 					$("#contenidoDetalleVenta").html(lee.mensaje);
 					$("#modal_ver_detalle").modal("show");
 				}
-				else if (lee.resultado == "consultar_uno") {
+				else if (lee.resultado == "consultarUno") {
 					cargarDatosVenta(lee.venta, lee.productos);
 				}
-				else if (lee.resultado === "buscar" || lee.resultado === "buscar_fecha") {
+				else if (lee.resultado === "buscar" || lee.resultado === "buscarFecha") {
 					$("#listaVentas").html(lee.mensaje);
 				}
 				else if (lee.resultado == "error") {

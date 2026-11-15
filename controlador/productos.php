@@ -14,13 +14,13 @@ if (is_file("vista/" . $pagina . ".php")) {
         $accion = $_POST['accion'];
 
         switch ($accion) {
-            case 'obtener_datos_categorias':
-                echo json_encode($o->obtener_datos_categorias());
+            case 'consultarCategorias':
+                echo json_encode($o->consultarCategorias());
                 break;
 
-            case 'listar_productos':
+            case 'consultarProductos':
                 $o->set_idCategoria($_POST['idCategoria']);
-                echo json_encode($o->listar_productos());
+                echo json_encode($o->consultarProductos());
                 break;
 
             case 'incluir':

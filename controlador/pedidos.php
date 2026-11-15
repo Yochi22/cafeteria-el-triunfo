@@ -15,7 +15,17 @@ if (is_file("vista/" . $pagina . ".php")) {
 
         switch ($accion) {
             case 'incluir':
-                echo json_encode($o->incluir($_POST['idCliente'], $_POST['idCuenta'], $_POST['idProducto'], $_POST['cantidad'], $_POST['precio'], $_POST['numComprobante']));
+                echo json_encode($o->incluir(
+                    $_POST['idCliente'],
+                    $_POST['idCuenta'],
+                    $_POST['idProducto'],
+                    $_POST['cantidad'],
+                    $_POST['precio'],
+                    $_POST['numComprobante'],
+                    $_POST['zonaDelivery'] ?? '',
+                    $_POST['calleDelivery'] ?? '',
+                    $_POST['numCasaDelivery'] ?? ''
+                ));
                 break;
 
             case 'consultar':
@@ -23,24 +33,39 @@ if (is_file("vista/" . $pagina . ".php")) {
                 echo json_encode($o->consultar($estadoFiltro));
                 break;
 
-            case 'consultar_uno':
+            case 'consultarUno':
                 echo json_encode($o->consultarUno($_POST['idPedido']));
                 break;
 
-            case 'modalclientes':
+            case 'listarClientes':
                 echo json_encode($o->listadoDeClientes());
                 break;
 
-            case 'modalcuentas':
+            case 'listarCuentas':
                 echo json_encode($o->listadoDeCuentas());
                 break;
 
-            case 'modalproductos':
+            case 'listarProductos':
                 echo json_encode($o->listadoDeProductos());
                 break;
 
             case 'modificar':
-                echo json_encode($o->modificar($_POST['idPedido'], $_POST['idCliente'], $_POST['idCuenta'], $_POST['estadoPedido'], $_POST['idProducto'], $_POST['cantidad'], $_POST['precio'], (array_key_exists('referenciaPago', $_POST) ? $_POST['referenciaPago'] : ($_POST['numComprobante'] ?? '')), $_POST['tipoPago'] ?? '', $_POST['cedulaPago'] ?? '', $_POST['tlfPago'] ?? ''));
+                echo json_encode($o->modificar(
+                    $_POST['idPedido'],
+                    $_POST['idCliente'],
+                    $_POST['idCuenta'],
+                    $_POST['estadoPedido'],
+                    $_POST['idProducto'],
+                    $_POST['cantidad'],
+                    $_POST['precio'],
+                    (array_key_exists('referenciaPago', $_POST) ? $_POST['referenciaPago'] : ($_POST['numComprobante'] ?? '')),
+                    $_POST['zonaDelivery'] ?? '',
+                    $_POST['calleDelivery'] ?? '',
+                    $_POST['numCasaDelivery'] ?? '',
+                    $_POST['tipoPago'] ?? '',
+                    $_POST['cedulaPago'] ?? '',
+                    $_POST['tlfPago'] ?? ''
+                ));
                 break;
 
             case 'eliminar':

@@ -35,11 +35,11 @@ if (is_file("vista/" . $pagina . ".php")) {
                 echo json_encode($o->consultar());
                 break;
 
-            case 'consultar_uno':
+            case 'consultarUno':
                 echo json_encode($o->consultarUno($_POST['idVenta'] ?? ''));
                 break;
 
-            case 'consultar_detalle':
+            case 'consultarDetalle':
                 echo json_encode($o->consultarDetalle($_POST['idVenta'] ?? ''));
                 break;
 
@@ -68,19 +68,19 @@ if (is_file("vista/" . $pagina . ".php")) {
                 echo json_encode($o->eliminar($_POST['idVenta'] ?? ''));
                 break;
 
-            case 'modal_personal':
+            case 'listarPersonal':
                 echo json_encode($o->listadoDePersonal());
                 break;
 
-            case 'modal_clientes':
+            case 'listarClientes':
                 echo json_encode($o->listadoDeClientes());
                 break;
 
-            case 'modal_productos':
+            case 'listarProductos':
                 echo json_encode($o->listadoDeProductos());
                 break;
 
-            case 'modal_cuentas':
+            case 'listarCuentas':
                 echo json_encode($o->listadoDeCuentas());
                 break;
 
@@ -89,7 +89,7 @@ if (is_file("vista/" . $pagina . ".php")) {
                 echo json_encode($o->buscar($valor));
                 break;
 
-            case 'buscar_fecha':
+            case 'buscarFecha':
                 $fecha = trim($_POST['fecha'] ?? '');
                 echo json_encode($o->buscarPorFecha($fecha));
                 break;

@@ -18,18 +18,22 @@ if (is_file("vista/" . $pagina . ".php")) {
                 echo json_encode($o->cargarProductos());
                 break;
 
-            case 'obtener_datos_categorias':
-                echo json_encode($o->obtener_datos_categorias());
+            case 'obtenerCategorias':
+                echo json_encode($o->obtenerCategorias());
                 break;
 
-            case 'listar_productos':
+            case 'listarProductos':
                 $idCategoria = $_POST['idCategoria'];
-                echo json_encode($o->listar_productos($idCategoria));
+                echo json_encode($o->listarProductos($idCategoria));
                 break;
 
             case 'buscar':
                 $valor = trim($_POST['valorBusqueda'] ?? '');
                 echo json_encode($o->buscar($valor));
+                break;
+
+            case 'obtenerTasaHoy':
+                echo json_encode($o->obtenerTasaHoy());
                 break;
 
             case 'cargarCarrito':

@@ -46,7 +46,6 @@
 
                 <div class="col-12 col-md-4 col-lg-3">
                     <div class="input-group bg-white border rounded-3 align-items-center shadow-sm h-100">
-
                         <input type="date" id="buscarFecha" name="buscarFecha" class="form-control border-0 py-2 shadow-none text-muted">
                     </div>
                 </div>
@@ -221,7 +220,7 @@
                                     <select class="form-select rounded-3" id="tipoPago" name="tipoPago" required>
                                         <option value="">Seleccione...</option>
                                         <option value="Efectivo">Efectivo</option>
-                                        <option value="Pago Movil">Pago Movil</option>
+                                        <option value="Pago Móvil">Pago Móvil</option>
                                         <option value="Tarjeta">Tarjeta</option>
                                     </select>
                                     <small id="stipoPago" class="text-danger fw-semibold"></small>

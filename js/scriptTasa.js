@@ -1,5 +1,3 @@
-
-// Consulta silenciosa al abrir el catálogo. No muestra el modal ni interrumpe la compra.
 function actualizarTasaCatalogo() {
     $.ajax({
         url: "https://ve.dolarapi.com/v1/dolares/oficial",
@@ -19,7 +17,6 @@ function actualizarTasaCatalogo() {
         },
         error: function (request, status, err) {
             console.warn("No se pudo actualizar la tasa automáticamente:", status, err);
-            // Se conserva la última tasa válida guardada, si existe.
             if (typeof actualizarPreciosEnBs === "function") {
                 actualizarPreciosEnBs();
             }
@@ -103,8 +100,6 @@ $(document).ready(function () {
         cargarTasa();
     });
 
-    // En el catálogo la consulta actualizada se ejecuta desde catalogo.js.
-    // En las demás vistas se conserva el comportamiento original de carga inicial.
     if (!localStorage.getItem('tasaDolar') && typeof actualizarPreciosEnBs !== "function") {
         $.get("https://ve.dolarapi.com/v1/dolares/oficial", function (R) {
             var precio = Number(R && R.promedio);

@@ -1,7 +1,10 @@
+let tasaDolar = 0;
+
 $(document).ready(function () {
     try {
         cargarCategorias();
         cargarProductos();
+        obtenerTasaActual()
         cargarCarritoLocal();
         cargarCuentas();
         actualizarContadorCarrito();
@@ -40,7 +43,7 @@ $(document).ready(function () {
 
 function cargarCategorias() {
     var datos = new FormData();
-    datos.append("accion", "obtener_datos_categorias");
+    datos.append("accion", "obtenerCategorias");
     enviaAjax(datos);
 }
 
@@ -51,11 +54,18 @@ function cargarProductos() {
     enviaAjax(datos);
 }
 
-function listar_productos(idCategoria, nombreCat) {
+
+function listarProductos(idCategoria, nombreCat) {
     var datos = new FormData();
-    datos.append("accion", "listar_productos");
+    datos.append("accion", "listarProductos");
     datos.append("idCategoria", idCategoria);
     $("#titulo_categoria_activo").text(nombreCat);
+    enviaAjax(datos);
+}
+
+function obtenerTasaActual() {
+    let datos = new FormData();
+    datos.append("accion", "obtenerTasaHoy");
     enviaAjax(datos);
 }
 
@@ -68,7 +78,6 @@ function abrirModalDetalle(id, nombre, descripcion, precio, imagen) {
     $("#modal-img").attr("src", imagen);
     $("#modal-cantidad").text("1");
 
-    let tasaDolar = parseFloat(localStorage.getItem('tasaDolar')) || 0;
     let precioEnBs = parseFloat(precio) * tasaDolar;
 
     if (tasaDolar > 0) {
@@ -92,6 +101,7 @@ function cambiarCantidadModal(cambio) {
     }
 }
 
+// FUNCIONES DE CARRITO
 function cargarCarritoLocal() {
     let carritoLocal = localStorage.getItem("carrito") || "[]";
     actualizarContadorCarrito();
@@ -150,8 +160,6 @@ function actualizarContadorCarrito() {
 }
 
 function actualizarPreciosEnBs() {
-    let tasaDolar = parseFloat(localStorage.getItem('tasaDolar')) || 0;
-
     let subtotalTexto = $('#subtotalCompra').text().replace('$', '').trim();
     let subtotalUsd = parseFloat(subtotalTexto) || 0;
 
@@ -229,7 +237,6 @@ function actualizarTotalConDelivery(precioDelivery) {
 
     $('#montoTotal').text("$" + totalUsdFinal.toFixed(2));
 
-    let tasaDolar = parseFloat(localStorage.getItem('tasaDolar')) || 0;
     if (tasaDolar > 0) {
         let totalGeneralBs = totalUsdFinal * tasaDolar;
         let formatoBs = `Bs. ${totalGeneralBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -239,7 +246,12 @@ function actualizarTotalConDelivery(precioDelivery) {
 
 $("#cuentaDestino").on("change", function () {
     let idCuenta = $(this).val();
-    if (!idCuenta) return;
+    let $btnCopiar = $("#btnCopiarDatos");
+
+    if (!idCuenta) {
+        $btnCopiar.prop("disabled", true).removeAttr("data-copiar");
+        return;
+    }
 
     let montoTotal = $("#montoTotalBs").text() || "0.00";
 
@@ -256,14 +268,16 @@ function cargarCuentas() {
     enviaAjax(datos);
 }
 
+// Copiar con API
 $(document).on("click", "#btnCopiarDatos", function () {
-    let banco = $("#copiarBanco").text();
-    let cedula = $("#copiarCedula").text();
-    let telefono = $("#copiarTlfn").text();
-    let cuenta = $("#copiarNum").text();
-    let montoTotal = $("#copiarMonto").text();
+    let textoACopiar = $(this).attr("data-copiar");
 
-    navigator.clipboard.writeText(banco + "\n" + cedula + "\n" + telefono + "\n" + cuenta + "\n" + montoTotal)
+    if (!textoACopiar) {
+        mostrarNotificacion("Por favor seleccione una cuenta destino primero.");
+        return;
+    }
+
+    navigator.clipboard.writeText(textoACopiar)
         .then(() => {
             mostrarNotificacion("¡Texto copiado al portapapeles!");
             $("#modalCuentaCli").modal("hide");
@@ -429,6 +443,7 @@ function validarEnvio() {
 $("#btnGuardar").on("click", function () {
     if (validarEnvio()) {
         var carrito = JSON.parse(localStorage.getItem("carrito") || "[]");
+
         if (!carrito.length) {
             mostrarMensaje("El carrito está vacío.");
             return;
@@ -441,6 +456,7 @@ $("#btnGuardar").on("click", function () {
             mostrarMensaje("Hay productos antiguos en el carrito. Retírelos y agréguelos nuevamente para continuar.");
             return;
         }
+
         var datos = new FormData($("#f")[0]);
         datos.set("accion", "registrarPedidoCliente");
         datos.append("carrito", JSON.stringify(carrito));
@@ -470,7 +486,6 @@ function limpia() {
     $("#srefPago").text("");
     $("#scedulaPago").text("");
     $("#stlfPago").text("");
-
     $("#scalleDelivery").text("");
     $("#snumCasaDelivery").text("");
 }
@@ -515,12 +530,14 @@ function enviaAjax(datos) {
 
                 if (
                     lee.resultado == "cargarProductos" ||
-                    lee.resultado == "listar_productos" ||
+                    lee.resultado == "listarProductos" ||
                     lee.resultado == "buscar"
                 ) {
                     $("#cuadricula_items").html(lee.mensaje);
+
                 } else if (lee.resultado == "categorias_cargadas") {
                     $("#contenedor_categorias").html(lee.mensaje);
+
                 } else if (lee.resultado == "cargarCarrito") {
                     $("#contenedorCarrito").html(lee.mensaje);
                     if (lee.subtotal !== undefined) {
@@ -528,15 +545,22 @@ function enviaAjax(datos) {
                         $("#montoTotal").text("$" + lee.subtotal);
                     }
                     actualizarPreciosEnBs();
+
+                } else if (lee.resultado == "tasaActual") {
+                    tasaDolar = parseFloat(lee.precio) || 0;
+                    actualizarPreciosEnBs();
+
                 } else if (lee.resultado == "precioDeliveryObtenido") {
                     let precioDelivery = parseFloat(lee.precio) || 0;
                     $("#zonaDelivery").data("precioDelivery", precioDelivery);
                     actualizarPreciosEnBs();
+
                 } else if (lee.resultado == "cuentasCargadas") {
                     $("#cuentaDestino").html(lee.mensaje);
+
                 } else if (lee.resultado == "mostrarDetalleCuenta") {
-                    $("#modalCuentaCliCont").html(lee.mensaje);
-                    $("#modalCuentaCli").modal("show");
+                    $("#btnCopiarDatos").attr("data-copiar", lee.mensaje).prop("disabled", false);
+
                 } else if (lee.resultado == "pedidoClienteRegistrado") {
                     $("#pagoModal").modal("hide");
                     localStorage.removeItem("carrito");
@@ -544,6 +568,7 @@ function enviaAjax(datos) {
                     limpia();
                     cargarCarritoLocal();
                     mostrarNotificacion(lee.mensaje);
+
                 } else if (lee.resultado == "error") {
                     mostrarMensaje(lee.mensaje);
                 }

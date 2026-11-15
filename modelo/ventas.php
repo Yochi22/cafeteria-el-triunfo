@@ -28,9 +28,14 @@ class Ventas extends datos
             $idCuentaVal = $idCuenta ?: null;
             $estadoPedido = 'Finalizado';
 
+            // Si no es Pago Móvil, aseguramos valores por defecto para evitar errores NOT NULL
+            $cedulaVal = ($tipoPago === 'Pago Móvil' && !empty($cedulaPago)) ? $cedulaPago : 'N/A';
+            $tlfVal = ($tipoPago === 'Pago Móvil' && !empty($tlfPago)) ? $tlfPago : 'N/A';
+            $refVal = ($tipoPago === 'Pago Móvil' && !empty($referencia)) ? $referencia : '0000';
+
             $stmtPed = $co->prepare("INSERT INTO pedidos (idCliente, idCuenta, precioTotal, estadoPedido) 
             VALUES (:idCliente, :idCuenta, :total, :estadoPedido)");
-            
+
             $stmtPed->bindParam(':idCliente', $idClienteVal);
             $stmtPed->bindParam(':idCuenta', $idCuentaVal);
             $stmtPed->bindParam(':total', $totalVenta);
@@ -64,13 +69,14 @@ class Ventas extends datos
 
             $stmtPago = $co->prepare("INSERT INTO detallesventa (cedulaPago, tlfPago, referencia) 
             VALUES (:cedula, :tlf, :ref)");
-            $stmtPago->bindParam(':cedula', $cedulaPago);
-            $stmtPago->bindParam(':tlf', $tlfPago);
-            $stmtPago->bindParam(':ref', $referencia);
+            $stmtPago->bindParam(':cedula', $cedulaVal);
+            $stmtPago->bindParam(':tlf', $tlfVal);
+            $stmtPago->bindParam(':ref', $refVal);
             $stmtPago->execute();
 
             $idDetalleGenerado = $co->lastInsertId();
 
+            // Usar 'Pago Móvil' con tilde para respetar el ENUM de la BD
             $stmtVenta = $co->prepare("INSERT INTO ventas (idDetalle, idPersonal, tipoPago, fechaVenta, cantidadVenta, totalVenta) 
             VALUES (:idDetalle, :idPersonal, :tipoPago, :fecha, :cantidad, :total)");
 
@@ -174,7 +180,7 @@ class Ventas extends datos
                             LEFT JOIN cuentas c ON ped.idCuenta = c.idCuenta
                             LEFT JOIN dirdelivery dir ON ped.idPedido = dir.idPedido
                             WHERE v.idVenta = :idVenta");
-            
+
             $stmt->bindParam(':idVenta', $idVenta);
             $stmt->execute();
             $venta = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -183,13 +189,13 @@ class Ventas extends datos
                                    FROM pedidosproducto pp 
                                    JOIN productos p ON pp.idProducto = p.idProducto 
                                    WHERE pp.idPedido = :idPedido");
-            
+
             $idPedidoTemp = $venta['idPedido'] ?? null;
             $stmtProd->bindParam(':idPedido', $idPedidoTemp);
             $stmtProd->execute();
             $productos = $stmtProd->fetchAll(PDO::FETCH_ASSOC);
 
-            $r['resultado'] = 'consultar_uno';
+            $r['resultado'] = 'consultarUno';
             $r['venta'] = $venta;
             $r['productos'] = $productos;
         } catch (Exception $e) {
@@ -318,6 +324,7 @@ class Ventas extends datos
 
             $cantidadTotalVenta = 0;
             $totalVenta = 0;
+
             for ($i = 0; $i < count($productos); $i++) {
                 $cant = intval($cantidades[$i]);
                 $precio = floatval($precios[$i]);
@@ -325,6 +332,10 @@ class Ventas extends datos
                 $cantidadTotalVenta += $cant;
                 $totalVenta += $subtotal;
             }
+
+            $cedulaVal = ($tipoPago === 'Pago Móvil' && !empty($cedulaPago)) ? $cedulaPago : 'N/A';
+            $tlfVal = ($tipoPago === 'Pago Móvil' && !empty($tlfPago)) ? $tlfPago : 'N/A';
+            $refVal = ($tipoPago === 'Pago Móvil' && !empty($referencia)) ? $referencia : '0000';
 
             $modVenta = $co->prepare("UPDATE ventas SET idPersonal = :idPersonal, tipoPago = :tipoPago, cantidadVenta = :cant, totalVenta = :total WHERE idVenta = :idVenta");
             $modVenta->bindParam(':idPersonal', $idPersonal);
@@ -335,9 +346,9 @@ class Ventas extends datos
             $modVenta->execute();
 
             $modPago = $co->prepare("UPDATE detallesventa SET cedulaPago = :cedula, tlfPago = :tlf, referencia = :ref WHERE idDetalle = :idDetalle");
-            $modPago->bindParam(':cedula', $cedulaPago);
-            $modPago->bindParam(':tlf', $tlfPago);
-            $modPago->bindParam(':ref', $referencia);
+            $modPago->bindParam(':cedula', $cedulaVal);
+            $modPago->bindParam(':tlf', $tlfVal);
+            $modPago->bindParam(':ref', $refVal);
             $modPago->bindParam(':idDetalle', $idDetalle);
             $modPago->execute();
 
@@ -355,7 +366,7 @@ class Ventas extends datos
                 $delDir = $co->prepare("DELETE FROM dirdelivery WHERE idPedido = :idPedido");
                 $delDir->bindParam(':idPedido', $idPedido);
                 $delDir->execute();
-                
+
                 $insDir = $co->prepare("INSERT INTO dirdelivery (idPedido, zona, calle, numCasa) VALUES (:idPedido, :zona, :calle, :numCasa)");
                 $insDir->bindParam(':idPedido', $idPedido);
                 $insDir->bindParam(':zona', $zonaDelivery);
@@ -389,6 +400,7 @@ class Ventas extends datos
             if ($co->inTransaction()) {
                 $co->rollBack();
             }
+
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }
@@ -447,6 +459,7 @@ class Ventas extends datos
             if ($co->inTransaction()) {
                 $co->rollBack();
             }
+
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }
@@ -459,6 +472,7 @@ class Ventas extends datos
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $r = array();
+
         try {
             $stmt = $co->prepare("SELECT * FROM personal");
             $stmt->execute();
@@ -466,6 +480,7 @@ class Ventas extends datos
 
             if ($resultado !== false) {
                 $respuesta = '';
+
                 foreach ($resultado as $fila) {
                     $respuesta .= "
                         <tr style='cursor:pointer' onclick='colocapersonal(this);'>
@@ -476,13 +491,15 @@ class Ventas extends datos
                         </tr>
                     ";
                 }
-                $r['resultado'] = 'modal_personal';
+
+                $r['resultado'] = 'listarPersonal';
                 $r['mensaje'] = $respuesta;
             }
         } catch (Exception $e) {
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }
+
         return $r;
     }
 
@@ -491,6 +508,7 @@ class Ventas extends datos
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $r = array();
+
         try {
             $stmt = $co->prepare("SELECT * FROM clientes");
             $stmt->execute();
@@ -498,6 +516,7 @@ class Ventas extends datos
 
             if ($resultado !== false) {
                 $respuesta = '';
+
                 foreach ($resultado as $fila) {
                     $respuesta .= "
                         <tr style='cursor:pointer' onclick='colocacliente(this);'>
@@ -508,13 +527,15 @@ class Ventas extends datos
                         </tr>
                     ";
                 }
-                $r['resultado'] = 'modal_clientes';
+
+                $r['resultado'] = 'listarClientes';
                 $r['mensaje'] = $respuesta;
             }
         } catch (Exception $e) {
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }
+
         return $r;
     }
 
@@ -523,27 +544,31 @@ class Ventas extends datos
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $r = array();
+
         try {
             $stmt = $co->prepare("SELECT * FROM productos");
             $stmt->execute();
             $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             if ($resultado !== false) {
-                $html = '';
+                $respuesta = '';
+
                 foreach ($resultado as $fila) {
-                    $html .= "<tr style='cursor:pointer' class='bg-light-hover' onclick='seleccionarProducto(" . $fila['idProducto'] . ", \"" . $fila['codigoProd'] . "\", \"" . $fila['nombreProd'] . "\", " . $fila['precioProd'] . ")'>";
-                    $html .= "<td>" . $fila['codigoProd'] . "</td>";
-                    $html .= "<td>" . $fila['nombreProd'] . "</td>";
-                    $html .= "<td class='text-success fw-bold'>$" . number_format($fila['precioProd'], 2) . "</td>";
-                    $html .= "</tr>";
+                    $respuesta .= "<tr style='cursor:pointer' class='bg-light-hover' onclick='seleccionarProducto(" . $fila['idProducto'] . ", \"" . $fila['codigoProd'] . "\", \"" . $fila['nombreProd'] . "\", " . $fila['precioProd'] . ")'>";
+                    $respuesta .= "<td>" . $fila['codigoProd'] . "</td>";
+                    $respuesta .= "<td>" . $fila['nombreProd'] . "</td>";
+                    $respuesta .= "<td class='text-success fw-bold'>$" . number_format($fila['precioProd'], 2) . "</td>";
+                    $respuesta .= "</tr>";
                 }
-                $r['resultado'] = 'modal_productos';
-                $r['mensaje'] = $html;
+
+                $r['resultado'] = 'listarProductos';
+                $r['mensaje'] = $respuesta;
             }
         } catch (Exception $e) {
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }
+
         return $r;
     }
 
@@ -552,6 +577,7 @@ class Ventas extends datos
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $r = array();
+
         try {
             $stmt = $co->prepare("SELECT * FROM cuentas");
             $stmt->execute();
@@ -559,6 +585,7 @@ class Ventas extends datos
 
             if ($resultado !== false) {
                 $respuesta = '';
+
                 foreach ($resultado as $fila) {
                     $respuesta .= "
                         <tr style='cursor:pointer' onclick='colocacuentas(this);'>
@@ -571,13 +598,15 @@ class Ventas extends datos
                         </tr>
                     ";
                 }
-                $r['resultado'] = 'modal_cuentas';
+
+                $r['resultado'] = 'listarCuentas';
                 $r['mensaje'] = $respuesta;
             }
         } catch (Exception $e) {
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
         }
+
         return $r;
     }
 
@@ -683,7 +712,7 @@ class Ventas extends datos
                 $respuesta .= "</tr>";
             }
 
-            $r['resultado'] = 'buscar_fecha';
+            $r['resultado'] = 'buscarFecha';
             $r['mensaje'] = $respuesta;
         } catch (Exception $e) {
             $r['resultado'] = 'error';

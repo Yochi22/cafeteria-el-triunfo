@@ -289,9 +289,14 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="cuentaDestino" class="form-label">Cuenta destino</label>
-                                    <select class="form-select" id="cuentaDestino" name="cuentaDestino">
-                                        <option value="">Seleccione...</option>
-                                    </select>
+                                    <div class="input-group">
+                                        <select class="form-select" id="cuentaDestino" name="cuentaDestino">
+                                            <option value="">Seleccione...</option>
+                                        </select>
+                                        <button type="button" class="btn" style="color: #ff8c00; border: 1px solid #ff8c00;" id="btnCopiarDatos" title="Copiar datos" disabled>
+                                            <i class="bi bi-copy"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label for="refPago" class="form-label text-muted small fw-bold">Referencia del pago (Ultimos 4 Numeros)</label>

@@ -75,6 +75,36 @@
                             </div>
                         </div>
 
+                        <!-- Dirección de Delivery -->
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <hr>
+                                <h6 class="fw-bold text-dashboard"><i class="bi bi-geo-alt"></i> Dirección de Delivery</h6>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label for="zonaDelivery" class="form-label small fw-bold">Zona</label>
+                                <select class="form-select rounded-3" id="zonaDelivery" name="zonaDelivery" required>
+                                    <option value="">Seleccione zona...</option>
+                                    <option value="Centro" data-precio="1.00">Centro ($1.00)</option>
+                                    <option value="Este" data-precio="2.00">Este ($2.00)</option>
+                                    <option value="Oeste" data-precio="2.00">Oeste ($2.00)</option>
+                                    <option value="Norte" data-precio="1.50">Norte ($1.50)</option>
+                                    <option value="Sur" data-precio="2.50">Sur ($2.50)</option>
+                                </select>
+                                <span id="szonaDelivery" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label for="calleDelivery" class="form-label small fw-bold">Calle</label>
+                                <input type="text" class="form-control rounded-3" id="calleDelivery" name="calleDelivery" placeholder="Ej: Av. Venezuela" required>
+                                <span id="scalleDelivery" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <label for="numCasaDelivery" class="form-label small fw-bold">N° Casa / Local</label>
+                                <input type="text" class="form-control rounded-3" id="numCasaDelivery" name="numCasaDelivery" placeholder="Ej: 45" required>
+                                <span id="snumCasaDelivery" class="text-danger small"></span>
+                            </div>
+                        </div>
+
                         <!-- Comprobante y Estado -->
                         <div class="row mb-3">
                             <div class="col-md-6 mb-3 mb-md-0">
@@ -158,9 +188,11 @@
                             </table>
                         </div>
 
-                        <!-- Total General -->
-                        <div class="d-flex justify-content-end mb-3">
-                            <h4 class="text-dashboard fw-bold mb-0">Total: <span id="totalGeneral" class="text-success">$0.00</span></h4>
+                        <!-- Total General y Delivery -->
+                        <div class="d-flex flex-column align-items-end mb-3">
+                            <p class="text-muted small mb-1">Subtotal Productos: <span id="subtotalProductos" class="fw-semibold text-dark">$0.00</span></p>
+                            <p class="text-muted small mb-1">Costo Delivery: <span id="costoDelivery" class="fw-semibold text-dark">$0.00</span></p>
+                            <h4 class="text-dashboard fw-bold mb-0">Total General: <span id="totalGeneral" class="text-success">$0.00</span></h4>
                         </div>
 
                         <!-- Botón Guardar / Procesar -->
