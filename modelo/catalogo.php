@@ -417,7 +417,7 @@ class catalogo extends datos
 
             $zona = trim($datos['zonaDelivery'] ?? '');
             $calle = trim($datos['calleDelivery'] ?? '');
-            $numCasa = filter_var($datos['numCasa'] ?? null, FILTER_VALIDATE_INT);
+            $numCasa = trim($datos['numCasa'] ?? '');
 
             $tipoPago = trim($datos['tipoPago'] ?? '');
             $idCuenta = trim($datos['cuentaDestino'] ?? '');

@@ -79,8 +79,6 @@ class pedidos extends datos
         return $r;
     }
 
-
-    // CONSULTAR LISTADO DE PEDIDOS
     function consultar($estado = 'Todos')
     {
         $co = $this->conecta();
@@ -133,7 +131,6 @@ class pedidos extends datos
                 $comprobanteTexto = !empty($fila['numComprobante']) ? $fila['numComprobante'] : 'N/A';
                 $tipoPagoTexto = !empty($fila['tipoPago']) ? $fila['tipoPago'] : 'Por confirmar';
                 $pagadorTexto = !empty($fila['cedulaPago']) ? 'Pagador: ' . $fila['cedulaPago'] . ' / ' . $fila['tlfPago'] : '';
-                $deliveryTexto = !empty($fila['zona']) ? 'Zona: ' . $fila['zona'] . ' | Calle: ' . $fila['calle'] . ' | N° Casa: ' . $fila['numCasa'] : 'Sin dirección registrada';
                 $precioDeliv = isset($fila['precioDelivery']) ? (float)$fila['precioDelivery'] : 0.00;
 
                 $borderClass = $fila['estadoPedido'] == 'En Proceso' ? 'border-warning' : ($fila['estadoPedido'] == 'Cancelado' ? 'border-danger' : 'border-success');
@@ -160,10 +157,15 @@ class pedidos extends datos
                                     </div>
                                     <div class="col-md-4">
                                         <div class="p-3 bg-light rounded-3 h-100">
-                                            <p class="mb-2 text-muted small fw-bold text-uppercase"><i class="bi bi-geo-alt-fill text-secondary me-1"></i> Delivery</p>
-                                            <p class="mb-1 fw-semibold text-dark">' . htmlspecialchars($fila['zona'] ?? 'N/A', ENT_QUOTES, 'UTF-8') . ' ($' . number_format($precioDeliv, 2) . ')</p>
-                                            <p class="mb-0 small text-muted">' . htmlspecialchars($deliveryTexto, ENT_QUOTES, 'UTF-8') . '</p>
-                                        </div>
+                                            <p class="mb-2 text-muted small fw-bold text-uppercase"><i class="bi bi-geo-alt-fill text-secondary me-1"></i> Delivery</p>';
+                if (!empty($fila['zona'])) {
+                    $html .= '              <p class="mb-1 fw-semibold text-dark">Zona: ' . htmlspecialchars($fila['zona'], ENT_QUOTES, 'UTF-8') . ' ($' . number_format($precioDeliv, 2) . ')</p>
+                                            <p class="mb-1 small text-muted">Calle: ' . htmlspecialchars($fila['calle'], ENT_QUOTES, 'UTF-8') . '</p>
+                                            <p class="mb-0 small text-muted">N° Casa: ' . htmlspecialchars($fila['numCasa'], ENT_QUOTES, 'UTF-8') . '</p>';
+                } else {
+                    $html .= '              <p class="mb-0 small text-muted">Sin dirección registrada</p>';
+                }
+                $html .= '          </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="p-3 bg-light rounded-3 h-100">
@@ -221,7 +223,6 @@ class pedidos extends datos
 
         return $r;
     }
-
 
     // CONSULTAR UN SOLO PEDIDO (MODIFICAR)
     public function consultarUno($idPedido)
@@ -288,7 +289,6 @@ class pedidos extends datos
             return array("resultado" => "error", "mensaje" => $e->getMessage());
         }
     }
-
 
     // MODALES AUXILIARES (CLIENTES, CUENTAS, PRODUCTOS)
     function listadoDeClientes()
@@ -380,7 +380,6 @@ class pedidos extends datos
 
         return $r;
     }
-
 
     // MODIFICAR PEDIDO (CON TRANSACCIÓN Y VENTA)
     function modificar($idPedido, $idCliente, $idCuenta, $estadoPedido, $idProducto, $cantidad, $precio, $numComprobante, $zonaDelivery, $calleDelivery, $numCasaDelivery, $tipoPago = '', $cedulaPago = '', $tlfPago = '')
