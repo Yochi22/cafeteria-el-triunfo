@@ -124,11 +124,11 @@ function validarEnvioPrecio() {
             "Precio inválido.",
         ) == 0
     ) {
-        mostrarMensaje("Precio inválido.");
+        mostrarAlerta("Atención", "Precio inválido.", "error");
         return false;
     } else if (isNaN(precioVal) || precioVal <= 0) {
         $("#sinputPrecioZona").text("El precio debe ser mayor a 0.");
-        mostrarMensaje("El precio debe ser mayor a 0.");
+        mostrarAlerta("Atención", "El precio debe ser mayor a 0.", "error");
         return false;
     }
     $("#sinputPrecioZona").text("");
@@ -141,7 +141,7 @@ function validarEnvioHorario() {
     var ci = $("#editHoraCierre").val();
 
     if (ap.trim() === "" || ci.trim() === "") {
-        mostrarMensaje("Debe completar ambas horas.");
+        mostrarAlerta("Atención", "Debe completar ambas horas.", "error");
         return false;
     }
 
@@ -174,12 +174,17 @@ function limpiaPrecios() {
     $("#sinputPrecioZona").text("");
 }
 
-function mostrarMensaje(mensaje) {
-    $("#contenidoModal").html(mensaje);
-    $("#mostrarModal").modal("show");
-    setTimeout(function () {
-        $("#mostrarModal").modal("hide");
-    }, 5000);
+function mostrarAlerta(titulo, mensaje, icono) {
+    Swal.fire({
+        title: titulo,
+        html: mensaje,
+        icon: icono,
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#FF8C00',
+        customClass: {
+            popup: 'rounded-4 shadow'
+        }
+    });
 }
 
 function validarkeypress(er, e) {
@@ -307,7 +312,7 @@ function enviaAjax(datos) {
                     actualizarInputPrecioZona();
                 }
                 else if (lee.resultado === 'modificarHorario') {
-                    mostrarMensaje(lee.mensaje);
+                    mostrarAlerta("¡Éxito!", lee.mensaje, "success");
                     if (lee.mensaje === 'Horario actualizado con éxito.') {
                         $("#modal_editar_horario").modal("hide");
                         $("#modal_horarios").modal("hide");
@@ -315,7 +320,7 @@ function enviaAjax(datos) {
                     }
                 }
                 else if (lee.resultado === 'modificarPrecio') {
-                    mostrarMensaje(lee.mensaje);
+                    mostrarAlerta("¡Éxito!", lee.mensaje, "success");
                     if (lee.mensaje === 'Precio de delivery actualizado con éxito.') {
                         $("#modal_precios_delivery").modal("hide");
                         consultarPreciosDelivery();
@@ -340,7 +345,7 @@ function enviaAjax(datos) {
                     $("#mostrarModal").modal("show");
 
                 } else if (lee.resultado === "error") {
-                    mostrarMensaje(lee.mensaje);
+                    mostrarAlerta("Error", lee.mensaje, "error");
                 }
             } catch (e) {
                 alert("Error en JSON: " + e.name);
@@ -348,9 +353,9 @@ function enviaAjax(datos) {
         },
         error: function (request, status, err) {
             if (status === "timeout") {
-                mostrarMensaje("Servidor ocupado, intente de nuevo.");
+                mostrarAlerta("Error", "Servidor ocupado, intente de nuevo.", "error");
             } else {
-                mostrarMensaje("ERROR: <br/>" + request + status + err);
+                mostrarAlerta("Error", "ERROR: <br/>" + request + status + err, "error");
             }
         },
         complete: function () { }

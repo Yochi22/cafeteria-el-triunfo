@@ -28,7 +28,7 @@ if (is_file("vista/" . $pagina . ".php")) {
                 break;
 
             case 'buscar':
-                $valor = trim($_POST['valorBusqueda'] ?? '');
+                $valor = trim($_POST['valorBusqueda']);
                 echo json_encode($o->buscar($valor));
                 break;
 
@@ -37,7 +37,7 @@ if (is_file("vista/" . $pagina . ".php")) {
                 break;
 
             case 'cargarCarrito':
-                $productos = isset($_POST['carrito']) ? $_POST['carrito'] : '[]';
+                $productos = $_POST['carrito'];
                 echo json_encode($o->cargarCarrito($productos));
                 break;
 

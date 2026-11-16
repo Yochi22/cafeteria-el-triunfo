@@ -86,6 +86,21 @@ class productos extends datos
         return $r;
     }
 
+    // Función para generar las opciones del select de categorías
+    private function obtenerSelectCategorias($co)
+    {
+        $resCat = $co->query("SELECT idCategoria, nombreCat FROM categorias");
+        $htmlSelect = '';
+
+        if ($resCat) {
+            foreach ($resCat as $c) {
+                $htmlSelect .= '<option value="' . $c['idCategoria'] . '">' . $c['nombreCat'] . '</option>';
+            }
+        }
+
+        return $htmlSelect;
+    }
+
     // Función para Consultar Categorías (Pantalla Inicial)
     function consultarCategorias()
     {
@@ -100,20 +115,24 @@ class productos extends datos
 
             if ($resultado) {
                 foreach ($resultado as $c) {
-                    $htmlSelect .= '<option value="' . $c['idCategoria'] . '">' . $c['nombreCat'] . '</option>';
-
+                    $idCat = $c['idCategoria'];
+                    $nombreCat = $c['nombreCat'];
+                    $descCat = $c['descCat'] ?? '';
                     $fotoCat = !empty($c['fotoCat']) ? $c['fotoCat'] : '';
-                    $img_render = !empty($fotoCat) ? '<img src="' . $fotoCat . '" class="w-100 h-100 object-fit-cover" alt="' . $c['nombreCat'] . '">' : '<i class="bi bi-tags-fill fs-1"></i>';
+
+                    $htmlSelect .= '<option value="' . $idCat . '">' . $nombreCat . '</option>';
+
+                    $img_render = !empty($fotoCat) ? '<img src="' . $fotoCat . '" class="w-100 h-100 object-fit-cover" alt="' . $nombreCat . '">' : '<i class="bi bi-tags-fill fs-1"></i>';
 
                     $htmlCards .= '
                     <div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-4">
-                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100" style="cursor: pointer;" onclick="verCategoria(' . $c['idCategoria'] . ', \'' . addslashes($c['nombreCat']) . '\')">
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100" style="cursor: pointer;" data-id="' . $idCat . '" data-nombre="' . $nombreCat . '" onclick="verCategoria(this)">
                             <div class="card-header bg-light text-center border-0 d-flex align-items-center justify-content-center p-0" style="color: #FF8C00; height: 150px; overflow: hidden;">
                                 ' . $img_render . '
                             </div>
                             <div class="card-body d-flex flex-column text-center">
-                                <h5 class="text-dashboard fw-bold mb-1">' . $c['nombreCat'] . '</h5>
-                                <p class="text-muted small mb-0">' . ($c['descCat'] ?? '') . '</p>
+                                <h5 class="text-dashboard fw-bold mb-1">' . $nombreCat . '</h5>
+                                <p class="text-muted small mb-0">' . $descCat . '</p>
                             </div>
                         </div>
                     </div>';
@@ -129,9 +148,9 @@ class productos extends datos
             }
 
             $btnGestionar = '
-            <a href="?pagina=categorias" class="btn btn-crear d-flex align-items-center gap-2 shadow-sm py-2 px-3 rounded-3" style="background-color: #198754 !important; border-color: #198754 !important;">
+            <a href="?pagina=categorias" class="btn btn-success fw-bold d-flex align-items-center gap-2 shadow-sm py-2 px-3 rounded-3">
                 <i class="bi bi-tags fs-5"></i>
-                <span class="d-none d-sm-inline">Gestionar Categorías</span>
+                <span class="d-none d-sm-inline">GESTIONAR CATEGORÍAS</span>
             </a>';
 
             $r['resultado'] = 'consultarCategorias';
@@ -184,7 +203,7 @@ class productos extends datos
                                 <p class="text-muted small mb-3">' . $descProd . '</p>
                                 
                                 <div class="d-flex justify-content-end gap-2 mt-auto">
-                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" data-codigo="' . $codigoProd . '" data-nombre="' . addslashes($nombreProd) . '" data-precio="' . $precioProd . '" data-descripcion="' . addslashes($descProd) . '" data-foto="' . $fotoProd . '" data-idcategoria="' . $idCat . '" onclick="pone(this)">
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" data-codigo="' . $codigoProd . '" data-nombre="' . $nombreProd . '" data-precio="' . $precioProd . '" data-descripcion="' . $descProd . '" data-foto="' . $fotoProd . '" data-idcategoria="' . $idCat . '" onclick="pone(this)">
                                         <i class="bi bi-pencil-square"></i> Editar
                                     </button>
                                     <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="eliminar(this)">
@@ -204,13 +223,14 @@ class productos extends datos
             }
 
             $btnRegresar = '
-            <button class="btn btn-crear d-flex align-items-center gap-2 shadow-sm py-2 px-3 rounded-3" style="background-color: #0d6efd !important; border-color: #0d6efd !important;" onclick="consultar()">
+            <button class="btn btn-primary fw-bold d-flex align-items-center gap-2 shadow-sm py-2 px-3 rounded-3" onclick="consultar()">
                 <i class="bi bi-arrow-left-circle fs-5"></i>
-                <span class="d-none d-sm-inline">Regresar</span>
+                <span class="d-none d-sm-inline">REGRESAR</span>
             </button>';
 
             $r['resultado'] = 'consultarProductos';
             $r['mensaje'] = $html;
+            $r['select'] = $this->obtenerSelectCategorias($co);
             $r['boton'] = $btnRegresar;
         } catch (Exception $e) {
             $r['resultado'] = 'error';
@@ -331,7 +351,7 @@ class productos extends datos
                                 <p class="text-muted small mb-3">' . $descProd . '</p>
                                 
                                 <div class="d-flex justify-content-end gap-2 mt-auto">
-                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" data-codigo="' . $codigoProd . '" data-nombre="' . addslashes($nombreProd) . '" data-precio="' . $precioProd . '" data-descripcion="' . addslashes($descProd) . '" data-foto="' . $fotoProd . '" data-idcategoria="' . $idCategoria . '" onclick="pone(this)">
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" data-codigo="' . $codigoProd . '" data-nombre="' . $nombreProd . '" data-precio="' . $precioProd . '" data-descripcion="' . $descProd . '" data-foto="' . $fotoProd . '" data-idcategoria="' . $idCategoria . '" onclick="pone(this)">
                                         <i class="bi bi-pencil-square"></i> Editar
                                     </button>
                                     <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="eliminar(this)">

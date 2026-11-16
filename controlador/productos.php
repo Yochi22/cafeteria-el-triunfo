@@ -14,15 +14,6 @@ if (is_file("vista/" . $pagina . ".php")) {
         $accion = $_POST['accion'];
 
         switch ($accion) {
-            case 'consultarCategorias':
-                echo json_encode($o->consultarCategorias());
-                break;
-
-            case 'consultarProductos':
-                $o->set_idCategoria($_POST['idCategoria']);
-                echo json_encode($o->consultarProductos());
-                break;
-
             case 'incluir':
                 $o->set_codigoProd($_POST['codigoProd']);
                 $o->set_nombreProd($_POST['nombreProd']);
@@ -31,6 +22,15 @@ if (is_file("vista/" . $pagina . ".php")) {
                 $o->set_fotoProd($_POST['fotoProd']);
                 $o->set_idCategoria($_POST['idCategoria']);
                 echo json_encode($o->incluir());
+                break;
+
+            case 'consultarCategorias':
+                echo json_encode($o->consultarCategorias());
+                break;
+
+            case 'consultarProductos':
+                $o->set_idCategoria($_POST['idCategoria']);
+                echo json_encode($o->consultarProductos());
                 break;
 
             case 'modificar':

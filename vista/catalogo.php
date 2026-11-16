@@ -259,10 +259,28 @@
                         <div class="row justify-content-center mb-4">
                             <div class="col-12 col-md-8">
                                 <div class="border border-success rounded-4 p-3 bg-white shadow-sm mt-3">
-                                    <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-muted fw-semibold small">Subtotal</span>
+                                        <div class="text-end">
+                                            <span class="fw-semibold text-dark small" id="subtotalFinalBs">Bs. 0,00</span>
+                                            <div class="text-muted" style="font-size: 0.75rem;" id="subtotalFinal">$0.00</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="text-muted fw-semibold small">Delivery</span>
+                                        <div class="text-end">
+                                            <span class="fw-semibold text-dark small" id="deliveryTotalBs">Bs. 0,00</span>
+                                            <div class="text-muted" style="font-size: 0.75rem;" id="deliveryTotal">$0.00</div>
+                                        </div>
+                                    </div>
+
+                                    <hr class="my-2 text-success opacity-50">
+
+                                    <div class="d-flex justify-content-between align-items-center pt-1">
                                         <span class="text-success fw-bold fs-5">Monto Total</span>
                                         <div class="text-end">
-                                            <span class="fw-bold text-success fs-5" id="montoTotalBs">Bs. 0,00</span>
+                                            <span class="fw-bold text-success fs-4" id="montoTotalBs">Bs. 0,00</span>
                                             <div class="small text-success fw-bold" id="montoTotal">$0.00</div>
                                         </div>
                                     </div>
@@ -324,22 +342,12 @@
         </div>
     </form>
 
-    <div class="modal fade" id="modalCuentaCli" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-md">
-            <div class="modal-content border-0 rounded-4 shadow text-center p-3 position-relative">
-                <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                <i class="bi bi-bank fs-1" style="color: #ff8c00;"></i>
-                <h6 class="fw-bold text-dashboard mt-2">Datos de la Cuenta</h6>
-                <div class="modal-body text-start" id="modalCuentaCliCont"> </div>
-            </div>
-        </div>
-    </div>
-
     <?php require_once("comunes/modal_eliminar.php"); ?>
     <?php require_once("comunes/modal.php"); ?>
 
     <script src="js/scriptTasa.js"></script>
     <script src="js/catalogo.js"></script>
+    <script src="js/sweetalert.js"></script>
 </body>
 
 </html>

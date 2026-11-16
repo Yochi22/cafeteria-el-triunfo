@@ -1,4 +1,4 @@
-// Función para la lista de clientes (Recarga la DataTable)
+// Función para recargar DataTable de clientes
 function consultar() {
     if ($.fn.DataTable.isDataTable('#tblClientes')) {
         $("#tblClientes").DataTable().ajax.reload(null, false);
@@ -29,8 +29,19 @@ $(document).ready(function () {
                 className: "text-center",
                 render: function (data, type, row) {
                     return `
-                        <button type='button' class='btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1 my-1' data-nombre='${row.nombreCli}' data-apellido='${row.apellidoCli}' onclick='pone(this)'><i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span></button>
-                        <button type='button' class='btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1 m-1' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i><span class='d-none d-sm-inline'> Eliminar</span></button>
+                        <button type='button' class='btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1 my-1' 
+                            data-cedula='${row.cedulaCli}' 
+                            data-nombre='${row.nombreCli}' 
+                            data-apellido='${row.apellidoCli}' 
+                            data-tlf='${row.tlfCli}' 
+                            onclick='pone(this)'>
+                            <i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span>
+                        </button>
+                        <button type='button' class='btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1 m-1' 
+                            data-cedula='${row.cedulaCli}' 
+                            onclick='eliminar(this)'>
+                            <i class='bi bi-trash-fill'></i><span class='d-none d-sm-inline'> Eliminar</span>
+                        </button>
                     `;
                 }
             }
@@ -61,34 +72,39 @@ $(document).ready(function () {
     });
 
     // VALIDACIÓN DE DATOS
+    // -- Validación de cédula --
     $("#cedulaCli").on("keypress", function (e) {
         validarkeypress(/^[0-9\-\.]*$/, e);
     });
     $("#cedulaCli").on("keyup", function () {
-        validarkeyup(/^[0-9\.]{7,8}$/, $(this), $("#scedulaCli"), "Cédula Inválida - El formato debe ser: 99999999");
+        validarkeyup(/^[0-9\.]{7,12}$/, $(this), $("#scedulaCli"), "Cédula Inválida - El formato debe ser: 99999999");
     });
 
+    // -- Validación de nombre --
     $("#nombreCli").on("keypress", function (e) {
         validarkeypress(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]*$/, e);
     });
     $("#nombreCli").on("keyup", function () {
-        validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this), $("#snombreCli"), "Nombre Inválido - Solo letras");
+        validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this), $("#snombreCli"), "Nombre Inválido - Solo letras (entre 3 y 100 caracteres)");
     });
 
+    // -- Validación de apellido --
     $("#apellidoCli").on("keypress", function (e) {
         validarkeypress(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]*$/, e);
     });
     $("#apellidoCli").on("keyup", function () {
-        validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this), $("#sapellidoCli"), "Apellido Inválido - Solo letras");
+        validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this), $("#sapellidoCli"), "Apellido Inválido - Solo letras (entre 3 y 100 caracteres)");
     });
 
+    // -- Validación de teléfono --
     $("#tlfCli").on("keypress", function (e) {
         validarkeypress(/^[0-9\-+ ]*$/, e);
     });
     $("#tlfCli").on("keyup", function () {
-        validarkeyup(/^[0-9\-+ ]{11,12}$/, $(this), $("#stlfCli"), "Teléfono Inválido");
+        validarkeyup(/^[0-9\-+ ]{11,12}$/, $(this), $("#stlfCli"), "Teléfono Inválido - Formato: 0000-0000000");
     });
 
+    // Evitar que el formulario se envíe con Enter
     $("#f").on("submit", function (e) {
         e.preventDefault();
     });
@@ -139,7 +155,7 @@ $(document).ready(function () {
 
 // Validación de datos antes de enviar
 function validarEnvio() {
-    if (validarkeyup(/^[0-9\.]{7,8}$/, $("#cedulaCli"), $("#scedulaCli"), "Cédula Inválida") === 0) {
+    if (validarkeyup(/^[0-9\.]{7,12}$/, $("#cedulaCli"), $("#scedulaCli"), "Cédula Inválida") === 0) {
         mostrarAlerta("Atención", "Cédula Inválida <br/>(El formato debe ser: 99999999)", "warning");
         return false;
     }
@@ -178,7 +194,6 @@ function validarkeypress(er, e) {
     key = e.keyCode;
     tecla = String.fromCharCode(key);
     a = er.test(tecla);
-
     if (!a) {
         e.preventDefault();
     }
@@ -187,7 +202,6 @@ function validarkeypress(er, e) {
 // Función para validar por keyup
 function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
     a = er.test(etiqueta.val());
-
     if (a) {
         etiquetamensaje.text("");
         return 1;
@@ -199,13 +213,12 @@ function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
 
 // Llenar formulario para Modificar
 function pone(pos) {
-    var linea = $(pos).closest('tr');
     var btn = $(pos);
 
-    $("#cedulaCli").val($(linea).find("td:eq(0)").text().trim());
+    $("#cedulaCli").val(btn.data('cedula'));
     $("#nombreCli").val(btn.data('nombre'));
     $("#apellidoCli").val(btn.data('apellido'));
-    $("#tlfCli").val($(linea).find("td:eq(2)").text().trim());
+    $("#tlfCli").val(btn.data('tlf'));
 
     $("#btnGuardar").text('modificar');
     $("#modal_cliente").modal("show");
@@ -214,12 +227,11 @@ function pone(pos) {
 
 // Función Eliminar
 function eliminar(pos) {
-    var linea = $(pos).closest('tr');
-    var cedula = $(linea).find("td:eq(0)").text().trim();
+    var cedula = $(pos).data('cedula');
 
     Swal.fire({
         title: '¿Estás seguro?',
-        text: "¡Deseas eliminar este cliente del sistema!",
+        text: "¿Deseas eliminar este cliente del sistema?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: 'red',

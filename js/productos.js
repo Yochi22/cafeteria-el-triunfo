@@ -1,8 +1,10 @@
 var categoriaActual = null;
+var nombreCategoriaActual = '';
 
 // Función para la lista de categorías (pantalla inicial)
 function consultar() {
     categoriaActual = null;
+    nombreCategoriaActual = '';
     $("#titulo_seccion").html('<i class="bi bi-box-seam"></i> Productos');
     $("#subtitulo_seccion").text("¡Gestiona los productos de tu inventario fácilmente!");
     $("#contenedor_botones_header").html('');
@@ -12,36 +14,21 @@ function consultar() {
     enviaAjax(datos);
 }
 
-// Cargar opciones del select de categorías
-function cargarCategorias() {
-    var datos = new FormData();
-    datos.append('accion', 'consultarCategorias');
-    $.ajax({
-        async: true,
-        url: "index.php?pagina=productos",
-        type: "POST",
-        contentType: false,
-        data: datos,
-        processData: false,
-        cache: false,
-        success: function (respuesta) {
-            try {
-                var lee = JSON.parse(respuesta);
-                if (lee.resultado === 'consultarCategorias') {
-                    $('#idCategoria').html(lee.select);
-                } else if (lee.resultado === 'categorias') {
-                    $('#idCategoria').html(lee.mensaje);
-                }
-            } catch (e) {
-                console.error("Error al cargar categorías", e);
-            }
-        }
-    });
-}
-
 // Función para ver productos de una categoría específica
-function verCategoria(id, nombre) {
+function verCategoria(elemento, nombreDirecto) {
+    var id, nombre;
+
+    if (typeof elemento === 'object') {
+        var card = $(elemento);
+        id = card.data('id');
+        nombre = card.data('nombre');
+    } else {
+        id = elemento;
+        nombre = nombreDirecto;
+    }
+
     categoriaActual = id;
+    nombreCategoriaActual = nombre;
     $("#titulo_seccion").html('<i class="bi bi-box-seam"></i> ' + nombre);
     $("#subtitulo_seccion").text("Productos pertenecientes a esta categoría.");
 
@@ -53,7 +40,6 @@ function verCategoria(id, nombre) {
 
 $(document).ready(function () {
     consultar();
-    cargarCategorias();
 
     // VALIDACIÓN DE DATOS
     // -- Validación de código --
@@ -79,6 +65,7 @@ $(document).ready(function () {
     $("#precioProd").on("keyup", function () {
         var valor = parseFloat($(this).val());
         var res = validarkeyup(/^[0-9]{1,8}(\.[0-9]{1,2})?$/, $(this), $("#sprecioProd"), "Precio Inválido - Formato numérico correcto");
+
         if (res === 1 && (isNaN(valor) || valor <= 0)) {
             $("#sprecioProd").text("El precio debe ser mayor a 0");
         }
@@ -142,7 +129,7 @@ $(document).ready(function () {
             enviaAjax(datos);
         } else {
             if (categoriaActual !== null) {
-                verCategoria(categoriaActual, $("#titulo_seccion").text().replace(/<[^>]*>?/gm, '').trim());
+                verCategoria(categoriaActual, nombreCategoriaActual);
             } else {
                 consultar();
             }
@@ -305,15 +292,15 @@ function enviaAjax(datos) {
                 }
                 else if (lee.resultado === 'consultarProductos') {
                     $("#cuadricula_items").html(lee.mensaje);
+                    $("#idCategoria").html(lee.select);
                     $("#contenedor_botones_header").html(lee.boton);
-                    cargarCategorias();
                 }
                 else if (lee.resultado === 'incluir') {
                     if (lee.mensaje === 'Producto registrado con éxito.' || lee.mensaje === 'Producto incluido.') {
                         mostrarAlerta("¡Éxito!", lee.mensaje, "success");
                         $("#modal_producto").modal("hide");
                         if (categoriaActual !== null) {
-                            verCategoria(categoriaActual, $("#titulo_seccion").text().replace(/<[^>]*>?/gm, '').trim());
+                            verCategoria(categoriaActual, nombreCategoriaActual);
                         } else {
                             consultar();
                         }
@@ -326,7 +313,7 @@ function enviaAjax(datos) {
                         mostrarAlerta("¡Éxito!", lee.mensaje, "success");
                         $("#modal_producto").modal("hide");
                         if (categoriaActual !== null) {
-                            verCategoria(categoriaActual, $("#titulo_seccion").text().replace(/<[^>]*>?/gm, '').trim());
+                            verCategoria(categoriaActual, nombreCategoriaActual);
                         } else {
                             consultar();
                         }
@@ -338,7 +325,7 @@ function enviaAjax(datos) {
                     if (lee.mensaje === 'Producto eliminado con éxito.' || lee.mensaje === 'Producto eliminado.') {
                         mostrarAlerta("¡Éxito!", lee.mensaje, "success");
                         if (categoriaActual !== null) {
-                            verCategoria(categoriaActual, $("#titulo_seccion").text().replace(/<[^>]*>?/gm, '').trim());
+                            verCategoria(categoriaActual, nombreCategoriaActual);
                         } else {
                             consultar();
                         }

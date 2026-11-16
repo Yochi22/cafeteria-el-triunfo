@@ -48,22 +48,22 @@ $accesoPermitido = false;
 
 switch ($nivel) {
     case 'Administrador':
-        $paginas_admin = ['principal', 'pedidos', 'categorias', 'productos', 'ventas', 'reporte', 'cuentas', 'clientes', 'personal', 'usuarios'];
-        if (in_array($pagina, $paginas_admin)) {
+        $paginasAdmin = ['principal', 'pedidos', 'categorias', 'productos', 'ventas', 'reporte', 'cuentas', 'clientes', 'personal', 'usuarios'];
+        if (in_array($pagina, $paginasAdmin)) {
             $accesoPermitido = true;
         }
         break;
 
     case 'Cajero':
-        $paginas_cajero = ['principal', 'pedidos', 'ventas', 'reporte', 'clientes'];
-        if (in_array($pagina, $paginas_cajero)) {
+        $paginasCajero = ['principal', 'pedidos', 'ventas', 'reporte', 'clientes'];
+        if (in_array($pagina, $paginasCajero)) {
             $accesoPermitido = true;
         }
         break;
 
     case 'Mesero':
-        $paginas_mesero = ['principal', 'pedidos', 'clientes', 'productos', 'categorias'];
-        if (in_array($pagina, $paginas_mesero)) {
+        $paginasMesero = ['principal', 'pedidos', 'clientes', 'productos', 'categorias'];
+        if (in_array($pagina, $paginasMesero)) {
             $accesoPermitido = true;
         }
         break;

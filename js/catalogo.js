@@ -41,6 +41,7 @@ $(document).ready(function () {
     });
 });
 
+// FUNCIONES DE CATALOGO
 function cargarCategorias() {
     var datos = new FormData();
     datos.append("accion", "obtenerCategorias");
@@ -53,7 +54,6 @@ function cargarProductos() {
     $("#titulo_categoria_activo").text("Todos los productos");
     enviaAjax(datos);
 }
-
 
 function listarProductos(idCategoria, nombreCat) {
     var datos = new FormData();
@@ -141,12 +141,8 @@ $("#modal-btn-agregar").on("click", function () {
 
     cargarCarritoLocal();
     $("#modalDetalleProducto").modal("hide");
-    mostrarNotificacion("¡Producto agregado con éxito!");
+    mostrarAlerta("", "¡Producto agregado al carrito!", "<i class='bi bi-cart-check-fill' style='color: #FF8C00;'></i>");
 });
-
-function agregarAlCarrito(idProducto, cantidad) {
-    mostrarNotificacion("¡Producto agregado al carrito con éxito!");
-}
 
 function actualizarContadorCarrito() {
     let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
@@ -165,6 +161,14 @@ function actualizarPreciosEnBs() {
 
     let precioDelivery = parseFloat($("#zonaDelivery").data("precioDelivery")) || 0;
     let totalUsdFinal = subtotalUsd + precioDelivery;
+
+    let subtotalBs = subtotalUsd * tasaDolar;
+    let precioDeliveryBs = precioDelivery * tasaDolar;
+
+    $('#subtotalFinalBs').text(`Bs. ${subtotalBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
+    $('#subtotalFinal').text("$" + subtotalUsd.toFixed(2));
+    $('#deliveryTotalBs').text(`Bs. ${precioDeliveryBs.toLocaleString('es-VE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`);
+    $('#deliveryTotal').text("$" + precioDelivery.toFixed(2));
 
     $('#montoTotal').text("$" + totalUsdFinal.toFixed(2));
 
@@ -273,14 +277,13 @@ $(document).on("click", "#btnCopiarDatos", function () {
     let textoACopiar = $(this).attr("data-copiar");
 
     if (!textoACopiar) {
-        mostrarNotificacion("Por favor seleccione una cuenta destino primero.");
+        mostrarAlerta("", "Por favor seleccione una cuenta destino primero.", "warning");
         return;
     }
 
     navigator.clipboard.writeText(textoACopiar)
         .then(() => {
-            mostrarNotificacion("¡Texto copiado al portapapeles!");
-            $("#modalCuentaCli").modal("hide");
+            mostrarAlerta("", "Texto copiado al portapapeles", "info");
         })
         .catch((err) => {
             console.error("Error al copiar:", err);
@@ -333,7 +336,7 @@ $("#refPago").on("keypress", function (e) {
     validarkeypress(/^[0-9\-+ ]*$/, e);
 });
 $("#refPago").on("keyup", function () {
-    validarkeyup(/^[0-9\-+ ]{4}$/, $(this), $("#srefPago"), "Referencia Inválida - Entre 4 y 12 dígitos");
+    validarkeyup(/^[0-9\-+ ]{4}$/, $(this), $("#srefPago"), "Referencia Inválida - Solo 4 últimos dígitos");
 });
 
 $("#cedulaPago").on("keypress", function (e) {
@@ -384,55 +387,55 @@ function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
 
 function validarEnvio() {
     if (validarkeyup(/^[0-9\.]{7,8}$/, $("#cedulaCli"), $("#scedulaCli"), "Cédula Inválida") === 0) {
-        mostrarMensaje("Cédula Inválida <br/>(El formato debe ser entre 7 y 8 dígitos)");
+        mostrarAlerta("", "Cédula Inválida <br/>(El formato debe ser entre 7 y 8 dígitos)", "warning");
         return false;
     }
     else if (validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#nombreCli"), $("#snombreCli"), "Nombre Inválido") === 0) {
-        mostrarMensaje("Nombre Inválido <br/>(Solo letras entre 3 y 100 caracteres)");
+        mostrarAlerta("", "Nombre Inválida <br/>(Solo letras entre 3 y 100 caracteres)", "warning");
         return false;
     }
     else if (validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#apellidoCli"), $("#sapellidoCli"), "Apellido Inválido") === 0) {
-        mostrarMensaje("Apellido Inválido <br/>(Solo letras entre 3 y 100 caracteres)");
+        mostrarAlerta("", "Apellido Inválido <br/>(Solo letras entre 3 y 100 caracteres)", "warning");
         return false;
     }
     else if (validarkeyup(/^[0-9\-+ ]{11,12}$/, $("#tlfCli"), $("#stlfCli"), "Teléfono Inválido") === 0) {
-        mostrarMensaje("Teléfono Inválido <br/>(Formato: 0000-0000000)");
+        mostrarAlerta("", "Teléfono Inválido <br/>(Formato: 0000-0000000)", "warning");
         return false;
     }
 
     if (!$("#zonaDelivery").val()) {
-        mostrarMensaje("Seleccione una zona de delivery.");
+        mostrarAlerta("", "Seleccione una zona de delivery.", "warning");
         return false;
     }
     else if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC\-\#\.,]{3,100}$/, $("#calleDelivery"), $("#scalleDelivery"), "Calle Inválida") === 0) {
-        mostrarMensaje("Calle Inválida <br/>(Entre 3 y 100 caracteres)");
+        mostrarAlerta("", "Calle Inválida <br/>(Entre 3 y 100 caracteres)", "warning");
         return false;
     }
     else if (validarkeyup(/^[0-9]{1,6}$/, $("#numCasaDelivery"), $("#snumCasaDelivery"), "Número Inválido") === 0) {
-        mostrarMensaje("Número de Casa Inválido <br/>(Solo números enteros)");
+        mostrarAlerta("", "Número de Casa Inválido <br/>(Solo números enteros)", "warning");
         return false;
     }
 
     else if ($("#tipoPago").val() === "") {
-        mostrarMensaje("Seleccione un método de pago.");
+        mostrarAlerta("", "Seleccione un método de pago.", "warning");
         return false;
     }
 
     if ($("#tipoPago").val() === "Pago Móvil") {
         if (validarkeyup(/^[0-9\-+ ]{4}$/, $("#refPago"), $("#srefPago"), "Referencia Inválida") === 0) {
-            mostrarMensaje("Referencia Inválida <br/>(Entre 4 y 12 caracteres)");
+            mostrarAlerta("", "Referencia Inválida <br/>(Solo 4 últimos dígitos)", "warning");
             return false;
         }
         if (validarkeyup(/^[0-9\.]{7,12}$/, $("#cedulaPago"), $("#scedulaPago"), "Cédula Inválida") === 0) {
-            mostrarMensaje("Cédula Inválida de quien pagó <br/>(Entre 7 y 12 dígitos)");
+            mostrarAlerta("", "Cédula Inválida de quien pagó <br/>(Entre 7 y 12 dígitos)", "warning");
             return false;
         }
         if (validarkeyup(/^[0-9\-+ ]{11,12}$/, $("#tlfPago"), $("#stlfPago"), "Teléfono Inválido") === 0) {
-            mostrarMensaje("Teléfono Inválido de quien pagó <br/>(Formato: 0000-0000000)");
+            mostrarAlerta("", "Teléfono Inválido de quien pagó <br/>(Formato: 0000-0000000)", "warning");
             return false;
         }
         if (!$("#cuentaDestino").val()) {
-            mostrarMensaje("Seleccione la cuenta destino del Pago Móvil.");
+            mostrarAlerta("", "Seleccione la cuenta destino del Pago Móvil.", "warning");
             return false;
         }
     }
@@ -445,15 +448,15 @@ $("#btnGuardar").on("click", function () {
         var carrito = JSON.parse(localStorage.getItem("carrito") || "[]");
 
         if (!carrito.length) {
-            mostrarMensaje("El carrito está vacío.");
+            mostrarAlerta("", "El carrito está vacío.", "warning");
             return;
         }
         if (!$("#tipoPago").val()) {
-            mostrarMensaje("Seleccione un método de pago.");
+            mostrarAlerta("", "Seleccione un método de pago.", "warning");
             return;
         }
         if (carrito.some(function (p) { return !p.codigoProd; })) {
-            mostrarMensaje("Hay productos antiguos en el carrito. Retírelos y agréguelos nuevamente para continuar.");
+            mostrarAlerta("", "Hay productos antiguos en el carrito. Retírelos y agréguelos nuevamente para continuar.", "warning");
             return;
         }
 
@@ -490,26 +493,48 @@ function limpia() {
     $("#snumCasaDelivery").text("");
 }
 
-function mostrarMensaje(mensaje) {
-    if ($("#mostrarModal").length) {
-        $(".modal").modal("hide");
-        $("#contenidoModal").html(mensaje);
-        setTimeout(function () { $("#mostrarModal").modal("show"); }, 200);
-    } else {
-        alert(mensaje);
+function mostrarAlerta(titulo, mensaje, icono) {
+    if ($('#swal-anim-style').length === 0) {
+        $('<style>', {
+            id: 'swal-anim-style',
+            html: `
+                @keyframes slideInRight {
+                    0% {
+                        transform: translateX(-40px);
+                        opacity: 0;
+                    }
+                    100% {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+                .animate-slide-in {
+                    display: inline-block;
+                    animation: slideInRight 0.5s ease-out forwards;
+                }
+            `
+        }).appendTo('head');
     }
-}
 
-function mostrarNotificacion(mensaje) {
-    if ($("#contenidoModal").length) {
-        $("#contenidoModal").html(mensaje);
-        $("#mostrarModal").modal("show");
-        setTimeout(function () {
-            $("#mostrarModal").modal("hide");
-        }, 2000);
+    let config = {
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#FF8C00',
+        returnFocus: false,
+        customClass: {
+            popup: 'rounded-4 shadow'
+        }
+    };
+
+    if (icono && icono.trim().startsWith('<')) {
+        config.title = `<div class="mb-2 fs-1"><div class="animate-slide-in d-inline-block">${icono}</div></div>${titulo}`;
+        config.html = mensaje;
     } else {
-        alert(mensaje);
+        config.title = titulo;
+        config.html = mensaje;
+        config.icon = icono;
     }
+
+    Swal.fire(config);
 }
 
 function enviaAjax(datos) {
@@ -567,10 +592,10 @@ function enviaAjax(datos) {
                     actualizarContadorCarrito();
                     limpia();
                     cargarCarritoLocal();
-                    mostrarNotificacion(lee.mensaje);
+                    mostrarAlerta("¡Éxito!", lee.mensaje, "success");
 
                 } else if (lee.resultado == "error") {
-                    mostrarMensaje(lee.mensaje);
+                    mostrarAlerta("Error", lee.mensaje, "error");
                 }
             } catch (e) {
                 alert(
@@ -580,9 +605,9 @@ function enviaAjax(datos) {
         },
         error: function (request, status, err) {
             if (status == "timeout") {
-                mostrarMensaje("Servidor ocupado, intente de nuevo.");
+                mostrarAlerta("", "Servidor ocupado, intente de nuevo.", "error");
             } else {
-                mostrarMensaje("ERROR: <br/>" + status + " " + err);
+                mostrarAlerta("", "ERROR: <br/>" + status + " " + err, "error");
             }
         },
         complete: function () { },

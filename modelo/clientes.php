@@ -33,11 +33,7 @@ class clientes extends datos
             $resultado->execute();
             $fila = $resultado->fetchAll(PDO::FETCH_BOTH);
 
-            if ($fila) {
-                return true;
-            } else {
-                return false;
-            }
+            return (bool)$fila;
         } catch (Exception $e) {
             return false;
         }

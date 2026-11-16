@@ -54,15 +54,16 @@
                 </form>
             </div>
 
-            <!-- Promedio de ganancias en dolares y bolivares -->
+            <!-- Tarjetas de métricas -->
             <div class="row g-4 mb-4">
+                <!-- Total de ventas -->
                 <div class="col-12 col-sm-6 col-md-4">
                     <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <small class="text-muted fw-semibold text-uppercase small">Total de ventas</small>
-                                <h3 class="fw-bold mt-2 mb-1 text-success" id="totalVen">$ 0.00</h3>
-                                <h3 class="fw-bold mt-2 mb-1 text-secondary" id="totalVenBs">Bs 0.00</h3>
+                                <h3 class="fw-bold mt-2 mb-1 text-success" id="totalVenBs">Bs. 0,00</h3>
+                                <h5 class="fw-semibold mb-0 text-muted" id="totalVen">$ 0.00</h5>
                             </div>
                             <div class="p-3 bg-success bg-opacity-10 text-success rounded-3">
                                 <i class="bi bi-cash-stack fs-4"></i>
@@ -77,12 +78,8 @@
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <small class="text-muted fw-semibold text-uppercase small">Promedio Ganancias</small>
-                                <div class="d-flex align-items-baseline gap-2 mt-2">
-                                    <h3 class="fw-bold mb-0 text-primary" id="promGanancias">$ 0.00</h3>
-                                </div>
-                                <div class="d-flex align-items-baseline gap-2 mt-2">
-                                    <h3 class="fw-bold mb-0 text-secondary" id="promGananciasBs">$ 0.00</h3>
-                                </div>
+                                <h3 class="fw-bold mt-2 mb-1 text-primary" id="promGananciasBs">Bs. 0,00</h3>
+                                <h5 class="fw-semibold mb-0 text-muted" id="promGanancias">$ 0.00</h5>
                             </div>
                             <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-3">
                                 <i class="bi bi-graph-up-arrow fs-4"></i>
@@ -91,7 +88,7 @@
                     </div>
                 </div>
 
-                <!-- Tasa del dolar y fecha -->
+                <!-- Tasa del dólar y fecha -->
                 <div class="col-12 col-sm-6 col-md-4">
                     <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
                         <div class="d-flex justify-content-between align-items-start">
@@ -137,7 +134,7 @@
                     </div>
                 </div>
 
-                <!-- pedidos cancelados -->
+                <!-- Pedidos cancelados -->
                 <div class="col-12 col-sm-6 col-md-4">
                     <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
                         <div class="d-flex justify-content-between align-items-start">

@@ -47,18 +47,18 @@
 
             <!-- Lista de Cuentas -->
             <div class="table-responsive rounded-3 shadow-sm">
-                <table class="table table-hover align-items-center text-center">
+                <table id="tblCuentas" class="table table-hover align-items-center text-center">
                     <thead class="text-dashboard border-bottom">
                         <tr>
-                            <th>Banco</th>
-                            <th>Cédula Titular</th>
-                            <th>Teléfono</th>
-                            <th>Tipo de Cuenta</th>
-                            <th>N° de Cuenta</th>
-                            <th>Acciones</th>
+                            <th class="text-center">Banco</th>
+                            <th class="text-center">Cédula Titular</th>
+                            <th class="text-center">Teléfono</th>
+                            <th class="text-center">Tipo de Cuenta</th>
+                            <th class="text-center">N° de Cuenta</th>
+                            <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="listaCuentas" class="text-center">
+                    <tbody>
                     </tbody>
                 </table>
             </div>
@@ -82,20 +82,20 @@
                                 <!-- DATOS DE LA CUENTA -->
                                 <div class="mb-3">
                                     <label for="nombreBanco" class="form-label text-muted small fw-bold">Nombre del Banco</label>
-                                    <input type="text" class="form-control rounded-3" id="nombreBanco" name="nombreBanco" required>
+                                    <input type="text" class="form-control rounded-3" id="nombreBanco" name="nombreBanco" required autocomplete="off">
                                     <span id="snombreBanco" class="text-danger small"></span>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="cedulaTitular" class="form-label text-muted small fw-bold">Cédula Titular</label>
-                                        <input type="text" class="form-control rounded-3" id="cedulaTitular" name="cedulaTitular" required>
+                                        <input type="text" class="form-control rounded-3" id="cedulaTitular" name="cedulaTitular" required autocomplete="off">
                                         <span id="scedulaTitular" class="text-danger small"></span>
                                     </div>
 
                                     <div class="col-md-6 mb-3">
                                         <label for="tlfCuenta" class="form-label text-muted small fw-bold">Teléfono</label>
-                                        <input type="text" class="form-control rounded-3" id="tlfCuenta" name="tlfCuenta" required>
+                                        <input type="text" class="form-control rounded-3" id="tlfCuenta" name="tlfCuenta" required autocomplete="off">
                                         <span id="stlfCuenta" class="text-danger small"></span>
                                     </div>
                                 </div>
@@ -113,7 +113,7 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label for="numCuenta" class="form-label text-muted small fw-bold">Número de Cuenta</label>
-                                        <input type="text" class="form-control rounded-3" id="numCuenta" name="numCuenta" required>
+                                        <input type="text" class="form-control rounded-3" id="numCuenta" name="numCuenta" required autocomplete="off">
                                         <span id="snumCuenta" class="text-danger small"></span>
                                     </div>
                                 </div>
@@ -138,6 +138,8 @@
 
     <!-- Llamada del archivo JavaScript -->
     <script src="js/cuentas.js"></script>
+    <script src="js/datatables.js"></script>
+    <script src="js/sweetalert.js"></script>
 </body>
 
 </html>

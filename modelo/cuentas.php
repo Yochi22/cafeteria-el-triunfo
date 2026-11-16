@@ -84,48 +84,15 @@ class cuentas extends datos
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $r = array();
 
         try {
-            $resultado = $co->query("SELECT * FROM cuentas");
-            if ($resultado) {
-                $respuesta = '';
-                foreach ($resultado as $fila) {
-                    $respuesta .= "<tr>";
-                    $respuesta .= "<td>" . $fila['nombreBanco'] . "</td>";
-                    $respuesta .= "<td>" . $fila['cedulaTitular'] . "</td>";
-                    $respuesta .= "<td>" . $fila['tlfCuenta'] . "</td>";
-                    $respuesta .= "<td>" . $fila['tipoCuenta'] . "</td>";
-                    $respuesta .= "<td>" . $fila['numCuenta'] . "</td>";
-                    $respuesta .= "<td>";
-                    $respuesta .= "<button type='button' class='btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1 my-1' data-banco='" . $fila['nombreBanco'] . "' data-cedula='" . $fila['cedulaTitular'] . "' data-telefono='" . $fila['tlfCuenta'] . "' data-tipo='" . $fila['tipoCuenta'] . "' onclick='pone(this)'><i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span></button>";
-                    $respuesta .= "<button type='button' class='btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1 m-1' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i><span class='d-none d-sm-inline'> Eliminar</span></button>";
-                    $respuesta .= "</td>";
-                    $respuesta .= "</tr>";
-                }
-
-                if ($respuesta == "") {
-                    $respuesta .= "<tr>";
-                    $respuesta .= "<td colspan='6' class='text-center text-muted py-4'>";
-                    $respuesta .= "<span><i class='bi bi-wallet2 fs-1' style='color: #FF8C00'></i></span>";
-                    $respuesta .= "<h5 class='text-dashboard'>No tienes cuentas registradas.</h5>";
-                    $respuesta .= "</td>";
-                    $respuesta .= "</tr>";
-                }
-
-                $r['resultado'] = 'consultar';
-                $r['mensaje'] = $respuesta;
-            } else {
-                $r['resultado'] = 'consultar';
-                $r['mensaje'] = '';
-            }
+            $resultado = $co->query("SELECT nombreBanco, cedulaTitular, tlfCuenta, tipoCuenta, numCuenta FROM cuentas");
+            return $resultado->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            $r['resultado'] = 'error';
-            $r['mensaje'] = $e->getMessage();
+            return array();
         }
-
-        return $r;
     }
+
 
     // Función para Modificar Cuenta
     function modificar()
@@ -183,68 +150,6 @@ class cuentas extends datos
         } else {
             $r['resultado'] = 'eliminar';
             $r['mensaje'] = 'El número de cuenta no existe.';
-        }
-
-        return $r;
-    }
-
-    // Función para Buscar
-    function buscar($valor)
-    {
-        $co = $this->conecta();
-        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $valor = trim($valor);
-        $busqueda = "%" . $valor . "%";
-        $r = array();
-
-        try {
-            if ($busqueda) {
-                $bus = $co->prepare("SELECT nombreBanco, cedulaTitular, tlfCuenta, tipoCuenta, numCuenta 
-                                    FROM cuentas
-                                    WHERE nombreBanco LIKE :busqueda
-                                    OR cedulaTitular LIKE :busqueda
-                                    OR tlfCuenta LIKE :busqueda
-                                    OR tipoCuenta LIKE :busqueda
-                                    OR numCuenta LIKE :busqueda");
-
-                $bus->bindParam(':busqueda', $busqueda);
-                $bus->execute();
-                $resultado = $bus->fetchAll();
-
-                $respuesta = "";
-                foreach ($resultado as $fila) {
-                    $respuesta .= "<tr>";
-                    $respuesta .= "<td>" . $fila['nombreBanco'] . "</td>";
-                    $respuesta .= "<td>" . $fila['cedulaTitular'] . "</td>";
-                    $respuesta .= "<td>" . $fila['tlfCuenta'] . "</td>";
-                    $respuesta .= "<td>" . $fila['tipoCuenta'] . "</td>";
-                    $respuesta .= "<td>" . $fila['numCuenta'] . "</td>";
-                    $respuesta .= "<td>";
-                    $respuesta .= "<button type='button' class='btn btn-outline-info btn-sm d-inline-flex align-items-center gap-1 my-1' data-banco='" . $fila['nombreBanco'] . "' data-cedula='" . $fila['cedulaTitular'] . "' data-telefono='" . $fila['tlfCuenta'] . "' data-tipo='" . $fila['tipoCuenta'] . "' onclick='pone(this)'><i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span></button>";
-                    $respuesta .= "<button type='button' class='btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1 m-1' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i> Eliminar</button>";
-                    $respuesta .= "</td>";
-                    $respuesta .= "</tr>";
-                }
-
-                if ($respuesta == "") {
-                    $respuesta .= "<tr>";
-                    $respuesta .= "<td colspan='6' class='text-center text-muted py-4'>";
-                    $respuesta .= "<span><i class='bi bi-person-fill-slash fs-1' style='color: #FF8C00'></i></span>";
-                    $respuesta .= "<h5 class='text-dashboard'>No se encontraron registros</h5>";
-                    $respuesta .= "<h6 class='text-secondary'>Intenta de nuevo.</h6>";
-                    $respuesta .= "</td>";
-                    $respuesta .= "</tr>";
-                }
-
-                $r['resultado'] = 'buscar';
-                $r['mensaje'] = $respuesta;
-            } else {
-                $r['resultado'] = 'consultar';
-                $r['mensaje'] = '';
-            }
-        } catch (Exception $e) {
-            $r['resultado'] = 'error';
-            $r['mensaje'] = $e->getMessage();
         }
 
         return $r;

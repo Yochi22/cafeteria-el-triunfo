@@ -40,11 +40,6 @@ if (is_file("vista/" . $pagina . ".php")) {
                 $o->set_numCuenta(trim($_POST['numCuenta']));
                 echo json_encode($o->eliminar());
                 break;
-
-            case 'buscar':
-                $valor = trim($_POST['valorBusqueda'] ?? '');
-                echo json_encode($o->buscar($valor));
-                break;
         }
 
         exit();
