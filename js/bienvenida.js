@@ -11,7 +11,7 @@ $(document).ready(function () {
 
 function cargarHorarios() {
     var datos = new FormData();
-    datos.append("accion", "consultar_horario");
+    datos.append("accion", "consultarHorarios");
     enviaAjax(datos);
 }
 
@@ -72,6 +72,7 @@ function enviaAjax(datos) {
         success: function (respuesta) {
             try {
                 var lee = JSON.parse(respuesta);
+
                 if (Array.isArray(lee)) {
                     horariosGlobal = lee;
                     verificarEstadoLocal();
@@ -81,7 +82,7 @@ function enviaAjax(datos) {
             }
         },
         error: function (request, status, error) {
-            console.error("Error de conexión");
+            console.error("Error de conexión: " + error);
         }
     });
 }

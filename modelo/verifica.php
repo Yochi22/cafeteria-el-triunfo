@@ -2,7 +2,7 @@
 
 class verifica
 {
-    function leesesion()
+    function leeSesion()
     {
         if (empty($_SESSION)) {
             session_start();
@@ -17,7 +17,7 @@ class verifica
         return $s;
     }
 
-    function destruyesesion()
+    function destruyeSesion()
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();

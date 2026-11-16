@@ -8,16 +8,17 @@ if (!empty($_POST)) {
     $o->set_password($_POST['password']);
     $m = $o->existe();
 
-    if ($m) {
+    if ($m['resultado'] == 'existe') {
         session_destroy();
         session_start();
-        $_SESSION['nivel'] = $m['rol'];
-        $_SESSION['idUsuario'] = $m['idUsuario'];
-        header("Location: ?pagina=principal");
 
+        $_SESSION['nivel'] = $m['datos']['rol'];
+        $_SESSION['idUsuario'] = $m['datos']['idUsuario'];
+
+        header("Location: ?pagina=principal");
         exit;
     } else {
-        $mensaje = "Usuario o contraseña incorrectos.";
+        $mensaje = $m['mensaje'];
     }
 }
 

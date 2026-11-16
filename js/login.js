@@ -57,6 +57,7 @@ function validarkeypress(er, e) {
 // Función para validar por keyup
 function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
     a = er.test(etiqueta.val());
+
     if (a) {
         etiquetamensaje.text("");
         return 1;

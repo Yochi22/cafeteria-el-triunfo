@@ -34,7 +34,7 @@ if (is_file("vista/" . $pagina . ".php")) {
                 break;
 
             case 'modificar':
-                $o->set_codigoOrig($_POST['codigoOrig']);
+                $o->set_codigoOriginal($_POST['codigoOriginal']);
                 $o->set_codigoProd($_POST['codigoProd']);
                 $o->set_nombreProd($_POST['nombreProd']);
                 $o->set_precioProd($_POST['precioProd']);
@@ -45,7 +45,7 @@ if (is_file("vista/" . $pagina . ".php")) {
                 break;
 
             case 'eliminar':
-                $o->set_codigoProd($_POST['codigoProd']);
+                $o->set_codigoProd(trim($_POST['codigoProd']));
                 echo json_encode($o->eliminar());
                 break;
 
@@ -55,7 +55,7 @@ if (is_file("vista/" . $pagina . ".php")) {
                 break;
         }
 
-        exit;
+        exit();
     }
 
     require_once("vista/" . $pagina . ".php");

@@ -19,7 +19,7 @@ $(document).ready(function () {
         var fFin = $("#fecFin").val();
 
         var form = $('<form action="" method="POST" target="_blank">' +
-            '<input type="hidden" name="accion" value="generar_pdf">' +
+            '<input type="hidden" name="accion" value="generarPDF">' +
             '<input type="hidden" name="fecIni" value="' + fInicio + '">' +
             '<input type="hidden" name="fecFin" value="' + fFin + '">' +
             '</form>');
@@ -46,11 +46,17 @@ function ejecutarFiltrado() {
         success: function (respuesta) {
             try {
                 var lee = JSON.parse(respuesta);
+
                 if (lee.resultado == "exito") {
                     $("#totalVen").text(lee.totalVen);
                     $("#promGanancias").text(lee.promedio);
-                    $("#count_finalizados").text(lee.pedFinalizados);
-                    $("#count_cancelados").text(lee.pedCancelados);
+                    $("#promGananciasBs").text(lee.promedioBs);
+                    $("#pedFinalizados").text(lee.pedFinalizados);
+                    $("#pedProceso").text(lee.pedProceso);
+                    $("#pedCancelados").text(lee.pedCancelados);
+                    $("#totalVenBs").text(lee.totalVenBs);
+                    $("#tasaPeriodo").text(lee.tasaReporte);
+                    $("#fechaTasaPeriodo").text("Actualizada al: " + lee.fechaTasaReporte);
                 }
             } catch (e) {
                 console.error("Error al procesar la respuesta: ", e);

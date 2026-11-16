@@ -4,7 +4,7 @@ require_once("modelo/datos.php");
 
 class bienvenida extends datos
 {
-    public function consultarHorario()
+    public function consultarHorarios()
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

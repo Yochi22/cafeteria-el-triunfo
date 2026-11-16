@@ -35,7 +35,7 @@
 
             <hr class="text-secondary mb-4">
 
-            <!--formulario de filtro por fechas -->
+            <!-- Formulario de filtro por fechas -->
             <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
                 <h5 class="text-dashboard fw-bold mb-3"><i class="bi bi-filter"></i> Filtrar Reporte por Fechas</h5>
                 <form id="formFiltroFechas" class="row g-3 align-items-end">
@@ -54,13 +54,15 @@
                 </form>
             </div>
 
+            <!-- Promedio de ganancias en dolares y bolivares -->
             <div class="row g-4 mb-4">
-                <div class="col-12 col-sm-6 col-md-3">
+                <div class="col-12 col-sm-6 col-md-4">
                     <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
-                                <small class="text-muted fw-semibold text-uppercase small">Total de Ventas</small>
+                                <small class="text-muted fw-semibold text-uppercase small">Total de ventas</small>
                                 <h3 class="fw-bold mt-2 mb-1 text-success" id="totalVen">$ 0.00</h3>
+                                <h3 class="fw-bold mt-2 mb-1 text-secondary" id="totalVenBs">Bs 0.00</h3>
                             </div>
                             <div class="p-3 bg-success bg-opacity-10 text-success rounded-3">
                                 <i class="bi bi-cash-stack fs-4"></i>
@@ -69,12 +71,18 @@
                     </div>
                 </div>
 
-                <div class="col-12 col-sm-6 col-md-3">
+                <!-- Promedio de ganancias -->
+                <div class="col-12 col-sm-6 col-md-4">
                     <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <small class="text-muted fw-semibold text-uppercase small">Promedio Ganancias</small>
-                                <h3 class="fw-bold mt-2 mb-1 text-primary" id="promGanancias">$ 0.00</h3>
+                                <div class="d-flex align-items-baseline gap-2 mt-2">
+                                    <h3 class="fw-bold mb-0 text-primary" id="promGanancias">$ 0.00</h3>
+                                </div>
+                                <div class="d-flex align-items-baseline gap-2 mt-2">
+                                    <h3 class="fw-bold mb-0 text-secondary" id="promGananciasBs">$ 0.00</h3>
+                                </div>
                             </div>
                             <div class="p-3 bg-primary bg-opacity-10 text-primary rounded-3">
                                 <i class="bi bi-graph-up-arrow fs-4"></i>
@@ -83,12 +91,29 @@
                     </div>
                 </div>
 
-                <div class="col-12 col-sm-6 col-md-3">
+                <!-- Tasa del dolar y fecha -->
+                <div class="col-12 col-sm-6 col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <small class="text-muted fw-semibold text-uppercase small">Tasa del Dólar (Día)</small>
+                                <h3 class="fw-bold mt-2 mb-1 text-warning" id="tasaPeriodo">Bs. 0,00</h3>
+                                <small class="text-muted" id="fechaTasaPeriodo">Fecha: --/--/----</small>
+                            </div>
+                            <div class="p-3 bg-warning bg-opacity-10 text-warning rounded-3">
+                                <i class="bi bi-coin fs-4"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pedidos finalizados -->
+                <div class="col-12 col-sm-6 col-md-4">
                     <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <small class="text-muted fw-semibold text-uppercase small">Pedidos Finalizados</small>
-                                <h3 class="fw-bold mt-2 mb-1 text-success" id="count_finalizados">0</h3>
+                                <h3 class="fw-bold mt-2 mb-1 text-success" id="pedFinalizados">0</h3>
                             </div>
                             <div class="p-3 bg-success bg-opacity-10 text-success rounded-3">
                                 <i class="bi bi-check-circle-fill fs-4"></i>
@@ -97,12 +122,28 @@
                     </div>
                 </div>
 
-                <div class="col-12 col-sm-6 col-md-3">
+                <!-- Pedidos en proceso -->
+                <div class="col-12 col-sm-6 col-md-4">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <small class="text-muted fw-semibold text-uppercase small">Pedidos en Proceso</small>
+                                <h3 class="fw-bold mt-2 mb-1 text-warning" id="pedProceso">0</h3>
+                            </div>
+                            <div class="p-3 bg-warning bg-opacity-10 text-warning rounded-3">
+                                <i class="bi bi-clock-history fs-4"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- pedidos cancelados -->
+                <div class="col-12 col-sm-6 col-md-4">
                     <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
                         <div class="d-flex justify-content-between align-items-start">
                             <div>
                                 <small class="text-muted fw-semibold text-uppercase small">Pedidos Cancelados</small>
-                                <h3 class="fw-bold mt-2 mb-1 text-danger" id="count_cancelados">0</h3>
+                                <h3 class="fw-bold mt-2 mb-1 text-danger" id="pedCancelados">0</h3>
                             </div>
                             <div class="p-3 bg-danger bg-opacity-10 text-danger rounded-3">
                                 <i class="bi bi-x-circle-fill fs-4"></i>
@@ -116,6 +157,7 @@
     </div>
 
     <script src="js/reporte.js"></script>
+
 </body>
 
 </html>

@@ -14,8 +14,8 @@ if (is_file("vista/" . $pagina . ".php")) {
         $accion = $_POST['accion'];
 
         switch ($accion) {
-            case 'consultar_horario':
-                echo json_encode($o->consultarHorario());
+            case 'consultarHorarios':
+                echo json_encode($o->consultarHorarios());
                 break;
         }
 

@@ -20,7 +20,7 @@ if (is_file("vista/" . $pagina . ".php")) {
                 echo json_encode($o->consultarDatosReporte());
                 break;
 
-            case 'generar_pdf':
+            case 'generarPDF':
                 $o->set_fecIni($_POST['fecIni'] ?? '');
                 $o->set_fecFin($_POST['fecFin'] ?? '');
                 $o->generarPDF();

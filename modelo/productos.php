@@ -1,10 +1,11 @@
 <?php
 
-require_once("modelo/datos.php");
+require_once('modelo/datos.php');
 
 class productos extends datos
 {
-    private $codigoOrig;
+    // Atributos
+    private $codigoOriginal;
     private $codigoProd;
     private $nombreProd;
     private $precioProd;
@@ -12,7 +13,8 @@ class productos extends datos
     private $fotoProd;
     private $idCategoria;
 
-    function set_codigoOrig($valor) { $this->codigoOrig = $valor; }
+    // Setters
+    function set_codigoOriginal($valor) { $this->codigoOriginal = $valor; }
     function set_codigoProd($valor) { $this->codigoProd = $valor; }
     function set_nombreProd($valor) { $this->nombreProd = $valor; }
     function set_precioProd($valor) { $this->precioProd = $valor; }
@@ -20,25 +22,25 @@ class productos extends datos
     function set_fotoProd($valor) { $this->fotoProd = $valor; }
     function set_idCategoria($valor) { $this->idCategoria = $valor; }
 
-    function get_codigoOrig() { return $this->codigoOrig; }
+    // Getters
+    function get_codigoOriginal() { return $this->codigoOriginal; }
     function get_codigoProd() { return $this->codigoProd; }
     function get_nombreProd() { return $this->nombreProd; }
     function get_precioProd() { return $this->precioProd; }
     function get_descProd() { return $this->descProd; }
     function get_fotoProd() { return $this->fotoProd; }
-    function get_idCategoria()  { return $this->idCategoria; }
+    function get_idCategoria() { return $this->idCategoria; }
 
+    // Función para verificar si el Producto ya está registrado
     function existe($codigoProd)
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
         try {
             $resultado = $co->prepare("SELECT * FROM productos WHERE codigoProd = :codigoProd");
             $resultado->bindParam(':codigoProd', $codigoProd);
             $resultado->execute();
-
-            $fila = $resultado->fetch(PDO::FETCH_ASSOC);
+            $fila = $resultado->fetchAll(PDO::FETCH_BOTH);
 
             if ($fila) {
                 return true;
@@ -46,166 +48,93 @@ class productos extends datos
                 return false;
             }
         } catch (Exception $e) {
-            return $e->getMessage();
+            return false;
         }
     }
 
+    // Función para Registrar Producto
     function incluir()
     {
-        $r = array();
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $r = array();
 
         if (!$this->existe($this->codigoProd)) {
             try {
-                $i = $co->prepare("INSERT INTO productos (codigoProd, nombreProd, precioProd, descProd, fotoProd, idCategoria) VALUES (:codigoProd, :nombreProd, :precioProd, :descProd, :fotoProd, :idCategoria)");
-                $i->bindParam(':codigoProd', $this->codigoProd);
-                $i->bindParam(':nombreProd', $this->nombreProd);
-                $i->bindParam(':precioProd', $this->precioProd);
-                $i->bindParam(':descProd', $this->descProd);
-                $i->bindParam(':fotoProd', $this->fotoProd);
-                $i->bindParam(':idCategoria', $this->idCategoria);
-                $i->execute();
+                $inc = $co->prepare("INSERT INTO productos(codigoProd, nombreProd, precioProd, descProd, fotoProd, idCategoria)
+                VALUES (:codigoProd, :nombreProd, :precioProd, :descProd, :fotoProd, :idCategoria)");
+
+                $inc->bindParam(':codigoProd', $this->codigoProd);
+                $inc->bindParam(':nombreProd', $this->nombreProd);
+                $inc->bindParam(':precioProd', $this->precioProd);
+                $inc->bindParam(':descProd', $this->descProd);
+                $inc->bindParam(':fotoProd', $this->fotoProd);
+                $inc->bindParam(':idCategoria', $this->idCategoria);
+                $inc->execute();
 
                 $r['resultado'] = 'incluir';
-                $r['mensaje'] = 'Producto incluido.';
+                $r['mensaje'] = 'Producto registrado con éxito.';
             } catch (Exception $e) {
                 $r['resultado'] = 'error';
                 $r['mensaje'] = $e->getMessage();
             }
         } else {
-            $r['resultado'] = 'error';
-            $r['mensaje'] = 'Ya existe un producto con ese código.';
+            $r['resultado'] = 'incluir';
+            $r['mensaje'] = 'Ya existe el código de producto a registrar.';
         }
 
         return $r;
     }
 
-    function modificar()
-    {
-        $r = array();
-        $co = $this->conecta();
-        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        if (!$this->existe($this->codigoOrig)) {
-            $r['resultado'] = 'error';
-            $r['mensaje'] = 'El producto no existe.';
-            return $r;
-        }
-
-        if ($this->codigoProd !== $this->codigoOrig && $this->existe($this->codigoProd)) {
-            $r['resultado'] = 'error';
-            $r['mensaje'] = 'Ya existe un producto con ese código.';
-            return $r;
-        }
-
-        try {
-            $m = $co->prepare("UPDATE productos SET codigoProd = :codigoProd, nombreProd = :nombreProd, precioProd = :precioProd, descProd = :descProd, fotoProd = :fotoProd, idCategoria = :idCategoria WHERE codigoProd = :codigoOrig");
-            $m->bindParam(":codigoOrig", $this->codigoOrig);
-            $m->bindParam(":codigoProd", $this->codigoProd);
-            $m->bindParam(":nombreProd", $this->nombreProd);
-            $m->bindParam(":precioProd", $this->precioProd);
-            $m->bindParam(":descProd", $this->descProd);
-            $m->bindParam(":fotoProd", $this->fotoProd);
-            $m->bindParam(":idCategoria", $this->idCategoria);
-            $m->execute();
-
-            $r['resultado'] = 'modificar';
-            $r['mensaje'] = 'Producto modificado.';
-        } catch (Exception $e) {
-            $r['resultado'] = 'error';
-            $r['mensaje'] = $e->getMessage();
-        }
-
-        return $r;
-    }
-
-    function eliminar()
-    {
-        $r = array();
-        $co = $this->conecta();
-        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        if ($this->existe($this->codigoProd)) {
-            try {
-                $stmtId = $co->prepare("SELECT idProducto FROM productos WHERE codigoProd = :codigoProd");
-                $stmtId->execute([':codigoProd' => $this->codigoProd]);
-                $prod = $stmtId->fetch(PDO::FETCH_ASSOC);
-
-                if (!$prod) {
-                    $r['resultado'] = 'error';
-                    $r['mensaje'] = 'El producto no existe.';
-                    return $r;
-                }
-
-                $idProducto = $prod['idProducto'];
-
-                $stmtCheck = $co->prepare("SELECT COUNT(*) as total FROM pedidosproducto pp INNER JOIN pedidos p ON pp.idPedido = p.idPedido WHERE pp.idProducto = :idProducto AND p.estadoPedido = 'En Proceso'");
-                $stmtCheck->execute([':idProducto' => $idProducto]);
-                $row = $stmtCheck->fetch(PDO::FETCH_ASSOC);
-
-                if ($row['total'] > 0) {
-                    $r['resultado'] = 'error';
-                    $r['mensaje'] = 'Este producto está asociado a un pedido en proceso.';
-                    return $r;
-                }
-
-                $stmtDelDetalles = $co->prepare("DELETE pp FROM pedidosproducto pp INNER JOIN pedidos p ON pp.idPedido = p.idPedido WHERE pp.idProducto = :idProducto AND p.estadoPedido IN ('Finalizado', 'Cancelado')");
-                $stmtDelDetalles->execute([':idProducto' => $idProducto]);
-
-                $e = $co->prepare("DELETE FROM productos WHERE codigoProd = :codigoProd");
-                $e->bindParam(":codigoProd", $this->codigoProd);
-                $e->execute();
-
-                $r['resultado'] = 'eliminar';
-                $r['mensaje'] = 'Producto eliminado.';
-            } catch (Exception $e) {
-                $r['resultado'] = 'error';
-                $r['mensaje'] = $e->getMessage();
-            }
-        } else {
-            $r['resultado'] = 'error';
-            $r['mensaje'] = 'El producto no existe.';
-        }
-
-        return $r;
-    }
-
+    // Función para Consultar Categorías (Pantalla Inicial)
     function consultarCategorias()
     {
-        $r = array();
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $r = array();
 
         try {
-            $stmt = $co->query("SELECT * FROM categorias");
-            $cats = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+            $resultado = $co->query("SELECT * FROM categorias");
             $htmlCards = '';
             $htmlSelect = '';
 
-            if ($cats) {
-                foreach ($cats as $c) {
+            if ($resultado) {
+                foreach ($resultado as $c) {
                     $htmlSelect .= '<option value="' . $c['idCategoria'] . '">' . $c['nombreCat'] . '</option>';
 
-                    $fotoCat = !empty($c['fotoCat']) ? $c['fotoCat'] : 'img/principal.jpg';
+                    $fotoCat = !empty($c['fotoCat']) ? $c['fotoCat'] : '';
+                    $img_render = !empty($fotoCat) ? '<img src="' . $fotoCat . '" class="w-100 h-100 object-fit-cover" alt="' . $c['nombreCat'] . '">' : '<i class="bi bi-tags-fill fs-1"></i>';
+
                     $htmlCards .= '
-                    <div class="col-6 col-md-4 col-lg-3 mb-4">
-                        <div class="card border-0 rounded-4 shadow-sm text-center h-100 p-2 position-relative dynamic-card" style="cursor:pointer" onclick="verCategoria(' . $c['idCategoria'] . ', \'' . $c['nombreCat'] . '\')">
-                            <img src="' . $fotoCat . '" class="card-img-top rounded-4" style="height:140px; object-fit:cover;">
-                            <div class="card-body px-1 py-3">
-                                <h6 class="text-dashboard fw-bold mb-0">' . $c['nombreCat'] . '</h6>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-4">
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100" style="cursor: pointer;" onclick="verCategoria(' . $c['idCategoria'] . ', \'' . addslashes($c['nombreCat']) . '\')">
+                            <div class="card-header bg-light text-center border-0 d-flex align-items-center justify-content-center p-0" style="color: #FF8C00; height: 150px; overflow: hidden;">
+                                ' . $img_render . '
+                            </div>
+                            <div class="card-body d-flex flex-column text-center">
+                                <h5 class="text-dashboard fw-bold mb-1">' . $c['nombreCat'] . '</h5>
+                                <p class="text-muted small mb-0">' . ($c['descCat'] ?? '') . '</p>
                             </div>
                         </div>
                     </div>';
                 }
-            } else {
-                $htmlCards = '<div class="col-12 text-center text-muted py-5"><h5 class="text-dashboard mt-2">No hay categorías registradas.</h5></div>';
             }
 
-            $btnGestionar = '<a href="?pagina=categorias" class="btn btn-crear d-flex align-items-center gap-2" style="background-color: #198754 !important;"><i class="bi bi-tags fs-5"></i><span class="d-none d-sm-inline">Gestionar Categorías</span></a>';
+            if ($htmlCards == "") {
+                $htmlCards = '
+                <div class="col-12 text-center text-muted py-5">
+                    <span><i class="bi bi-tags-fill fs-1" style="color: #FF8C00"></i></span>
+                    <h5 class="text-dashboard mt-2">No hay categorías registradas.</h5>
+                </div>';
+            }
 
-            $r['resultado'] = 'categorias_completas';
+            $btnGestionar = '
+            <a href="?pagina=categorias" class="btn btn-crear d-flex align-items-center gap-2 shadow-sm py-2 px-3 rounded-3" style="background-color: #198754 !important; border-color: #198754 !important;">
+                <i class="bi bi-tags fs-5"></i>
+                <span class="d-none d-sm-inline">Gestionar Categorías</span>
+            </a>';
+
+            $r['resultado'] = 'consultarCategorias';
             $r['cards'] = $htmlCards;
             $r['select'] = $htmlSelect;
             $r['boton'] = $btnGestionar;
@@ -217,62 +146,65 @@ class productos extends datos
         return $r;
     }
 
+    // Función para Consultar Productos de una Categoría
     function consultarProductos()
     {
-        $r = array();
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-
+        $r = array();
 
         try {
-            $stmt = $co->prepare("SELECT * FROM productos WHERE idCategoria = ?");
+            $stmt = $co->prepare("SELECT p.*, c.nombreCat FROM productos p LEFT JOIN categorias c ON p.idCategoria = c.idCategoria WHERE p.idCategoria = ?");
             $stmt->execute([$this->idCategoria]);
             $prods = $stmt->fetchAll(PDO::FETCH_ASSOC);
             $html = '';
 
             if ($prods) {
                 foreach ($prods as $p) {
-                    $fotoProd = !empty($p['fotoProd']) ? $p['fotoProd'] : 'img/principal.jpg';
-                    $nombreProd = $p['nombreProd'];
-                    $descProd = $p['descProd'];
-                    $precioProd = $p['precioProd'];
-                    $idCat = $p['idCategoria'];
                     $codigoProd = $p['codigoProd'];
+                    $nombreProd = $p['nombreProd'];
+                    $precioProd = $p['precioProd'];
+                    $descProd = $p['descProd'];
+                    $fotoProd = $p['fotoProd'];
+                    $idCat = $p['idCategoria'];
+                    $nombreCat = $p['nombreCat'] ?? 'Sin categoría';
+
+                    $img_render = !empty($fotoProd) ? '<img src="' . $fotoProd . '" class="w-100 h-100 object-fit-cover" alt="' . $nombreProd . '">' : '<i class="bi bi-box-seam fs-1"></i>';
 
                     $html .= '
-                    <div class="col-12 col-md-6 col-lg-4 mb-4">
-                        <div class="card border-0 rounded-4 shadow-sm h-100 dynamic-card">
-                            <div class="row g-0 h-100 align-items-center">
-                                <div class="col-4 p-2 text-center">
-                                    <img src="' . $fotoProd . '" class="img-fluid rounded-3" style="height:90px; width:90px; object-fit:cover;">
-                                </div>
-                                <div class="col-8">
-                                    <div class="card-body py-3 pe-3 ps-2 d-flex flex-column justify-content-between h-100">
-                                        <div>
-                                            <h6 class="text-dashboard fw-bold mb-1 text-truncate">' . $p['nombreProd'] . '</h6>
-                                            <p class="text-success fw-bold small mb-2">$' . number_format($p['precioProd'], 2) . '</p>
-                                        </div>
-                                        <div class="d-flex justify-content-end gap-2">
-                                            <button class="btn btn-sm btn-light rounded-3 text-primary shadow-2-strong" onclick="pone(\'' . $codigoProd . '\', \'' . $nombreProd . '\', ' . $precioProd . ', \'' . $descProd . '\', \'' . $fotoProd . '\', ' . $idCat . ')">
-                                                <i class="bi bi-pencil-square">Editar</i>
-                                            </button>
-                                            <button class="btn btn-sm btn-light rounded-3 text-danger shadow-2-strong" onclick="eliminar(\'' . $codigoProd . '\')">
-                                                <i class="bi bi-trash">Eliminar</i>
-                                            </button>
-                                        </div>
-                                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-4">
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+                            <div class="card-header bg-light text-center border-0 d-flex align-items-center justify-content-center p-0" style="color: #FF8C00; height: 150px; overflow: hidden;">
+                                ' . $img_render . '
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <span class="badge bg-light text-dark align-self-start mb-2 border"><i class="bi bi-tag"></i> ' . $nombreCat . '</span>
+                                <h5 class="text-dashboard fw-bold mb-1">' . $nombreProd . '</h5>
+                                <h6 class="text-success fw-bold mb-2">$' . number_format($precioProd, 2) . '</h6>
+                                <p class="text-muted small mb-3">' . $descProd . '</p>
+                                
+                                <div class="d-flex justify-content-end gap-2 mt-auto">
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" data-codigo="' . $codigoProd . '" data-nombre="' . addslashes($nombreProd) . '" data-precio="' . $precioProd . '" data-descripcion="' . addslashes($descProd) . '" data-foto="' . $fotoProd . '" data-idcategoria="' . $idCat . '" onclick="pone(this)">
+                                        <i class="bi bi-pencil-square"></i> Editar
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="eliminar(this)">
+                                        <i class="bi bi-trash"></i> Eliminar
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>';
                 }
             } else {
-                $html = '<div class="col-12 text-center text-muted py-5"><h5 class="text-dashboard mt-2">No hay productos en esta categoría.</h5></div>';
+                $html = '
+                <div class="col-12 text-center text-muted py-5">
+                    <span><i class="bi bi-box-seam fs-1" style="color: #FF8C00"></i></span>
+                    <h5 class="text-dashboard mt-2">No hay productos en esta categoría.</h5>
+                </div>';
             }
 
             $btnRegresar = '
-            <button class="btn btn-crear d-flex align-items-center gap-2" style="background-color: #0d6efd !important;" onclick="cargarDatosCategorias()">
+            <button class="btn btn-crear d-flex align-items-center gap-2 shadow-sm py-2 px-3 rounded-3" style="background-color: #0d6efd !important; border-color: #0d6efd !important;" onclick="consultar()">
                 <i class="bi bi-arrow-left-circle fs-5"></i>
                 <span class="d-none d-sm-inline">Regresar</span>
             </button>';
@@ -288,67 +220,144 @@ class productos extends datos
         return $r;
     }
 
-    function buscar($valor)
+    // Función para Modificar Producto
+    function modificar()
     {
-        $r = array();
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $busqueda = "%" . trim($valor) . "%";
+        $r = array();
+
+        if ($this->existe($this->codigoOriginal)) {
+            try {
+                $mod = $co->prepare("UPDATE productos
+                    SET codigoProd = :codigoProd, nombreProd = :nombreProd, precioProd = :precioProd, descProd = :descProd, fotoProd = :fotoProd, idCategoria = :idCategoria 
+                    WHERE codigoProd = :codigoOriginal");
+
+                $mod->bindParam(':codigoOriginal', $this->codigoOriginal);
+                $mod->bindParam(':codigoProd', $this->codigoProd);
+                $mod->bindParam(':nombreProd', $this->nombreProd);
+                $mod->bindParam(':precioProd', $this->precioProd);
+                $mod->bindParam(':descProd', $this->descProd);
+                $mod->bindParam(':fotoProd', $this->fotoProd);
+                $mod->bindParam(':idCategoria', $this->idCategoria);
+                $mod->execute();
+
+                $r['resultado'] = 'modificar';
+                $r['mensaje'] = 'Producto modificado con éxito.';
+            } catch (Exception $e) {
+                $r['resultado'] = 'error';
+                $r['mensaje'] = $e->getMessage();
+            }
+        } else {
+            $r['resultado'] = 'modificar';
+            $r['mensaje'] = 'El código del producto no existe.';
+        }
+
+        return $r;
+    }
+
+    // Función para Eliminar Producto
+    function eliminar()
+    {
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $r = array();
+
+        if ($this->existe($this->codigoProd)) {
+            try {
+                $eli = $co->prepare("DELETE FROM productos WHERE codigoProd = :codigoProd");
+                $eli->bindParam(':codigoProd', $this->codigoProd);
+                $eli->execute();
+
+                $r['resultado'] = 'eliminar';
+                $r['mensaje'] = 'Producto eliminado con éxito.';
+            } catch (Exception $e) {
+                $r['resultado'] = 'error';
+                $r['mensaje'] = 'No se puede eliminar el producto porque tiene registros asociados.';
+            }
+        } else {
+            $r['resultado'] = 'eliminar';
+            $r['mensaje'] = 'El código del producto no existe.';
+        }
+
+        return $r;
+    }
+
+    // Función para Buscar
+    function buscar($valor)
+    {
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $valor = trim($valor);
+        $busqueda = "%" . $valor . "%";
+        $r = array();
 
         try {
-            $b = $co->prepare("SELECT * FROM productos WHERE (codigoProd LIKE :busqueda OR nombreProd LIKE :busqueda OR descProd LIKE :busqueda)");
-            $b->bindParam(':busqueda', $busqueda);
-            $b->execute();
-            $prods = $b->fetchAll(PDO::FETCH_ASSOC);
-            $html = '';
+            if ($busqueda) {
+                $bus = $co->prepare("SELECT p.*, c.nombreCat 
+                                    FROM productos p 
+                                    LEFT JOIN categorias c ON p.idCategoria = c.idCategoria
+                                    WHERE p.codigoProd LIKE :busqueda
+                                    OR p.nombreProd LIKE :busqueda
+                                    OR p.descProd LIKE :busqueda
+                                    OR c.nombreCat LIKE :busqueda");
 
-            if ($prods) {
-                foreach ($prods as $p) {
-                    $fotoProd = !empty($p['fotoProd']) ? $p['fotoProd'] : 'img/principal.jpg';
-                    $nombreProd = $p['nombreProd'];
-                    $descProd = $p['descProd'];
-                    $precioProd = $p['precioProd'];
-                    $idCat = $p['idCategoria'];
-                    $codigoProd = $p['codigoProd'];
+                $bus->bindParam(':busqueda', $busqueda);
+                $bus->execute();
+                $resultado = $bus->fetchAll();
+
+                $html = "";
+                foreach ($resultado as $fila) {
+                    $codigoProd = $fila['codigoProd'];
+                    $nombreProd = $fila['nombreProd'];
+                    $precioProd = $fila['precioProd'];
+                    $descProd = $fila['descProd'];
+                    $fotoProd = $fila['fotoProd'];
+                    $idCategoria = $fila['idCategoria'];
+                    $nombreCat = $fila['nombreCat'] ?? 'Sin categoría';
+
+                    $img_render = !empty($fotoProd) ? '<img src="' . $fotoProd . '" class="w-100 h-100 object-fit-cover" alt="' . $nombreProd . '">' : '<i class="bi bi-box-seam fs-1"></i>';
 
                     $html .= '
-                    <div class="col-12 col-md-6 col-lg-4 mb-4">
-                        <div class="card border-0 rounded-4 shadow-sm h-100 dynamic-card">
-                            <div class="row g-0 h-100 align-items-center">
-                                <div class="col-4 p-2 text-center">
-                                    <img src="' . $fotoProd . '" class="img-fluid rounded-3" style="height:90px; width:90px; object-fit:cover;">
-                                </div>
-                                <div class="col-8">
-                                    <div class="card-body py-3 pe-3 ps-2 d-flex flex-column justify-content-between h-100">
-                                        <div>
-                                            <h6 class="text-dashboard fw-bold mb-1 text-truncate">' . $p['nombreProd'] . '</h6>
-                                            <p class="text-success fw-bold small mb-2">$' . number_format($p['precioProd'], 2) . '</p>
-                                        </div>
-                                        <div class="d-flex justify-content-end gap-2">
-                                            <button class="btn btn-sm btn-light rounded-3 text-primary shadow-2-strong" onclick="pone(\'' . $codigoProd . '\', \'' . $nombreProd . '\', ' . $precioProd . ', \'' . $descProd . '\', \'' . $fotoProd . '\', ' . $idCat . ')">
-                                                <i class="bi bi-pencil-square">Editar</i>
-                                            </button>
-                                            <button class="btn btn-sm btn-light rounded-3 text-danger shadow-2-strong" onclick="eliminar(\'' . $codigoProd . '\')">
-                                                <i class="bi bi-trash">Eliminar</i>
-                                            </button>
-                                        </div>
-                                    </div>
+                    <div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-4">
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
+                            <div class="card-header bg-light text-center border-0 d-flex align-items-center justify-content-center p-0" style="color: #FF8C00; height: 150px; overflow: hidden;">
+                                ' . $img_render . '
+                            </div>
+                            <div class="card-body d-flex flex-column">
+                                <span class="badge bg-light text-dark align-self-start mb-2 border"><i class="bi bi-tag"></i> ' . $nombreCat . '</span>
+                                <h5 class="text-dashboard fw-bold mb-1">' . $nombreProd . '</h5>
+                                <h6 class="text-success fw-bold mb-2">$' . number_format($precioProd, 2) . '</h6>
+                                <p class="text-muted small mb-3">' . $descProd . '</p>
+                                
+                                <div class="d-flex justify-content-end gap-2 mt-auto">
+                                    <button class="btn btn-sm btn-outline-primary rounded-pill px-3" data-codigo="' . $codigoProd . '" data-nombre="' . addslashes($nombreProd) . '" data-precio="' . $precioProd . '" data-descripcion="' . addslashes($descProd) . '" data-foto="' . $fotoProd . '" data-idcategoria="' . $idCategoria . '" onclick="pone(this)">
+                                        <i class="bi bi-pencil-square"></i> Editar
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="eliminar(this)">
+                                        <i class="bi bi-trash"></i> Eliminar
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     </div>';
                 }
-            } else {
-                $html = '
-                <div class="col-12 text-center text-muted py-5">
-                    <span><i class="bi bi-box-seam fs-1" style="color: #FF8C00"></i></span>
-                    <h5 class="text-dashboard mt-2">No se encuentran productos</h5>
-                    <h6 class="text-dashboard text-secondary small">Intenta con otra búsqueda.</h6>
-                </div>';
-            }
 
-            $r['resultado'] = 'buscar';
-            $r['mensaje'] = $html;
+                if ($html == "") {
+                    $html = '
+                    <div class="col-12 text-center text-muted py-5">
+                        <span><i class="bi bi-box-seam fs-1" style="color: #FF8C00"></i></span>
+                        <h5 class="text-dashboard mt-2">No se encontraron registros</h5>
+                        <h6 class="text-secondary">Intenta de nuevo.</h6>
+                    </div>';
+                }
+
+                $r['resultado'] = 'buscar';
+                $r['mensaje'] = $html;
+            } else {
+                $r['resultado'] = 'consultar';
+                $r['mensaje'] = '';
+            }
         } catch (Exception $e) {
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();

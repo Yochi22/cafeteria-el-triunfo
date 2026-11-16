@@ -13,65 +13,68 @@ if (is_file("modelo/verifica.php")) {
     $v = new verifica();
 
     if ($pagina == 'salida') {
-        $v->destruyesesion();
+        $v->destruyeSesion();
     } else {
-        $nivel = $v->leesesion();
+        $nivel = $v->leeSesion();
     }
 }
 
-if (is_file("controlador/" . $pagina . ".php")) {
-    if ($pagina == 'login' or $pagina == 'catalogo' or $pagina == 'bienvenida') {
-        if ($pagina == 'login' and !empty($nivel)) {
-            header("Location: ?pagina=principal");
-            exit;
-        } else {
-            require_once("controlador/" . $pagina . ".php");
-        }
-    } else {
-        if (empty($nivel)) {
-            header("Location: ?pagina=login");
-            exit;
-        } else {
-            if (
-                $nivel == 'Administrador' and
-                ($pagina == 'principal' or
-                    $pagina == 'pedidos' or
-                    $pagina == 'categorias' or
-                    $pagina == 'productos' or
-                    $pagina == 'ventas' or
-                    $pagina == 'reporte' or
-                    $pagina == 'cuentas' or
-                    $pagina == 'clientes' or
-                    $pagina == 'personal' or
-                    $pagina == 'usuarios')
-            ) {
-                require_once("controlador/" . $pagina . ".php");
-            } else if (
-                $nivel == 'Cajero' and
-                ($pagina == 'principal' or
-                    $pagina == 'pedidos' or
-                    $pagina == 'ventas' or
-                    $pagina == 'reporte' or
-                    $pagina == 'clientes')
-            ) {
-                require_once("controlador/" . $pagina . ".php");
-            } else if (
-                $nivel == 'Mesero' and
-                ($pagina == 'principal' or
-                    $pagina == 'pedidos' or
-                    $pagina == 'clientes' or
-                    $pagina == 'productos' or
-                    $pagina == 'categorias')
-            ) {
-                require_once("controlador/" . $pagina . ".php");
-            } else {
-                echo "<h3>Acceso denegado</h3>";
-                echo "<p>No tienes permisos para acceder a este modulo.</p>";
-            }
-        }
-    }
-} else {
+// Validar si el controlador existe
+if (!is_file("controlador/" . $pagina . ".php")) {
     echo "PAGINA EN CONSTRUCCION";
+    exit;
+}
+
+// Páginas públicas o de acceso libre
+$paginasLibres = ['login', 'catalogo', 'bienvenida'];
+
+if (in_array($pagina, $paginasLibres)) {
+    if ($pagina == 'login' && !empty($nivel)) {
+        header("Location: ?pagina=principal");
+        exit;
+    }
+    require_once("controlador/" . $pagina . ".php");
+    exit;
+}
+
+// Si la página no es libre, se requiere iniciar sesión obligatoriamente
+if (empty($nivel)) {
+    header("Location: ?pagina=login");
+    exit;
+}
+
+// Control de acceso por roles
+$accesoPermitido = false;
+
+switch ($nivel) {
+    case 'Administrador':
+        $paginas_admin = ['principal', 'pedidos', 'categorias', 'productos', 'ventas', 'reporte', 'cuentas', 'clientes', 'personal', 'usuarios'];
+        if (in_array($pagina, $paginas_admin)) {
+            $accesoPermitido = true;
+        }
+        break;
+
+    case 'Cajero':
+        $paginas_cajero = ['principal', 'pedidos', 'ventas', 'reporte', 'clientes'];
+        if (in_array($pagina, $paginas_cajero)) {
+            $accesoPermitido = true;
+        }
+        break;
+
+    case 'Mesero':
+        $paginas_mesero = ['principal', 'pedidos', 'clientes', 'productos', 'categorias'];
+        if (in_array($pagina, $paginas_mesero)) {
+            $accesoPermitido = true;
+        }
+        break;
+}
+
+// Resultado final de la validación
+if ($accesoPermitido) {
+    require_once("controlador/" . $pagina . ".php");
+} else {
+    echo "<h3>Acceso denegado</h3>";
+    echo "<p>No tienes permisos para acceder a este modulo.</p>";
 }
 
 ?>
