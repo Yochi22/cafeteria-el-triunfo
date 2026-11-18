@@ -4,6 +4,7 @@ require_once("modelo/datos.php");
 
 class Ventas extends datos
 {
+    // FUNCIÓN DE INCLUIR
     function incluir($idPersonal, $idCliente, $tipoPago, $cedulaPago, $tlfPago, $referencia, $idCuenta, $productos, $cantidades, $precios, $zonaDelivery, $calleDelivery, $numCasaDelivery)
     {
         $co = $this->conecta();
@@ -14,46 +15,75 @@ class Ventas extends datos
             $co->beginTransaction();
             $fecha = date('Y-m-d');
 
+            // Bucle for para calcular la cantidad total y el precio de productos 
             $cantidadTotalVenta = 0;
-            $totalVenta = 0;
+            $precioProductos = 0;
             for ($i = 0; $i < count($productos); $i++) {
                 $cant = intval($cantidades[$i]);
                 $precio = floatval($precios[$i]);
                 $subtotal = $cant * $precio;
                 $cantidadTotalVenta += $cant;
-                $totalVenta += $subtotal;
+                $precioProductos += $subtotal;
             }
 
+            // Obtener precio del delivery según la zona
+            $precioDelivery = 0.00;
+            if (!empty($zonaDelivery)) {
+                $stmtZona = $co->prepare("SELECT precio FROM preciosdelivery WHERE nombreZona = :zona LIMIT 1");
+                $stmtZona->execute([':zona' => $zonaDelivery]);
+                $resZona = $stmtZona->fetch(PDO::FETCH_ASSOC);
+                $precioDelivery = $resZona ? (float)$resZona['precio'] : 0.00;
+            }
+
+            $totalVenta = $precioProductos + $precioDelivery;
+
             $idClienteVal = $idCliente ?: null;
-            $idCuentaVal = $idCuenta ?: null;
             $estadoPedido = 'Finalizado';
 
-            // Si no es Pago Móvil, aseguramos valores por defecto para evitar errores NOT NULL
-            $cedulaVal = ($tipoPago === 'Pago Móvil' && !empty($cedulaPago)) ? $cedulaPago : 'N/A';
-            $tlfVal = ($tipoPago === 'Pago Móvil' && !empty($tlfPago)) ? $tlfPago : 'N/A';
-            $refVal = ($tipoPago === 'Pago Móvil' && !empty($referencia)) ? $referencia : '0000';
+            // Pone valores para cuando el tipo de pago no sea pago móvil
+            if ($tipoPago === 'Pago Móvil') {
+                $cedulaVal = !empty($cedulaPago) ? $cedulaPago : 'N/A';
+                $tlfVal = !empty($tlfPago) ? $tlfPago : 'N/A';
+                $refVal = !empty($referencia) ? $referencia : '0000';
+                $idCuentaVal = !empty($idCuenta) ? $idCuenta : null;
+            } else {
+                $cedulaVal = 'N/A';
+                $tlfVal = 'N/A';
+                $refVal = '0000';
+                $idCuentaVal = null;
+            }
 
-            $stmtPed = $co->prepare("INSERT INTO pedidos (idCliente, idCuenta, precioTotal, estadoPedido) 
-            VALUES (:idCliente, :idCuenta, :total, :estadoPedido)");
+            // Guarda el pedido completo
+            $stmtPed = $co->prepare("INSERT INTO pedidos (idCliente, idCuenta, precioTotal, tipoPago, cedulaPago, tlfPago, numComprobante, estadoPedido) 
+            VALUES (:idCliente, :idCuenta, :total, :tipoPago, :cedulaPago, :tlfPago, :numComprobante, :estadoPedido)");
 
             $stmtPed->bindParam(':idCliente', $idClienteVal);
             $stmtPed->bindParam(':idCuenta', $idCuentaVal);
             $stmtPed->bindParam(':total', $totalVenta);
+            $stmtPed->bindParam(':tipoPago', $tipoPago);
+            $stmtPed->bindParam(':cedulaPago', $cedulaVal);
+            $stmtPed->bindParam(':tlfPago', $tlfVal);
+            $stmtPed->bindParam(':numComprobante', $refVal);
             $stmtPed->bindParam(':estadoPedido', $estadoPedido);
             $stmtPed->execute();
 
             $idPedidoGenerado = $co->lastInsertId();
 
-            $stmtDir = $co->prepare("INSERT INTO dirdelivery (idPedido, zona, calle, numCasa) VALUES (:idPedido, :zona, :calle, :numCasa)");
-            $stmtDir->bindParam(':idPedido', $idPedidoGenerado);
-            $stmtDir->bindParam(':zona', $zonaDelivery);
-            $stmtDir->bindParam(':calle', $calleDelivery);
-            $stmtDir->bindParam(':numCasa', $numCasaDelivery);
-            $stmtDir->execute();
+            // Guarda la dirección de delivery
+            if (!empty($zonaDelivery)) {
+                $stmtDir = $co->prepare("INSERT INTO dirdelivery (idPedido, zona, calle, numCasa) VALUES (:idPedido, :zona, :calle, :numCasa)");
+                $stmtDir->bindParam(':idPedido', $idPedidoGenerado);
+                $stmtDir->bindParam(':zona', $zonaDelivery);
+                $stmtDir->bindParam(':calle', $calleDelivery);
+                $stmtDir->bindParam(':numCasa', $numCasaDelivery);
+                $stmtDir->execute();
+            }
 
+            // Guarda los productos asociados al pedido
             $stmtProd = $co->prepare("INSERT INTO pedidosproducto (idPedido, idProducto, cantidadProd, subTotal) 
             VALUES (:idPedido, :idProd, :cant, :subtotal)");
 
+            // Bucle for para insertar los productos en la tabla pedidosproducto
             for ($i = 0; $i < count($productos); $i++) {
                 $cant = intval($cantidades[$i]);
                 $precio = floatval($precios[$i]);
@@ -67,16 +97,16 @@ class Ventas extends datos
                 $stmtProd->execute();
             }
 
+            // Guarda los detalles del pago
             $stmtPago = $co->prepare("INSERT INTO detallesventa (cedulaPago, tlfPago, referencia) 
             VALUES (:cedula, :tlf, :ref)");
             $stmtPago->bindParam(':cedula', $cedulaVal);
             $stmtPago->bindParam(':tlf', $tlfVal);
             $stmtPago->bindParam(':ref', $refVal);
             $stmtPago->execute();
-
             $idDetalleGenerado = $co->lastInsertId();
 
-            // Usar 'Pago Móvil' con tilde para respetar el ENUM de la BD
+            // Registrar la venta
             $stmtVenta = $co->prepare("INSERT INTO ventas (idDetalle, idPersonal, tipoPago, fechaVenta, cantidadVenta, totalVenta) 
             VALUES (:idDetalle, :idPersonal, :tipoPago, :fecha, :cantidad, :total)");
 
@@ -90,18 +120,19 @@ class Ventas extends datos
 
             $idVentaGenerado = $co->lastInsertId();
 
+            // Une el pedido con la venta en la tabla pedidosventa
             $stmtBridge = $co->prepare("INSERT INTO pedidosventa (idPedido, idVenta) 
             VALUES (:idPedido, :idVenta)");
             $stmtBridge->bindParam(':idPedido', $idPedidoGenerado);
             $stmtBridge->bindParam(':idVenta', $idVentaGenerado);
             $stmtBridge->execute();
 
-            $co->commit();
+            $co->commit(); // Si todo salió bien, hace commit
             $r['resultado'] = 'incluir';
-            $r['mensaje'] = "Venta y Pedido #$idPedidoGenerado registrados con éxito. N° de Venta: $idVentaGenerado";
+            $r['mensaje'] = "Venta registrada. N° de Venta: $idVentaGenerado";
         } catch (Exception $e) {
             if ($co->inTransaction()) {
-                $co->rollBack();
+                $co->rollBack(); // Si no salió bien, hace rollback
             }
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();
@@ -110,54 +141,29 @@ class Ventas extends datos
         return $r;
     }
 
+    // FUNCIÓN CONSULTAR
     function consultar()
     {
         $co = $this->conecta();
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $r = array();
 
         try {
-            $stmt = $co->prepare("SELECT v.*, p.nombrePer, p.apellidoPer FROM ventas v LEFT JOIN personal p ON v.idPersonal = p.idPersonal ORDER BY v.idVenta DESC");
-            $stmt->execute();
-            $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            if ($resultado !== false) {
-                $respuesta = '';
-                foreach ($resultado as $fila) {
-                    $nombrePersonal = !empty($fila['nombrePer']) ? $fila['nombrePer'] . " " . $fila['apellidoPer'] : "Personal #" . $fila['idPersonal'];
-
-                    $respuesta .= "<tr>";
-                    $respuesta .= "<td class='fw-bold'>#" . str_pad($fila['idVenta'], 3, "0", STR_PAD_LEFT) . "</td>";
-                    $respuesta .= "<td class='fw-semibold'>" . $nombrePersonal . "</td>";
-                    $respuesta .= "<td class='fw-bold text-success'>$" . number_format($fila['totalVenta'], 2) . "</td>";
-                    $respuesta .= "<td class='fw-semibold'>" . $fila['tipoPago'] . "</td>";
-                    $respuesta .= "<td><button type='button' class='btn btn-outline-info btn-sm d-inline-flex align-items-center gap-1' onclick='consultarDetalle(" . $fila['idVenta'] . ")'><i class='bi bi-eye-fill'></i><span class='d-none d-sm-inline'> Ver Detalle</span></button></td>";
-                    $respuesta .= "<td>";
-                    $respuesta .= "<button type='button' class='btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1' onclick='pone(" . $fila['idVenta'] . ")'><i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span></button> ";
-                    $respuesta .= "<button type='button' class='btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1' onclick='eliminar(" . $fila['idVenta'] . ")'><i class='bi bi-trash-fill'></i><span class='d-none d-sm-inline'> Eliminar</span></button>";
-                    $respuesta .= "</td>";
-                    $respuesta .= "</tr>";
-                }
-                if ($respuesta == "") {
-                    $respuesta .= "<tr>";
-                    $respuesta .= "<td colspan='6' class='text-center text-muted py-4'>";
-                    $respuesta .= "<span><i class='bi bi-bag-check-fill fs-1' style='color: #FF8C00'></i></span>";
-                    $respuesta .= "<h5 class='text-dashboard'>No Tiene Ventas Registradas</h5>";
-                    $respuesta .= "</td>";
-                    $respuesta .= "</tr>";
-                }
-
-                $r['resultado'] = 'consultar';
-                $r['mensaje'] = $respuesta;
-            }
+            $respuesta = $co->prepare("SELECT v.idVenta, 
+                                          CONCAT(p.nombrePer, ' ', p.apellidoPer) AS nombrePer, 
+                                          v.totalVenta, 
+                                          v.tipoPago,
+                                          v.fechaVenta
+                                   FROM ventas v 
+                                   LEFT JOIN personal p ON v.idPersonal = p.idPersonal 
+                                   ORDER BY v.idVenta DESC");
+            $respuesta->execute();
+            return $respuesta->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            $r['resultado'] = 'error';
-            $r['mensaje'] = $e->getMessage();
+            return array();
         }
-
-        return $r;
     }
 
+    // FUNCIÓN QUE CONSULTA UNA VENTA ESPECIFICA
     function consultarUno($idVenta)
     {
         $co = $this->conecta();
@@ -165,6 +171,7 @@ class Ventas extends datos
         $r = array();
 
         try {
+            // Datos generales de la venta
             $stmt = $co->prepare("SELECT v.*, d.cedulaPago, d.tlfPago, d.referencia, 
                                    per.cedulaPer, per.nombrePer, per.apellidoPer,
                                    ped.idPedido, ped.idCuenta, 
@@ -183,8 +190,9 @@ class Ventas extends datos
 
             $stmt->bindParam(':idVenta', $idVenta);
             $stmt->execute();
-            $venta = $stmt->fetch(PDO::FETCH_ASSOC);
+            $venta = $stmt->fetch(PDO::FETCH_ASSOC); // Guarda toda la información seleccionada aquí
 
+            // Datos de los productos de esa venta
             $stmtProd = $co->prepare("SELECT pp.idProducto, pp.cantidadProd AS cantidad, pp.subTotal, p.codigoProd, p.nombreProd, p.precioProd AS precioUnitario 
                                    FROM pedidosproducto pp 
                                    JOIN productos p ON pp.idProducto = p.idProducto 
@@ -193,7 +201,7 @@ class Ventas extends datos
             $idPedidoTemp = $venta['idPedido'] ?? null;
             $stmtProd->bindParam(':idPedido', $idPedidoTemp);
             $stmtProd->execute();
-            $productos = $stmtProd->fetchAll(PDO::FETCH_ASSOC);
+            $productos = $stmtProd->fetchAll(PDO::FETCH_ASSOC); // Guarda todos los productos aquí
 
             $r['resultado'] = 'consultarUno';
             $r['venta'] = $venta;
@@ -206,6 +214,7 @@ class Ventas extends datos
         return $r;
     }
 
+    // FUNCIÓN QUE CONSULTA EL DETALLE DE UNA VENTA ESPECÍFICA
     function consultarDetalle($idVenta)
     {
         $co = $this->conecta();
@@ -213,13 +222,15 @@ class Ventas extends datos
         $r = array();
 
         try {
+            // MEGA CONSULTA PARA OBTENER TODOS LOS DATOS DE LA VENTA
             $stmt = $co->prepare("SELECT v.*, d.cedulaPago, d.tlfPago, d.referencia, 
                                    per.nombrePer, per.apellidoPer, per.cedulaPer,
                                    cli.nombreCli, cli.cedulaCli, cli.tlfCli,
                                    pp.cantidadProd AS cantidad, pp.subTotal,
                                    prod.codigoProd, prod.nombreProd, prod.precioProd AS precioUnitario,
                                    c.nombreBanco, c.numCuenta,
-                                   dir.zona AS zonaDelivery, dir.calle AS calleDelivery, dir.numCasa AS numCasaDelivery
+                                   dir.zona AS zonaDelivery, dir.calle AS calleDelivery, dir.numCasa AS numCasaDelivery,
+                                   pd.precio AS precioDeliveryCosto
                             FROM ventas v 
                             JOIN detallesventa d ON v.idDetalle = d.idDetalle 
                             JOIN personal per ON v.idPersonal = per.idPersonal 
@@ -230,22 +241,57 @@ class Ventas extends datos
                             JOIN productos prod ON pp.idProducto = prod.idProducto
                             LEFT JOIN cuentas c ON ped.idCuenta = c.idCuenta
                             LEFT JOIN dirdelivery dir ON ped.idPedido = dir.idPedido
+                            LEFT JOIN preciosdelivery pd ON dir.zona = pd.nombreZona
                             WHERE v.idVenta = :idVenta");
 
             $stmt->bindParam(':idVenta', $idVenta);
             $stmt->execute();
-            $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC); // Guarda todos los resultados aquí
 
             if ($resultados) {
                 $v = $resultados[0];
                 $idVentaStr = str_pad($v['idVenta'], 3, "0", STR_PAD_LEFT);
                 $totalFormateado = number_format($v['totalVenta'], 2);
+                $costoDelivery = isset($v['precioDeliveryCosto']) ? floatval($v['precioDeliveryCosto']) : 0.00;
 
+                // Busca la tasa exacta del día de la venta
+                $stmtTasa = $co->prepare("SELECT precioTasa FROM tasadiaria WHERE fechaTasa = :fechaVenta");
+                $stmtTasa->bindParam(':fechaVenta', $v['fechaVenta']);
+                $stmtTasa->execute();
+                $tasaRow = $stmtTasa->fetch(PDO::FETCH_ASSOC);
+
+                $precioTasa = $tasaRow ? floatval($tasaRow['precioTasa']) : 0;
+
+                // Busca la tasa histórica más cercana anterior si no hay tasa del dia
+                if ($precioTasa == 0) {
+                    $stmtCercana = $co->prepare("SELECT precioTasa FROM tasadiaria WHERE fechaTasa <= :fechaVenta ORDER BY fechaTasa DESC LIMIT 1");
+                    $stmtCercana->bindParam(':fechaVenta', $v['fechaVenta']);
+                    $stmtCercana->execute();
+                    $tasaCercanaRow = $stmtCercana->fetch(PDO::FETCH_ASSOC);
+                    $precioTasa = $tasaCercanaRow ? floatval($tasaCercanaRow['precioTasa']) : 0;
+                }
+
+                // Tomamos la última disponible si no hay más
+                if ($precioTasa == 0) {
+                    $stmtUltimaTasa = $co->prepare("SELECT precioTasa FROM tasadiaria ORDER BY fechaTasa DESC LIMIT 1");
+                    $stmtUltimaTasa->execute();
+                    $ultimaTasaRow = $stmtUltimaTasa->fetch(PDO::FETCH_ASSOC);
+                    $precioTasa = $ultimaTasaRow ? floatval($ultimaTasaRow['precioTasa']) : 0;
+                }
+
+                // Cálculo del total en Bolívares
+                $totalBs = $v['totalVenta'] * $precioTasa;
+                $totalBsFormateado = number_format($totalBs, 2);
+
+                // CREA EL MODAL CON LA MINI FACTURA DE LA VENTA
                 $html = '
+                    <!-- cabecera de la venta -->
                     <div class="card border rounded-4 p-3">
                         <div class="text-center mb-3">
                             <span class="badge bg-warning text-dark px-3 py-2 fs-6">Orden #' . $idVentaStr . '</span>
                         </div>
+
+                        <!-- datos generales de la venta -->
                         <div class="row g-2 small mb-3">
                             <div class="col-6"><strong>Fecha:</strong> ' . $v['fechaVenta'] . '</div>
                             <div class="col-6"><strong>Personal:</strong> ' . $v['nombrePer'] . ' ' . $v['apellidoPer'] . '</div>
@@ -253,16 +299,20 @@ class Ventas extends datos
                             <div class="col-6"><strong>Telefono:</strong> ' . (!empty($v['tlfCli']) ? $v['tlfCli'] : 'N/A') . '</div>
                         </div>
 
+                        <!-- datos del delivery -->
                         <h6 class="fw-bold text-dashboard border-bottom pb-1 mb-2"><i class="bi bi-geo-alt"></i> Dirección de Delivery</h6>
                         <div class="row g-2 small mb-3">
-                            <div class="col-4"><strong>Zona:</strong> ' . (!empty($v['zonaDelivery']) ? $v['zonaDelivery'] : 'N/A') . '</div>
+                            <div class="col-4"><strong>Zona:</strong> ' . (!empty($v['zonaDelivery']) ? $v['zonaDelivery'] . ' ($' . number_format($costoDelivery, 2) . ')' : 'N/A') . '</div>
                             <div class="col-8"><strong>Calle:</strong> ' . (!empty($v['calleDelivery']) ? $v['calleDelivery'] : 'N/A') . '</div>
                             <div class="col-12"><strong>N° Casa:</strong> ' . (!empty($v['numCasaDelivery']) ? $v['numCasaDelivery'] : 'N/A') . '</div>
                         </div>
 
+                        <!-- productos del pedido -->
                         <h6 class="fw-bold text-dashboard border-bottom pb-1 mb-2"><i class="bi bi-basket"></i> Productos del Pedido</h6>
-                        <div class="table-responsive mb-3">
-                            <table class="table table-sm table-bordered text-center align-middle bg-white small">
+
+                        <!-- Crea la minitabla de productos -->
+                        <div class="table-responsive mb-1">
+                            <table class="table table-sm table-bordered text-center align-middle bg-white small mb-0">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Cant</th>
@@ -271,9 +321,11 @@ class Ventas extends datos
                                     </tr>
                                 </thead>
                                 <tbody>';
-
+                $precioTotalProductosDolar = 0;
+                // Recorre los productos y los agrega a la tabla
                 foreach ($resultados as $prod) {
                     if ($prod['nombreProd']) {
+                        $precioTotalProductosDolar += floatval($prod['subTotal']);
                         $html .= '<tr>
                                     <td>' . $prod['cantidad'] . '</td>
                                     <td class="text-start">' . $prod['nombreProd'] . '</td>
@@ -281,11 +333,18 @@ class Ventas extends datos
                                   </tr>';
                     }
                 }
-
+                $precioTotalProductosBs = $precioTotalProductosDolar * $precioTasa;
                 $html .= '      </tbody>
                             </table>
+                        </div>';
+                // Texto que muestra el precio de los productos 
+                $html .= '
+                        <div class="d-flex justify-content-between align-items-center px-1 py-2 mb-3 border-bottom small text-muted">
+                            <span>Subtotal Productos:</span>
+                            <span><strong class="text-success">$' . number_format($precioTotalProductosDolar, 2) . '</strong> <span class="ms-1">Bs. ' . number_format($precioTotalProductosBs, 2) . '</span></span>
                         </div>
-                        
+
+                        <!-- datos del pago -->
                         <h6 class="fw-bold text-dashboard border-bottom pb-1 mb-2"><i class="bi bi-wallet2"></i> Datos del Pago</h6>
                         <div class="row g-2 small mb-3">
                             <div class="col-6"><strong>Banco:</strong> ' . (!empty($v['nombreBanco']) ? $v['nombreBanco'] : 'N/A') . '</div>
@@ -296,9 +355,22 @@ class Ventas extends datos
                             <div class="col-12"><strong>Referencia:</strong> ' . (!empty($v['referencia']) ? $v['referencia'] : 'N/A') . '</div>
                         </div>
 
-                        <div class="d-flex justify-content-between align-items-center border-top pt-2">
-                            <h5 class="fw-bold text-dashboard mb-0">Total Venta:</h5>
-                            <h4 class="fw-bold text-success mb-0">$' . $totalFormateado . '</h4>
+                        <!-- resumen final de la venta -->
+                        <div class="border-top pt-2 mt-2">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="small text-muted">Precio Delivery (' . (!empty($v['zonaDelivery']) ? $v['zonaDelivery'] : 'N/A') . '):</span>
+                                <span class="small fw-bold text-secondary">$' . number_format($costoDelivery, 2) . ' <span class="text-muted fw-normal">/ Bs. ' . number_format($costoDelivery * $precioTasa, 2) . '</span></span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center border-top pt-2">
+                                <div>
+                                    <h5 class="fw-bold text-dashboard mb-0">Total Venta:</h5>
+                                    <small class="text-muted">Tasa aplicada: ' . ($precioTasa > 0 ? number_format($precioTasa, 2) . ' Bs/$' : 'No registrada') . '</small>
+                                </div>
+                                <div class="text-end">
+                                    <h4 class="fw-bold text-success mb-0">$' . $totalFormateado . '</h4>
+                                    <h5 class="fw-bold text-secondary mb-0">Bs. ' . $totalBsFormateado . '</h5>
+                                </div>
+                            </div>
                         </div>
                     </div>';
 
@@ -313,6 +385,7 @@ class Ventas extends datos
         return $r;
     }
 
+    // FUNCIÓN DE MODIFICAR
     function modificar($idVenta, $idPersonal, $idCliente, $tipoPago, $idDetalle, $idPedido, $cedulaPago, $tlfPago, $referencia, $idCuenta, $productos, $cantidades, $precios, $zonaDelivery, $calleDelivery, $numCasaDelivery)
     {
         $co = $this->conecta();
@@ -323,20 +396,32 @@ class Ventas extends datos
             $co->beginTransaction();
 
             $cantidadTotalVenta = 0;
-            $totalVenta = 0;
+            $precioProductos = 0;
 
             for ($i = 0; $i < count($productos); $i++) {
                 $cant = intval($cantidades[$i]);
                 $precio = floatval($precios[$i]);
                 $subtotal = $cant * $precio;
                 $cantidadTotalVenta += $cant;
-                $totalVenta += $subtotal;
+                $precioProductos += $subtotal;
             }
 
+            $precioDelivery = 0.00;
+            if (!empty($zonaDelivery)) {
+                $stmtZona = $co->prepare("SELECT precio FROM preciosdelivery WHERE nombreZona = :zona LIMIT 1");
+                $stmtZona->execute([':zona' => $zonaDelivery]);
+                $resZona = $stmtZona->fetch(PDO::FETCH_ASSOC);
+                $precioDelivery = $resZona ? (float)$resZona['precio'] : 0.00;
+            }
+
+            $totalVenta = $precioProductos + $precioDelivery;
+
+            // Agregar datos por defecto si el pago no es pago móvil
             $cedulaVal = ($tipoPago === 'Pago Móvil' && !empty($cedulaPago)) ? $cedulaPago : 'N/A';
             $tlfVal = ($tipoPago === 'Pago Móvil' && !empty($tlfPago)) ? $tlfPago : 'N/A';
             $refVal = ($tipoPago === 'Pago Móvil' && !empty($referencia)) ? $referencia : '0000';
 
+            // ACTUALIZA LAS TABLAS
             $modVenta = $co->prepare("UPDATE ventas SET idPersonal = :idPersonal, tipoPago = :tipoPago, cantidadVenta = :cant, totalVenta = :total WHERE idVenta = :idVenta");
             $modVenta->bindParam(':idPersonal', $idPersonal);
             $modVenta->bindParam(':tipoPago', $tipoPago);
@@ -363,17 +448,21 @@ class Ventas extends datos
                 $modPed->bindParam(':idPedido', $idPedido);
                 $modPed->execute();
 
+                // Para el delivery borra los datos nuevos y los ingresa de nuevo
                 $delDir = $co->prepare("DELETE FROM dirdelivery WHERE idPedido = :idPedido");
                 $delDir->bindParam(':idPedido', $idPedido);
                 $delDir->execute();
 
-                $insDir = $co->prepare("INSERT INTO dirdelivery (idPedido, zona, calle, numCasa) VALUES (:idPedido, :zona, :calle, :numCasa)");
-                $insDir->bindParam(':idPedido', $idPedido);
-                $insDir->bindParam(':zona', $zonaDelivery);
-                $insDir->bindParam(':calle', $calleDelivery);
-                $insDir->bindParam(':numCasa', $numCasaDelivery);
-                $insDir->execute();
+                if (!empty($zonaDelivery)) {
+                    $insDir = $co->prepare("INSERT INTO dirdelivery (idPedido, zona, calle, numCasa) VALUES (:idPedido, :zona, :calle, :numCasa)");
+                    $insDir->bindParam(':idPedido', $idPedido);
+                    $insDir->bindParam(':zona', $zonaDelivery);
+                    $insDir->bindParam(':calle', $calleDelivery);
+                    $insDir->bindParam(':numCasa', $numCasaDelivery);
+                    $insDir->execute();
+                }
 
+                // Hace lo mismo con los productos
                 $delProd = $co->prepare("DELETE FROM pedidosproducto WHERE idPedido = :idPedido");
                 $delProd->bindParam(':idPedido', $idPedido);
                 $delProd->execute();
@@ -393,12 +482,12 @@ class Ventas extends datos
                 }
             }
 
-            $co->commit();
+            $co->commit(); // Si todo salió bien, hace commit
             $r['resultado'] = 'modificar';
-            $r['mensaje'] = "Venta y Pedido modificados con éxito.";
+            $r['mensaje'] = "Venta modificada con éxito.";
         } catch (Exception $e) {
             if ($co->inTransaction()) {
-                $co->rollBack();
+                $co->rollBack(); // Si no salió bien, hace rollback
             }
 
             $r['resultado'] = 'error';
@@ -417,27 +506,33 @@ class Ventas extends datos
         try {
             $co->beginTransaction();
 
+            // Busca los IDs asociados a ventas
             $stmt = $co->prepare("SELECT v.idDetalle, pv.idPedido FROM ventas v JOIN pedidosventa pv ON v.idVenta = pv.idVenta WHERE v.idVenta = :idVenta");
             $stmt->bindParam(':idVenta', $idVenta);
             $stmt->execute();
             $v = $stmt->fetch(PDO::FETCH_ASSOC);
 
+            // ELIMINACIÓN EN CASCADA
             if (!empty($v['idPedido'])) {
+                // Borra el delivery
                 $stmtDelDir = $co->prepare("DELETE FROM dirdelivery WHERE idPedido = :idPedido");
                 $stmtDelDir->bindParam(':idPedido', $v['idPedido']);
                 $stmtDelDir->execute();
             }
 
+            // Borra la venta
             $stmtDelVenta = $co->prepare("DELETE FROM ventas WHERE idVenta = :idVenta");
             $stmtDelVenta->bindParam(':idVenta', $idVenta);
             $stmtDelVenta->execute();
 
+            // Borra el detalle de la venta
             if (!empty($v['idDetalle'])) {
                 $stmtDelDet = $co->prepare("DELETE FROM detallesventa WHERE idDetalle = :idDetalle");
                 $stmtDelDet->bindParam(':idDetalle', $v['idDetalle']);
                 $stmtDelDet->execute();
             }
 
+            // Borra el pedido y los productos asociados
             if (!empty($v['idPedido'])) {
                 $stmtDelPv = $co->prepare("DELETE FROM pedidosventa WHERE idPedido = :idPedido");
                 $stmtDelPv->bindParam(':idPedido', $v['idPedido']);
@@ -452,12 +547,12 @@ class Ventas extends datos
                 $stmtDelPed->execute();
             }
 
-            $co->commit();
+            $co->commit(); // Si todo salió bien, hace commit
             $r['resultado'] = 'eliminar';
             $r['mensaje'] = 'Venta eliminada con éxito.';
         } catch (Exception $e) {
             if ($co->inTransaction()) {
-                $co->rollBack();
+                $co->rollBack(); // Si no salió bien, hace rollback
             }
 
             $r['resultado'] = 'error';
@@ -467,6 +562,7 @@ class Ventas extends datos
         return $r;
     }
 
+    // FUNCIONES PARA LISTAR PERSONAL, CLIENTES, PRODUCTOS Y CUENTAS
     function listadoDePersonal()
     {
         $co = $this->conecta();
@@ -602,118 +698,6 @@ class Ventas extends datos
                 $r['resultado'] = 'listarCuentas';
                 $r['mensaje'] = $respuesta;
             }
-        } catch (Exception $e) {
-            $r['resultado'] = 'error';
-            $r['mensaje'] = $e->getMessage();
-        }
-
-        return $r;
-    }
-
-    function buscar($valor)
-    {
-        $co = $this->conecta();
-        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $valor = trim($valor);
-        $busqueda = "%" . $valor . "%";
-        $r = array();
-
-        try {
-            $bus = $co->prepare("SELECT v.*, p.nombrePer, p.apellidoPer 
-                                 FROM ventas v 
-                                 JOIN personal p ON v.idPersonal = p.idPersonal 
-                                 WHERE v.idVenta LIKE :busqueda 
-                                 OR p.nombrePer LIKE :busqueda 
-                                 OR p.apellidoPer LIKE :busqueda 
-                                 ORDER BY v.idVenta ASC");
-
-            $bus->bindParam(':busqueda', $busqueda);
-            $bus->execute();
-            $resultado = $bus->fetchAll(PDO::FETCH_BOTH);
-
-            $respuesta = "";
-            foreach ($resultado as $fila) {
-                $idVentaStr = "#" . str_pad($fila['idVenta'], 3, "0", STR_PAD_LEFT);
-                $nombrePersonal = isset($fila['nombrePer']) ? $fila['nombrePer'] . " " . $fila['apellidoPer'] : "Personal #" . $fila['idPersonal'];
-
-                $respuesta .= "<tr>";
-                $respuesta .= "<td class='fw-bold'>" . $idVentaStr . "</td>";
-                $respuesta .= "<td>" . $nombrePersonal . "</td>";
-                $respuesta .= "<td class='text-success fw-bold'>$" . number_format($fila['totalVenta'], 2) . "</td>";
-                $respuesta .= "<td>" . $fila['tipoPago'] . "</td>";
-                $respuesta .= "<td><button type='button' class='btn btn-outline-info btn-sm' onclick='consultarDetalle(" . $fila['idVenta'] . ")'><i class='bi bi-eye-fill'></i><span class='d-none d-sm-inline'> Ver Detalle</span></button></td>";
-                $respuesta .= "<td>";
-                $respuesta .= "<button type='button' class='btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1' onclick='pone(" . $fila['idVenta'] . ")'><i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span></button> ";
-                $respuesta .= "<button type='button' class='btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1' onclick='eliminar(" . $fila['idVenta'] . ")'><i class='bi bi-trash-fill'></i><span class='d-none d-sm-inline'> Eliminar</span></button>";
-                $respuesta .= "</td>";
-                $respuesta .= "</tr>";
-            }
-
-            if ($respuesta == "") {
-                $respuesta .= "<tr>";
-                $respuesta .= "<td colspan='6' class='text-center text-muted py-4'>";
-                $respuesta .= "<span><i class='bi bi-search fs-1' style='color: #FF8C00'></i></span>";
-                $respuesta .= "<h5 class='text-dashboard'>No se encontraron ventas</h5>";
-                $respuesta .= "</td>";
-                $respuesta .= "</tr>";
-            }
-
-            $r['resultado'] = 'buscar';
-            $r['mensaje'] = $respuesta;
-        } catch (Exception $e) {
-            $r['resultado'] = 'error';
-            $r['mensaje'] = $e->getMessage();
-        }
-
-        return $r;
-    }
-
-    function buscarPorFecha($fecha)
-    {
-        $co = $this->conecta();
-        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $r = array();
-
-        try {
-            $bus = $co->prepare("SELECT v.*, p.nombrePer, p.apellidoPer 
-                                 FROM ventas v 
-                                 JOIN personal p ON v.idPersonal = p.idPersonal 
-                                 WHERE v.fechaVenta = :fecha 
-                                 ORDER BY v.idVenta ASC");
-
-            $bus->bindParam(':fecha', $fecha);
-            $bus->execute();
-            $resultado = $bus->fetchAll(PDO::FETCH_BOTH);
-
-            $respuesta = "";
-            foreach ($resultado as $fila) {
-                $idVentaStr = "#" . str_pad($fila['idVenta'], 3, "0", STR_PAD_LEFT);
-                $nombrePersonal = isset($fila['nombrePer']) ? $fila['nombrePer'] . " " . $fila['apellidoPer'] : "Personal #" . $fila['idPersonal'];
-
-                $respuesta .= "<tr>";
-                $respuesta .= "<td class='fw-bold'>" . $idVentaStr . "</td>";
-                $respuesta .= "<td>" . $nombrePersonal . "</td>";
-                $respuesta .= "<td class='text-success fw-bold'>$" . number_format($fila['totalVenta'], 2) . "</td>";
-                $respuesta .= "<td>" . $fila['tipoPago'] . "</td>";
-                $respuesta .= "<td><button type='button' class='btn btn-outline-primary btn-sm' onclick='consultarDetalle(" . $fila['idVenta'] . ")'><i class='bi bi-eye-fill'></i><span class='d-none d-sm-inline'> Ver Detalle</span></button></td>";
-                $respuesta .= "<td>";
-                $respuesta .= "<button type='button' class='btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1' onclick='pone(" . $fila['idVenta'] . ")'><i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span></button> ";
-                $respuesta .= "<button type='button' class='btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1' onclick='eliminar(" . $fila['idVenta'] . ")'><i class='bi bi-trash-fill'></i><span class='d-none d-sm-inline'> Eliminar</span></button>";
-                $respuesta .= "</td>";
-                $respuesta .= "</tr>";
-            }
-
-            if ($respuesta == "") {
-                $respuesta .= "<tr>";
-                $respuesta .= "<td colspan='6' class='text-center text-muted py-4'>";
-                $respuesta .= "<span><i class='bi bi-calendar-x fs-1' style='color: #FF8C00'></i></span>";
-                $respuesta .= "<h5 class='text-dashboard'>No se encontraron ventas para esta fecha</h5>";
-                $respuesta .= "</td>";
-                $respuesta .= "</tr>";
-            }
-
-            $r['resultado'] = 'buscarFecha';
-            $r['mensaje'] = $respuesta;
         } catch (Exception $e) {
             $r['resultado'] = 'error';
             $r['mensaje'] = $e->getMessage();

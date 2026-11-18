@@ -47,11 +47,6 @@ if (is_file("vista/" . $pagina . ".php")) {
                 $o->set_idUsuario($_POST['idUsuario']);
                 echo json_encode($o->eliminar());
                 break;
-
-            case 'buscar':
-                $valor = trim($_POST['valorBusqueda'] ?? '');
-                echo json_encode($o->buscar($valor));
-                break;
         }
 
         exit();

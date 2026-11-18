@@ -1,13 +1,72 @@
-// Función para la lista de personal
 function consultar() {
-    var datos = new FormData();
-    datos.append('accion', 'consultar');
-    enviaAjax(datos);
+    if ($.fn.DataTable.isDataTable('#tblPersonal')) {
+        $("#tblPersonal").DataTable().ajax.reload(null, false);
+    }
 }
 
 $(document).ready(function () {
-    consultar();
-
+    // Inicializar DataTables
+    var table = $("#tblPersonal").DataTable({
+        ajax: {
+            url: "index.php?pagina=personal",
+            type: "POST",
+            data: { accion: "consultar" },
+            dataSrc: ""
+        },
+        columns: [
+            { data: "cedulaPer", className: "text-center" }, // Columna 0: Cédula
+            {
+                data: null,
+                className: "text-center",
+                render: function (data, type, row) {
+                    return `${row.nombrePer} ${row.apellidoPer}`; // Columna 1: Nombre y Apellido juntos
+                }
+            },
+            {
+                data: null,
+                className: "text-center",
+                render: function (data, type, row) {
+                    return `
+                        <button type='button' class='btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1 my-1' 
+                            data-cedula='${row.cedulaPer}' 
+                            data-nombre='${row.nombrePer}' 
+                            data-apellido='${row.apellidoPer}' 
+                            onclick='pone(this)'>
+                            <i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span>
+                        </button>
+                        <button type='button' class='btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1 m-1' 
+                            data-cedula='${row.cedulaPer}' 
+                            onclick='eliminar(this)'>
+                            <i class='bi bi-trash-fill'></i><span class='d-none d-sm-inline'> Eliminar</span>
+                        </button>
+                    `;
+                }
+            } // Columna 2: Acciones
+        ],
+        dom: 'rt<"row mt-3 align-items-center"<"col-md-6 text-muted small"i><"col-md-6 d-flex justify-content-end"p>>',
+        language: {
+            "decimal": "",
+            "emptyTable": "No hay empleados registrados.",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "Cargando...",
+            "processing": "Procesando...",
+            "search": "Buscar:",
+            "zeroRecords": `<div class='text-center text-muted py-4'>
+                                <span><i class='bi bi-person-fill-slash fs-1' style='color: #FF8C00'></i></span>
+                                <h5 class='text-dashboard'>No se encontraron registros</h5>
+                                <h6 class='text-secondary'>Intenta de nuevo.</h6>
+                            </div>`,
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+        }
+    });
     // VALIDACIÓN DE DATOS
     // Validación de cédula
     $("#cedulaPer").on("keypress", function (e) {
@@ -59,18 +118,13 @@ $(document).ready(function () {
     });
 
     // BOTÓN BUSCAR
-    function ejecutarBusqueda() {
-        var valor = $("#valorBusqueda").val();
+    $("#valorBusqueda").on("keyup", function () {
+        table.search(this.value).draw();
+    });
 
-        if (valor.trim().length > 0) {
-            var datos = new FormData();
-            datos.append('accion', 'buscar');
-            datos.append('valorBusqueda', valor);
-            enviaAjax(datos);
-        } else {
-            consultar();
-        }
-    }
+    $("#btnBuscar").on("click", function () {
+        table.search($("#valorBusqueda").val()).draw();
+    });
 
     $("#valorBusqueda").on("keyup", function () {
         ejecutarBusqueda();
@@ -96,22 +150,35 @@ $(document).ready(function () {
 // Validación de los datos antes de enviarlos
 function validarEnvio() {
     // Validación de envio de cédula
-    if (validarkeyup(/^[0-9\.]{7,12}$/, $("#cedulaPer"), $("#scedulaPer"), "Cédula Inválida - (El Formato debe ser: 99999999)") == 0) {
-        mostrarMensaje("Cédula Inválida - (El Formato debe ser: 99999999)");
+    if (validarkeyup(/^[0-9\.]{7,12}$/, $("#cedulaPer"), $("#scedulaPer"), "Cédula Inválida") === 0) {
+        mostrarAlerta("Atención", "Cédula Inválida <br/>(El formato debe ser: 99999999)", "warning");
         return false;
     }
     // Validación de envio de nombre
     else if (validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#nombrePer"), $("#snombrePer"), "Nombre Inválido - (Solo letras entre 3 y 100 carácteres)") == 0) {
-        mostrarMensaje("Nombre Inválido - (Solo letras entre 3 y 100 carácteres)");
+        mostrarAlerta("Atención", "Apellido Inválido - Solo letras (entre 3 y 100 caracteres)", "warning");
         return false;
     }
     // Validación de envio de apellido
     else if (validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#apellidoPer"), $("#sapellidoPer"), "Apellido Inválido - (Solo letras entre 3 y 100 carácteres)") == 0) {
-        mostrarMensaje("Apellido Inválido - (Solo letras entre 3 y 100 carácteres)");
+        mostrarAlerta("Atención", "Apellido Inválido - Solo letras (entre 3 y 100 caracteres)", "warning");
         return false;
     }
 
     return true;
+}
+
+function mostrarAlerta(titulo, mensaje, icono) {
+    Swal.fire({
+        title: titulo,
+        html: mensaje,
+        icon: icono,
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#FF8C00',
+        customClass: {
+            popup: 'rounded-4 shadow'
+        }
+    });
 }
 
 // Función para mostrar del modal del mensaje
@@ -126,6 +193,7 @@ function validarkeypress(er, e) {
     key = e.keyCode;
     tecla = String.fromCharCode(key);
     a = er.test(tecla);
+
     if (!a) {
         e.preventDefault();
     }
@@ -134,6 +202,7 @@ function validarkeypress(er, e) {
 // Función para validar por keyup
 function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
     a = er.test(etiqueta.val());
+
     if (a) {
         etiquetamensaje.text("");
         return 1;
@@ -145,24 +214,48 @@ function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
 
 // Función para llenar el formulario con los datos del personal
 function pone(pos) {
-    linea = $(pos).closest('tr');
-    $("#cedulaPer").prop("readonly", true);
-    var nombrePerCompleto = $(linea).find("td:eq(1)").text();
-    var nombrePerSeparado = nombrePerCompleto.split(' ');
+    var linea = $(pos).closest('tr');
 
-    $("#cedulaPer").val($(linea).find("td:eq(0)").text());
-    $("#nombrePer").val(nombrePerSeparado[0]);
-    $("#apellidoPer").val(nombrePerSeparado[1]);
+    var btnModificar = $(linea).find("button.btn-outline-primary");
+
+    // Extrar los datos exactos desde los atributos data-*
+    var cedula = btnModificar.attr("data-cedula");
+    var nombre = btnModificar.attr("data-nombre");
+    var apellido = btnModificar.attr("data-apellido");
+
+
+    $("#cedulaPer").prop("readonly", true);
+    $("#cedulaPer").val(cedula);
+    $("#nombrePer").val(nombre);
+    $("#apellidoPer").val(apellido);
+
     $("#btnGuardar").text('modificar');
     $("#modal_personal").modal("show");
 }
 
 function eliminar(pos) {
-    var linea = $(pos).closest('tr');
-    var cedula = $(linea).find("td:eq(0)").text();
+    var cedula = $(pos).data('cedula');
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¿Deseas eliminar este cliente del sistema?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: 'red',
+        cancelButtonColor: 'darkgray',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        customClass: {
+            popup: 'rounded-4 shadow'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var datos = new FormData();
+            datos.append('accion', 'eliminar');
+            datos.append('cedulaPer', cedula);
+            enviaAjax(datos);
+        }
+    });
 
-    $("#eliminar").val(cedula);
-    $("#modal_eliminar").modal("show");
 }
 
 function enviaAjax(datos) {
@@ -180,29 +273,32 @@ function enviaAjax(datos) {
             console.log(respuesta);
             try {
                 var lee = JSON.parse(respuesta);
+
                 if (lee.resultado == 'consultar') {
                     $("#listaPersonal").html(lee.mensaje);
                 }
-                else if (lee.resultado == 'incluir') {
-                    mostrarMensaje(lee.mensaje);
-                    if (lee.mensaje == 'Empleado incluido.') {
+                if (lee.resultado === 'incluir') {
+                    if (lee.mensaje === 'Empleado incluido.') {
+                        mostrarAlerta("¡Éxito!", lee.mensaje, "success");
                         $("#modal_personal").modal("hide");
                         consultar();
+                    } else {
+                        mostrarAlerta("Información", lee.mensaje, "info");
                     }
                 }
-                else if (lee.resultado == 'modificar') {
-                    mostrarMensaje(lee.mensaje);
-                    if (lee.mensaje == 'Empleado modificado.') {
+                else if (lee.resultado === 'modificar') {
+                    if (lee.mensaje === 'Empleado modificado') {
+                        mostrarAlerta("¡Éxito!", lee.mensaje, "success");
                         $("#modal_personal").modal("hide");
                         consultar();
+                    } else {
+                        mostrarAlerta("Información", lee.mensaje, "info");
                     }
                 }
-                else if (lee.resultado == 'eliminar') {
-                    mostrarMensaje(lee.mensaje);
-                    if (lee.mensaje == 'Empleado eliminado.') {
-                        $("#modal_eliminar").modal("hide");
-                        consultar();
-                    }
+                else if (lee.resultado === 'eliminar') {
+                    mostrarAlerta("Atención", lee.mensaje, "success");
+                    consultar();
+                    $("#modal_eliminar").modal("hide");
                 }
                 else if (lee.resultado == 'buscar') {
                     $('#listaPersonal').html(lee.mensaje);

@@ -218,7 +218,7 @@ class reportes extends datos
         $pdf->setPaper("A4", "portrait");
         $pdf->loadHtml($html);
         $pdf->render();
-        $pdf->stream('reporte.pdf', array("Attachment" => false));
+        $pdf->stream('Reporte.pdf', array("Attachment" => false));
     }
 }
 

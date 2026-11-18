@@ -41,7 +41,6 @@ $(document).ready(function () {
     });
 });
 
-// FUNCIONES DE CATALOGO
 function cargarCategorias() {
     var datos = new FormData();
     datos.append("accion", "obtenerCategorias");
@@ -85,9 +84,11 @@ function abrirModalDetalle(id, nombre, descripcion, precio, imagen) {
     } else {
         $("#modal-precioBs").text("Bs. 0,00 (Sin tasa)");
     }
+
     var modal = new bootstrap.Modal(
         document.getElementById("modalDetalleProducto"),
     );
+
     modal.show();
 }
 
@@ -101,7 +102,6 @@ function cambiarCantidadModal(cambio) {
     }
 }
 
-// FUNCIONES DE CARRITO
 function cargarCarritoLocal() {
     let carritoLocal = localStorage.getItem("carrito") || "[]";
     actualizarContadorCarrito();
@@ -250,20 +250,20 @@ function actualizarTotalConDelivery(precioDelivery) {
 
 $("#cuentaDestino").on("change", function () {
     let idCuenta = $(this).val();
-    let $btnCopiar = $("#btnCopiarDatos");
 
-    if (!idCuenta) {
-        $btnCopiar.prop("disabled", true).removeAttr("data-copiar");
-        return;
+    if (idCuenta) {
+        $("#btnAbrirModal").prop("disabled", false);
+
+        let montoTotal = $("#montoTotalBs").text() || "0.00";
+
+        var datos = new FormData();
+        datos.append('accion', 'detalleCuenta');
+        datos.append('idCuenta', idCuenta);
+        datos.append('montoTotal', montoTotal);
+        enviaAjax(datos);
+    } else {
+        $("#btnAbrirModal").prop("disabled", true);
     }
-
-    let montoTotal = $("#montoTotalBs").text() || "0.00";
-
-    var datos = new FormData();
-    datos.append("accion", "detalleCuenta");
-    datos.append("idCuenta", idCuenta);
-    datos.append("montoTotal", montoTotal);
-    enviaAjax(datos);
 });
 
 function cargarCuentas() {
@@ -272,16 +272,14 @@ function cargarCuentas() {
     enviaAjax(datos);
 }
 
-// Copiar con API
 $(document).on("click", "#btnCopiarDatos", function () {
-    let textoACopiar = $(this).attr("data-copiar");
+    let banco = $("#copiarBanco").text();
+    let cedula = $("#copiarCedula").text();
+    let telefono = $("#copiarTlfn").text();
+    let cuenta = $("#copiarNum").text();
+    let montoTotal = $("#montoTotalBs").text() || "0.00";
 
-    if (!textoACopiar) {
-        mostrarAlerta("", "Por favor seleccione una cuenta destino primero.", "warning");
-        return;
-    }
-
-    navigator.clipboard.writeText(textoACopiar)
+    navigator.clipboard.writeText(banco + "\n" + cedula + "\n" + telefono + "\n" + cuenta + "\n" + montoTotal)
         .then(() => {
             mostrarAlerta("", "Texto copiado al portapapeles", "info");
         })
@@ -290,67 +288,71 @@ $(document).on("click", "#btnCopiarDatos", function () {
         });
 });
 
+$("#btnAbrirModal").on("click", function () {
+    $("#modalCuentaCli").modal('show');
+});
+
 $("#cedulaCli").on("keypress", function (e) {
-    validarkeypress(/^[0-9\-\.]*$/, e);
+    validarkeypress(/^[0-9]*$/, e);
 });
 $("#cedulaCli").on("keyup", function () {
-    validarkeyup(/^[0-9\.]{7,8}$/, $(this), $("#scedulaCli"), "Cédula Inválida - Entre 7 y 8 dígitos");
+    validarkeyup(/^[0-9]{7,8}$/, $(this), $("#scedulaCli"), "Cédula Inválida - Debe tener entre 7 y 8 dígitos numéricos.");
 });
 
 $("#nombreCli").on("keypress", function (e) {
     validarkeypress(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]*$/, e);
 });
 $("#nombreCli").on("keyup", function () {
-    validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this), $("#snombreCli"), "Nombre Inválido - Solo letras (entre 3 y 100 caracteres)");
+    validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this), $("#snombreCli"), "Nombre Inválido - Solo letras (entre 3 y 100 caracteres).");
 });
 
 $("#apellidoCli").on("keypress", function (e) {
     validarkeypress(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]*$/, e);
 });
 $("#apellidoCli").on("keyup", function () {
-    validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this), $("#sapellidoCli"), "Apellido Inválido - Solo letras (entre 3 y 100 caracteres)");
+    validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $(this), $("#sapellidoCli"), "Apellido Inválido - Solo letras (entre 3 y 100 caracteres).");
 });
 
 $("#tlfCli").on("keypress", function (e) {
-    validarkeypress(/^[0-9\-+ ]*$/, e);
+    validarkeypress(/^[0-9]*$/, e);
 });
 $("#tlfCli").on("keyup", function () {
-    validarkeyup(/^[0-9\-+ ]{11,12}$/, $(this), $("#stlfCli"), "Teléfono Inválido - Formato: 0000-0000000");
+    validarkeyup(/^(0412|0414|0416|0422|0424|0426|02[0-9]{2})[0-9]{7}$/, $(this), $("#stlfCli"), "Teléfono Inválido - Formato : 04241234567.");
 });
 
 $("#calleDelivery").on("keypress", function (e) {
     validarkeypress(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC\-\#\.,]*$/, e);
 });
 $("#calleDelivery").on("keyup", function () {
-    validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC\-\#\.,]{3,100}$/, $(this), $("#scalleDelivery"), "Calle Inválida - Entre 3 y 100 caracteres");
+    validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC\-\#\.,]{3,100}$/, $(this), $("#scalleDelivery"), "Calle Inválida - Entre 3 y 100 caracteres.");
 });
 
 $("#numCasaDelivery").on("keypress", function (e) {
     validarkeypress(/^[0-9]*$/, e);
 });
 $("#numCasaDelivery").on("keyup", function () {
-    validarkeyup(/^[0-9]{1,6}$/, $(this), $("#snumCasaDelivery"), "Número Inválido - Solo números (1 a 6 dígitos)");
+    validarkeyup(/^[0-9]{1,6}$/, $(this), $("#snumCasaDelivery"), "Número Inválido - Solo números (1 a 6 dígitos).");
 });
 
 $("#refPago").on("keypress", function (e) {
-    validarkeypress(/^[0-9\-+ ]*$/, e);
+    validarkeypress(/^[0-9\-+]*$/, e);
 });
 $("#refPago").on("keyup", function () {
-    validarkeyup(/^[0-9\-+ ]{4}$/, $(this), $("#srefPago"), "Referencia Inválida - Solo 4 últimos dígitos");
+    validarkeyup(/^[0-9\-+]{4}$/, $(this), $("#srefPago"), "Referencia Inválida - Solo 4 últimos dígitos.");
 });
 
 $("#cedulaPago").on("keypress", function (e) {
-    validarkeypress(/^[0-9\-\.]*$/, e);
+    validarkeypress(/^[0-9]*$/, e);
 });
 $("#cedulaPago").on("keyup", function () {
-    validarkeyup(/^[0-9\.]{7,12}$/, $(this), $("#scedulaPago"), "Cédula Inválida - Entre 7 y 12 dígitos");
+    validarkeyup(/^[0-9]{7,8}$/, $(this), $("#scedulaPago"), "Cédula Inválida - Debe tener entre 7 y 8 dígitos numéricos.");
 });
 
 $("#tlfPago").on("keypress", function (e) {
-    validarkeypress(/^[0-9\-+ ]*$/, e);
+    validarkeypress(/^[0-9]*$/, e);
 });
 $("#tlfPago").on("keyup", function () {
-    validarkeyup(/^[0-9\-+ ]{11,12}$/, $(this), $("#stlfPago"), "Teléfono Inválido - Formato: 0000-0000000");
+    validarkeyup(/^(0412|0414|0416|0422|0424|0426|02[0-9]{2})[0-9]{7}$/, $(this), $("#stlfPago"), "Teléfono Inválido - Formato : 04241234567.");
 });
 
 $("#tipoPago").on("change", function () {
@@ -386,20 +388,20 @@ function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
 }
 
 function validarEnvio() {
-    if (validarkeyup(/^[0-9\.]{7,8}$/, $("#cedulaCli"), $("#scedulaCli"), "Cédula Inválida") === 0) {
-        mostrarAlerta("", "Cédula Inválida <br/>(El formato debe ser entre 7 y 8 dígitos)", "warning");
+    if (validarkeyup(/^[0-9]{7,8}$/, $("#cedulaCli"), $("#scedulaCli"), "Cédula Inválida") === 0) {
+        mostrarAlerta("", "Cédula Inválida <br/>(El formato debe ser entre 7 y 8 dígitos).", "warning");
         return false;
     }
     else if (validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#nombreCli"), $("#snombreCli"), "Nombre Inválido") === 0) {
-        mostrarAlerta("", "Nombre Inválida <br/>(Solo letras entre 3 y 100 caracteres)", "warning");
+        mostrarAlerta("", "Nombre Inválida <br/>(Solo letras entre 3 y 100 caracteres).", "warning");
         return false;
     }
     else if (validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#apellidoCli"), $("#sapellidoCli"), "Apellido Inválido") === 0) {
-        mostrarAlerta("", "Apellido Inválido <br/>(Solo letras entre 3 y 100 caracteres)", "warning");
+        mostrarAlerta("", "Apellido Inválido <br/>(Solo letras entre 3 y 100 caracteres).", "warning");
         return false;
     }
-    else if (validarkeyup(/^[0-9\-+ ]{11,12}$/, $("#tlfCli"), $("#stlfCli"), "Teléfono Inválido") === 0) {
-        mostrarAlerta("", "Teléfono Inválido <br/>(Formato: 0000-0000000)", "warning");
+    else if (validarkeyup(/^(0412|0414|0416|0422|0424|0426|02[0-9]{2})[0-9]{7}$/, $("#tlfCli"), $("#stlfCli"), "Teléfono Inválido") === 0) {
+        mostrarAlerta("", "Teléfono Inválido <br/>(Formato : 04241234567).", "warning");
         return false;
     }
 
@@ -422,16 +424,16 @@ function validarEnvio() {
     }
 
     if ($("#tipoPago").val() === "Pago Móvil") {
-        if (validarkeyup(/^[0-9\-+ ]{4}$/, $("#refPago"), $("#srefPago"), "Referencia Inválida") === 0) {
+        if (validarkeyup(/^[0-9\-+]{4}$/, $("#refPago"), $("#srefPago"), "Referencia Inválida") === 0) {
             mostrarAlerta("", "Referencia Inválida <br/>(Solo 4 últimos dígitos)", "warning");
             return false;
         }
-        if (validarkeyup(/^[0-9\.]{7,12}$/, $("#cedulaPago"), $("#scedulaPago"), "Cédula Inválida") === 0) {
-            mostrarAlerta("", "Cédula Inválida de quien pagó <br/>(Entre 7 y 12 dígitos)", "warning");
+        if (validarkeyup(/^[0-9]{7,8}$/, $("#cedulaPago"), $("#scedulaPago"), "Cédula Inválida") === 0) {
+            mostrarAlerta("", "Cédula Inválida de quien pagó <br/>(El formato debe ser entre 7 y 8 dígitos).", "warning");
             return false;
         }
-        if (validarkeyup(/^[0-9\-+ ]{11,12}$/, $("#tlfPago"), $("#stlfPago"), "Teléfono Inválido") === 0) {
-            mostrarAlerta("", "Teléfono Inválido de quien pagó <br/>(Formato: 0000-0000000)", "warning");
+        if (validarkeyup(/^(0412|0414|0416|0422|0424|0426|02[0-9]{2})[0-9]{7}$/, $("#tlfPago"), $("#stlfPago"), "Teléfono Inválido") === 0) {
+            mostrarAlerta("", "Teléfono Inválido de quien pagó <br/>(Formato : 04241234567).", "warning");
             return false;
         }
         if (!$("#cuentaDestino").val()) {
@@ -584,7 +586,8 @@ function enviaAjax(datos) {
                     $("#cuentaDestino").html(lee.mensaje);
 
                 } else if (lee.resultado == "mostrarDetalleCuenta") {
-                    $("#btnCopiarDatos").attr("data-copiar", lee.mensaje).prop("disabled", false);
+                    $("#modalCuentaCliCont").html(lee.mensaje);
+                    $("#modalCuentaCli").modal('show');
 
                 } else if (lee.resultado == "pedidoClienteRegistrado") {
                     $("#pagoModal").modal("hide");

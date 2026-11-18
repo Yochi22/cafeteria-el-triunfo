@@ -38,22 +38,22 @@ $(document).ready(function () {
     // VALIDACIÓN DE DATOS
     $("#numComprobante").on("keypress", function (e) { validarkeypress(/^[0-9]*$/, e); });
     $("#numComprobante").on("keyup", function () {
-        validarkeyup(/^[0-9]{4}$/, $(this), $("#snumComprobante"), "Comprobante Inválido");
+        validarkeyup(/^[0-9]{4}$/, $(this), $("#snumComprobante"), "Comprobante Inválido.");
     });
 
-    $("#cedulaPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9\-\.]*$/, e); });
+    $("#cedulaPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9]*$/, e); });
     $("#cedulaPagoPedido").on("keyup", function () {
-        validarkeyup(/^[0-9\.]{7,12}$/, $(this), $("#scedulaPagoPedido"), "Cédula Inválida - Formato: 999999999");
+        validarkeyup(/^[0-9]{7,8}$/, $(this), $("#scedulaPagoPedido"), "Cédula Inválida - Debe tener entre 7 y 8 dígitos numéricos.");
     });
 
-    $("#tlfPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9\-+ ]*$/, e); });
+    $("#tlfPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9]*$/, e); });
     $("#tlfPagoPedido").on("keyup", function () {
-        validarkeyup(/^[0-9\-+]{11,12}$/, $(this), $("#stlfPagoPedido"), "Teléfono Inválido - Formato: 0000-0000000");
+        validarkeyup(/^(0412|0414|0416|0422|0424|0426|02[0-9]{2})[0-9]{7}$/, $(this), $("#stlfPagoPedido"), "Teléfono Inválido - Formato : 04241234567.");
     });
 
-    $("#referenciaPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9\-+ ]*$/, e); });
+    $("#referenciaPagoPedido").on("keypress", function (e) { validarkeypress(/^[0-9\-+]*$/, e); });
     $("#referenciaPagoPedido").on("keyup", function () {
-        validarkeyup(/^[0-9\-+]{4}$/, $(this), $("#sreferenciaPagoPedido"), "Referencia Inválida");
+        validarkeyup(/^[0-9\-+]{4}$/, $(this), $("#sreferenciaPagoPedido"), "Referencia Inválida.");
     });
 
     // Control de botones auxiliares de cuentas
@@ -140,7 +140,7 @@ function validarEnvio() {
     }
     if ($("#numComprobante").val().trim() !== "") {
         if (validarkeyup(/^[0-9]{4}$/, $("#numComprobante"), $("#snumComprobante"), "Comprobante Inválido") === 0) {
-            mostrarAlerta("Atención", "Número de Comprobante Inválido", "warning");
+            mostrarAlerta("Atención", "Número de Comprobante Inválido.", "warning");
             return false;
         }
     }
@@ -158,11 +158,11 @@ function validarEnvio() {
                 mostrarAlerta("Atención", "Referencia inválida. Revise el formato indicado.", "warning");
                 return false;
             }
-            if (validarkeyup(/^[0-9\.]{7,12}$/, $("#cedulaPagoPedido"), $("#scedulaPagoPedido"), "Cédula Inválida") === 0) {
+            if (validarkeyup(/^[0-9]{7,8}$/, $("#cedulaPagoPedido"), $("#scedulaPagoPedido"), "Cédula Inválida") === 0) {
                 mostrarAlerta("Atención", "Cédula inválida del pagador.", "warning");
                 return false;
             }
-            if (validarkeyup(/^[0-9\-+ ]{11,12}$/, $("#tlfPagoPedido"), $("#stlfPagoPedido"), "Teléfono Inválido") === 0) {
+            if (validarkeyup(/^(0412|0414|0416|0422|0424|0426|02[0-9]{2})[0-9]{7}$/, $("#tlfPagoPedido"), $("#stlfPagoPedido"), "Teléfono Inválido") === 0) {
                 mostrarAlerta("Atención", "Teléfono inválido del pagador.", "warning");
                 return false;
             }
@@ -208,7 +208,7 @@ function seleccionarProducto(id, codigo, nombre, precio) {
             encontro = true;
             var inputCant = $(this).find("input[name='cantidad[]']");
             inputCant.val(parseInt(inputCant.val()) + 1);
-            modificasubtotal(inputCant[0]);
+            modificaSubTotal(inputCant[0]);
         }
     });
 
@@ -228,11 +228,11 @@ function seleccionarProducto(id, codigo, nombre, precio) {
             "'>$" +
             precio +
             "</td>" +
-            "<td class='align-middle' style='width: 120px;'><input type='number' class='form-control form-control-sm text-center' value='1' name='cantidad[]' min='1' onchange='modificasubtotal(this)' onkeyup='modificasubtotal(this)'></td>" +
+            "<td class='align-middle' style='width: 120px;'><input type='number' class='form-control form-control-sm text-center' value='1' name='cantidad[]' min='1' onchange='modificaSubTotal(this)' onkeyup='modificaSubTotal(this)'></td>" +
             "<td class='align-middle text-success fw-bold subtotal-cell'>$" +
             precio +
             "</td>" +
-            "<td class='align-middle'><button type='button' class='btn btn-outline-danger btn-sm' onclick='eliminalineadetalle(this)'><i class='bi bi-x-lg'></i></button></td>" +
+            "<td class='align-middle'><button type='button' class='btn btn-outline-danger btn-sm' onclick='eliminaLineaDetalle(this)'><i class='bi bi-x-lg'></i></button></td>" +
             "</tr>";
         $("#detallesdeventa").append(fila);
         calculaTotal();
@@ -241,7 +241,7 @@ function seleccionarProducto(id, codigo, nombre, precio) {
 }
 
 // Gestión de subtotales y total general
-function modificasubtotal(input) {
+function modificaSubTotal(input) {
     var fila = $(input).closest("tr");
     var precio = parseFloat(fila.find("input[name='precio[]']").val());
     var cantidad = parseInt($(input).val());
@@ -256,7 +256,7 @@ function modificasubtotal(input) {
     calculaTotal();
 }
 
-function eliminalineadetalle(btn) {
+function eliminaLineaDetalle(btn) {
     $(btn).closest("tr").remove();
     calculaTotal();
 }

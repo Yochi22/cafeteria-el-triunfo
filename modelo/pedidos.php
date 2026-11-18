@@ -86,6 +86,10 @@ class pedidos extends datos
         $r = array();
 
         try {
+            $stmtTasa = $co->query("SELECT precioTasa FROM tasadiaria ORDER BY idTasa DESC LIMIT 1");
+            $tasaData = $stmtTasa->fetch(PDO::FETCH_ASSOC);
+            $tasa = $tasaData ? (float)$tasaData['precioTasa'] : 1.00;
+
             $sql = "SELECT p.*, c.nombreCli, c.apellidoCli, c.cedulaCli, c.tlfCli, cu.nombreBanco, cu.numCuenta, cu.tipoCuenta, 
                            d.zona, d.calle, d.numCasa, pd.precio AS precioDelivery
                     FROM pedidos p 
@@ -195,6 +199,7 @@ class pedidos extends datos
                                 <div class="text-start text-lg-end">
                                     <span class="text-muted small text-uppercase fw-bold d-block mb-1">Total a Pagar</span>
                                     <h3 class="text-success fw-bold mb-0">$' . number_format($fila['precioTotal'], 2) . '</h3>
+                                    <h4 class="text-secondary fw-bold d-block">Bs. ' . number_format($fila['precioTotal'] * $tasa, 2, ',', '.') . '</h4>
                                 </div>
                                 <div class="d-flex flex-row flex-lg-column gap-2 w-100" style="max-width: 160px;">
                                     <button type="button" class="btn btn-outline-primary btn-sm rounded-pill d-flex align-items-center justify-content-center gap-2 w-100 py-1 px-3" onclick="pone(' . $fila['idPedido'] . ')" title="Editar">

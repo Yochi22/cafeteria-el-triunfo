@@ -386,18 +386,29 @@ class catalogo extends datos
             $cuenta = $cc->fetch(PDO::FETCH_ASSOC);
 
             if ($cuenta) {
-                $textoACopiar = "Banco: " . $cuenta['nombreBanco'] . "\n" .
-                    "Cédula: " . $cuenta['cedulaTitular'] . "\n" .
-                    "Teléfono: " . $cuenta['tlfCuenta'] . "\n" .
-                    "Nro. de Cuenta: " . $cuenta['numCuenta'] . "\n" .
-                    "Monto a pagar: " . $montoTotal;
+                $html = '
+                <div class="alert alert-light border p-3 rounded-3 mb-3">
+                    <button type="button" class="btn btn-secondary-sm position-absolute top-0 end-0 m-2" id="btnCopiarDatos" title="Copiar datos">
+                        <i class="bi bi-copy"></i>
+                    </button>
+                    <p class="mb-1" id="copiarBanco"><strong>Banco:</strong> ' . $cuenta['nombreBanco'] . '</p>
+                    <p class="mb-1" id="copiarCedula"><strong>Cédula:</strong> ' . $cuenta['cedulaTitular'] . '</p>
+                    <p class="mb-0" id="copiarTlfn"><strong>Teléfono:</strong> ' . $cuenta['tlfCuenta'] . '</p>
+                    <p class="mb-1" id="copiarNum"><strong>Nro. de Cuenta:</strong> <span class="text-dark fw-bold">' . $cuenta['numCuenta'] . '</span></p>
+                </div>
+                    <span class="text-muted small d-block">Monto a pagar:</span>
+                    <h4 class="text-success fw-bold mb-0">' . $montoTotal . '</h4>
+                </div>';
 
                 $r['resultado'] = 'mostrarDetalleCuenta';
-                $r['mensaje'] = $textoACopiar;
+                $r['mensaje'] = $html;
+            } else {
+                $r['resultado'] = 'error';
+                $r['mensaje'] = 'No se encontró la información de la cuenta.';
             }
         } catch (Exception $e) {
             $r['resultado'] = 'error';
-            $r['mensaje'] = $e->getMessage();
+            $r['mensaje'] = 'Error en base de datos: ' . $e->getMessage();
         }
 
         return $r;
@@ -445,24 +456,29 @@ class catalogo extends datos
             $lineas = array();
             $precioTotal = 0;
             $consultaProducto = $co->prepare('SELECT idProducto, precioProd FROM productos WHERE codigoProd = :codigo LIMIT 1');
+
             foreach ($carrito as $item) {
                 $codigo = trim($item['codigoProd'] ?? '');
                 $cantidad = filter_var($item['cantidad'] ?? null, FILTER_VALIDATE_INT);
+
                 if ($codigo === '' || !$cantidad || $cantidad < 1) {
                     throw new Exception('Hay un producto o cantidad inválida en el carrito. Vacíe y vuelva a agregar los productos.');
                 }
+
                 $consultaProducto->execute(array(':codigo' => $codigo));
                 $producto = $consultaProducto->fetch(PDO::FETCH_ASSOC);
+
                 if (!$producto) {
                     throw new Exception('Uno de los productos del carrito ya no está disponible. Actualice el carrito.');
                 }
+
                 $subtotal = (float)$producto['precioProd'] * $cantidad;
                 $precioTotal += $subtotal;
                 $lineas[] = array('idProducto' => $producto['idProducto'], 'cantidad' => $cantidad, 'subtotal' => $subtotal);
             }
 
-            // Sumar el precio del delivery al total del pedido
             $precioDelivery = 0.00;
+
             if ($zona !== '') {
                 $stmtDeliv = $co->prepare("SELECT precio FROM preciosdelivery WHERE nombreZona = :zona LIMIT 1");
                 $stmtDeliv->execute([':zona' => $zona]);
@@ -471,6 +487,7 @@ class catalogo extends datos
                     $precioDelivery = (float)$resDeliv['precio'];
                 }
             }
+
             $precioTotal += $precioDelivery;
 
             $idCuentaGuardar = ($tipoPago === 'Pago Móvil' && $idCuenta !== '') ? $idCuenta : null;

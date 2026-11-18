@@ -21,12 +21,12 @@
                     </button>
 
                     <div>
-                        <h2 class="text-dashboard mb-1"><i class="bi bi-graph-up-arrow"></i> Historial de Ventas</h2>
+                        <h2 class="text-dashboard mb-1"><i class="bi bi-receipt"></i> Historial de Ventas</h2>
                         <p class="text-muted mb-0">Revisa y gestiona todas las ventas concretadas de tu negocio.</p>
                     </div>
                 </div>
 
-                <button type="button" id="incluir" class="btn btn-crear" data-bs-toggle="modal" data-bs-target="#modal_cuentas">
+                <button type="button" id="incluir" class="btn btn-crear" data-bs-toggle="modal" data-bs-target="#modal_venta">
                     <i class="bi bi-plus-circle fs-5"></i>
                     <span class="d-none d-sm-inline"> Agregar Nueva Venta</span>
                 </button>
@@ -35,15 +35,17 @@
             <hr class="text-secondary mb-4">
 
             <div class="row mb-4 g-3">
+                <!-- BUSCADOR -->
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="input-group bg-white border rounded-3 align-items-center shadow-sm h-100">
                         <span class="input-group-text bg-transparent border-0 text-muted">
                             <i class="bi bi-search"></i>
                         </span>
-                        <input type="text" id="buscarVenta" name="buscarVenta" class="form-control border-0 py-2 shadow-none" placeholder="Buscar por cliente o N° de orden...">
+                        <input type="text" id="buscarVenta" name="buscarVenta" class="form-control border-0 py-2 shadow-none" placeholder="Buscar Venta...">
                     </div>
                 </div>
 
+                <!-- BUSCADOR POR FECHAS -->
                 <div class="col-12 col-md-4 col-lg-3">
                     <div class="input-group bg-white border rounded-3 align-items-center shadow-sm h-100">
                         <input type="date" id="buscarFecha" name="buscarFecha" class="form-control border-0 py-2 shadow-none text-muted">
@@ -57,7 +59,7 @@
                 </div>
                 <div class="card-body p-0 mt-3">
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle mb-0 text-center">
+                        <table id="tblVentas" class="table table-hover align-middle mb-0 text-center">
                             <thead class="table-light text-dashboard mb-1">
                                 <tr>
                                     <th class="py-3">N° Orden</th>
@@ -68,14 +70,15 @@
                                     <th class="py-3">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody id="listaVentas">
+                            <tbody>
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <form id="form_venta_completa">
+            <!-- FORMULARIO PARA INGRESAR LA VENTA -->
+            <form id="formVentas">
                 <input type="hidden" id="accion" name="accion" value="incluir">
                 <input type="hidden" id="idVenta" name="idVenta">
                 <input type="hidden" id="idDetalle" name="idDetalle">
@@ -109,13 +112,13 @@
                     </div>
                 </div>
 
-                <!-- Datos del Pedido  -->
+                <!-- Datos del Pedido -->
                 <div class="modal fade" id="modal_detallesdepedido" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-lg modal-dialog-centered">
                         <div class="modal-content border-0 rounded-4 shadow">
                             <div class="modal-header border-0 pb-0">
                                 <h5 class="modal-title fw-bold text-dashboard">
-                                    <button type="button" class="btn p-0 border-0 bg-transparent text-dashboard me-2 text-decoration-none shadow-none" data-bs-toggle="modal" data-bs-target="#modal_venta" title="Volver al formulario de personal ">
+                                    <button type="button" class="btn p-0 border-0 bg-transparent text-dashboard me-2 text-decoration-none shadow-none" data-bs-toggle="modal" data-bs-target="#modal_venta" title="Volver al formulario de personal">
                                         <i class="bi bi-arrow-left-circle fs-4 text-orange"></i>
                                     </button>
                                     Formulario de Detalles de Venta
@@ -125,36 +128,49 @@
                             <div class="modal-body">
                                 <h5 class="fw-bold text-dashboard text-center mb-3">Datos del Pedido</h5>
 
-                                <div class="row">
-                                    <div class="col-md-12 mb-2">
-                                        <p class="small mb-2" style="opacity: 0.5;">Dirección de delivery.</p>
-                                        <label for="zonaDelivery" class="form-label text-muted small fw-bold">Zona</label>
-                                        <select class="form-select rounded-3" id="zonaDelivery" name="zonaDelivery" required>
-                                            <option value="">Seleccione...</option>
-                                            <option value="Este">Este</option>
-                                            <option value="Oeste">Oeste</option>
-                                            <option value="Centro">Centro</option>
-                                            <option value="Norte">Norte</option>
-                                            <option value="Sur">Sur</option>
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <label for="aplicaDelivery" class="form-label text-muted small fw-bold">¿El Pedido es por Tienda o por Delivery?</label>
+                                        <select class="form-select rounded-3" id="aplicaDelivery" name="aplicaDelivery" required>
+                                            <option value="No">Por Tienda</option>
+                                            <option value="Sí">Por Delivery</option>
                                         </select>
                                     </div>
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-md-6 mb-2">
-                                        <label for="calleDelivery" class="form-label text-muted small fw-bold">Calle</label>
-                                        <input type="text" class="form-control rounded-3" id="calleDelivery" name="calleDelivery" required>
-                                        <span id="scalleDelivery" class="text-danger small"></span>
+                                <div id="seccionDelivery" style="display: none;">
+                                    <div class="row">
+                                        <div class="col-md-12 mb-2">
+                                            <p class="small mb-2" style="opacity: 0.5;">Dirección de delivery.</p>
+                                            <label for="zonaDelivery" class="form-label text-muted small fw-bold">Zona</label>
+                                            <select class="form-select rounded-3" id="zonaDelivery" name="zonaDelivery">
+                                                <option value="">Seleccione...</option>
+                                                <option value="Este">Este</option>
+                                                <option value="Oeste">Oeste</option>
+                                                <option value="Centro">Centro</option>
+                                                <option value="Norte">Norte</option>
+                                                <option value="Sur">Sur</option>
+                                            </select>
+                                            <span id="szonaDelivery" class="text-danger small"></span>
+                                        </div>
                                     </div>
 
-                                    <div class="col-md-6 mb-2">
-                                        <label for="numCasaDelivery" class="form-label text-muted small fw-bold">Num. Casa</label>
-                                        <input type="text" class="form-control rounded-3" id="numCasaDelivery" name="numCasaDelivery" required>
-                                        <span id="snumCasaDelivery" class="text-danger small"></span>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-2">
+                                            <label for="calleDelivery" class="form-label text-muted small fw-bold">Calle</label>
+                                            <input type="text" class="form-control rounded-3" id="calleDelivery" name="calleDelivery">
+                                            <span id="scalleDelivery" class="text-danger small"></span>
+                                        </div>
+
+                                        <div class="col-md-6 mb-2">
+                                            <label for="numCasaDelivery" class="form-label text-muted small fw-bold">Num. Casa</label>
+                                            <input type="text" class="form-control rounded-3" id="numCasaDelivery" name="numCasaDelivery">
+                                            <span id="snumCasaDelivery" class="text-danger small"></span>
+                                        </div>
                                     </div>
                                 </div>
 
-                                <div class="row mb-4">
+                                <div class="row mb-4 mt-3">
                                     <div class="col-md-6 mb-2 mb-md-0">
                                         <label class="form-label text-muted small fw-bold">Cliente</label>
                                         <div class="input-group">
@@ -248,7 +264,7 @@
                                             <span id="stlfPago" class="text-danger small"></span>
                                         </div>
                                         <div class="col-md-12 mb-3">
-                                            <label for="refPago" class="form-label text-muted small fw-bold">Referencia del pago (Ultimos 4 Numeros)</label>
+                                            <label for="refPago" class="form-label text-muted small fw-bold">Referencia del pago (Últimos 4 digitos)</label>
                                             <input type="text" class="form-control rounded-3" id="refPago" name="refPago" maxlength="4">
                                             <span id="srefPago" class="text-danger small"></span>
                                         </div>
@@ -264,11 +280,10 @@
                         </div>
                     </div>
                 </div>
-
             </form>
+            <!-- FIN DEL FORMULARIO -->
 
             <!-- LISTADOS DE SELECCIÓN -->
-
             <!-- Listado de Personal -->
             <div class="modal fade" id="modal_personal" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -374,6 +389,7 @@
                     </div>
                 </div>
             </div>
+            <!-- FIN DE LAS LISTAS -->
 
             <!-- Modal Ver Detalle -->
             <div class="modal fade" id="modal_ver_detalle" tabindex="-1" aria-hidden="true">
@@ -388,13 +404,13 @@
                     </div>
                 </div>
             </div>
-
         </main>
-
-        <?php require_once("comunes/modal_eliminar.php"); ?>
-        <?php require_once("comunes/modal.php"); ?>
     </div>
+
+    <!-- Llamada del archivo JavaScript -->
     <script src="js/ventas.js"></script>
+    <script src="js/datatables.js"></script>
+    <script src="js/sweetalert.js"></script>
 </body>
 
 </html>

@@ -109,7 +109,7 @@
                         <div class="row mb-3">
                             <div class="col-md-6 mb-3 mb-md-0">
                                 <label class="form-label text-muted small fw-bold">Número de Comprobante / Referencia (Opcional)</label>
-                                <input type="text" class="form-control rounded-3 bg-light border-secondary-subtle" id="numComprobante" name="numComprobante" maxlength="100" placeholder="Ej: 12345678">
+                                <input type="text" class="form-control rounded-3 bg-light border-secondary-subtle" id="numComprobante" name="numComprobante" maxlength="100" placeholder="Últimos 4 digitos">
                                 <span id="snumComprobante" class="text-danger small"></span>
                             </div>
                             <div class="col-md-6 mb-3 mb-md-0" id="divEstadoPedido" style="display: none;">

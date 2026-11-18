@@ -74,10 +74,10 @@ $(document).ready(function () {
     // VALIDACIÓN DE DATOS
     // -- Validación de cédula --
     $("#cedulaCli").on("keypress", function (e) {
-        validarkeypress(/^[0-9\-\.]*$/, e);
+        validarkeypress(/^[0-9]*$/, e);
     });
     $("#cedulaCli").on("keyup", function () {
-        validarkeyup(/^[0-9\.]{7,12}$/, $(this), $("#scedulaCli"), "Cédula Inválida - El formato debe ser: 99999999");
+        validarkeyup(/^[0-9]{7,8}$/, $(this), $("#scedulaCli"), "Cédula Inválida - Debe tener entre 7 y 8 dígitos numéricos.");
     });
 
     // -- Validación de nombre --
@@ -98,10 +98,10 @@ $(document).ready(function () {
 
     // -- Validación de teléfono --
     $("#tlfCli").on("keypress", function (e) {
-        validarkeypress(/^[0-9\-+ ]*$/, e);
+        validarkeypress(/^[0-9]*$/, e);
     });
     $("#tlfCli").on("keyup", function () {
-        validarkeyup(/^[0-9\-+ ]{11,12}$/, $(this), $("#stlfCli"), "Teléfono Inválido - Formato: 0000-0000000");
+        validarkeyup(/^(0412|0414|0416|0422|0424|0426|02[0-9]{2})[0-9]{7}$/, $(this), $("#stlfCli"), "Teléfono Inválido - Formato : 04241234567.");
     });
 
     // Evitar que el formulario se envíe con Enter
@@ -155,8 +155,8 @@ $(document).ready(function () {
 
 // Validación de datos antes de enviar
 function validarEnvio() {
-    if (validarkeyup(/^[0-9\.]{7,12}$/, $("#cedulaCli"), $("#scedulaCli"), "Cédula Inválida") === 0) {
-        mostrarAlerta("Atención", "Cédula Inválida <br/>(El formato debe ser: 99999999)", "warning");
+    if (validarkeyup(/^[0-9]{7,8}$/, $("#cedulaCli"), $("#scedulaCli"), "Cédula Inválida") === 0) {
+        mostrarAlerta("Atención", "Cédula Inválida <br/>(Solo números, entre 7 y 8 dígitos)", "warning");
         return false;
     }
     else if (validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{3,100}$/, $("#nombreCli"), $("#snombreCli"), "Nombre Inválido") === 0) {
@@ -167,8 +167,8 @@ function validarEnvio() {
         mostrarAlerta("Atención", "Apellido Inválido <br>(Solo letras entre 3 y 100 caracteres)", "warning");
         return false;
     }
-    else if (validarkeyup(/^[0-9\-+ ]{11,12}$/, $("#tlfCli"), $("#stlfCli"), "Teléfono Inválido") === 0) {
-        mostrarAlerta("Atención", "Teléfono Inválido <br>(Formato: 0000-0000000)", "warning");
+    else if (validarkeyup(/^(0412|0414|0416|0422|0424|0426|02[0-9]{2})[0-9]{7}$/, $("#tlfCli"), $("#stlfCli"), "Teléfono Inválido") === 0) {
+        mostrarAlerta("Atención", "Teléfono Inválido <br>Teléfono Inválido - Formato : 04241234567.", "warning");
         return false;
     }
 
@@ -194,6 +194,7 @@ function validarkeypress(er, e) {
     key = e.keyCode;
     tecla = String.fromCharCode(key);
     a = er.test(tecla);
+
     if (!a) {
         e.preventDefault();
     }
@@ -202,6 +203,7 @@ function validarkeypress(er, e) {
 // Función para validar por keyup
 function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
     a = er.test(etiqueta.val());
+
     if (a) {
         etiquetamensaje.text("");
         return 1;

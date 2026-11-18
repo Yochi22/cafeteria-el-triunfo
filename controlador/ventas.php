@@ -83,16 +83,6 @@ if (is_file("vista/" . $pagina . ".php")) {
             case 'listarCuentas':
                 echo json_encode($o->listadoDeCuentas());
                 break;
-
-            case 'buscar':
-                $valor = trim($_POST['valorBusqueda'] ?? '');
-                echo json_encode($o->buscar($valor));
-                break;
-
-            case 'buscarFecha':
-                $fecha = trim($_POST['fecha'] ?? '');
-                echo json_encode($o->buscarPorFecha($fecha));
-                break;
         }
 
         exit();

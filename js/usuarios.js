@@ -1,7 +1,7 @@
 function consultar() {
-    var datos = new FormData();
-    datos.append("accion", "consultar");
-    enviaAjax(datos);
+    if ($.fn.DataTable.isDataTable('#tblUsuarios')) {
+        $("#tblUsuarios").DataTable().ajax.reload(null, false);
+    }
 }
 
 function consultarPersonal() {
@@ -17,9 +17,77 @@ function consultarRoles() {
 }
 
 $(document).ready(function () {
-    consultar();
+    // Inicializar DataTables
+    var table = $("#tblUsuarios").DataTable({
+        ajax: {
+            url: "index.php?pagina=usuarios",
+            type: "POST",
+            data: { accion: "consultar" },
+            dataSrc: ""
+        },
+        columns: [
+            { data: "cedulaPer", className: "text-center" }, // Columna 0: Cédula
+            {
+                data: null,
+                className: "text-center",
+                render: function (data, type, row) {
+                    return `${row.nombrePer} ${row.apellidoPer}`; // Columna 1: Nombre y Apellido juntos
+                }
+            },
+            { data: "username", className: "text-center" }, // Columna 2: Usuario
+            { data: "rol", className: "text-center" }, // Columna 3: Rol
+            {
+                data: null,
+                className: "text-center",
+                orderable: false,
+                render: function (data, type, row) {
+                    return `
+                        <button type='button' class='btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1 my-1'
+                            data-idusuario='${row.idUsuario}'
+                            data-idpersonal='${row.idPersonal}'
+                            data-idrol='${row.idRol}'
+                            data-username='${row.username}'
+                            onclick='pone(this)'>
+                            <i class='bi bi-pencil-square'></i><span class='d-none d-sm-inline'> Modificar</span>
+                        </button>
+                        <button type='button' class='btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1 m-1'
+                            data-idusuario='${row.idUsuario}'
+                            onclick='eliminar(this)'>
+                            <i class='bi bi-trash-fill'></i><span class='d-none d-sm-inline'> Eliminar</span>
+                        </button>
+                    `;
+                }
+            } // Columna 4: Acciones
+        ],
+        dom: 'rt<"row mt-3 align-items-center"<"col-md-6 text-muted small"i><"col-md-6 d-flex justify-content-end"p>>',
+        language: {
+            "decimal": "",
+            "emptyTable": "No hay usuarios registrados.",
+            "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "Cargando...",
+            "processing": "Procesando...",
+            "search": "Buscar:",
+            "zeroRecords": `<div class='text-center text-muted py-4'>
+                                <span><i class='bi bi-person-fill-slash fs-1' style='color: #FF8C00'></i></span>
+                                <h5 class='text-dashboard'>No se encontraron registros</h5>
+                                <h6 class='text-secondary'>Intenta de nuevo.</h6>
+                            </div>`,
+            "paginate": {
+                "first": "Primero",
+                "last": "Último",
+                "next": "Siguiente",
+                "previous": "Anterior"
+            }
+        }
+    });
+
     consultarPersonal();
     consultarRoles();
+
+    // VALIDACIÓN DE DATOS
     $("#username").on("keypress", function (e) {
         validarkeypress(/^[A-Za-z0-9_.-]*$/, e);
     });
@@ -40,6 +108,7 @@ $(document).ready(function () {
     });
 
     $("#btnGuardar").on("click", function () {
+        // BOTÓN INCLUIR
         if ($(this).text() == "incluir") {
             if (validarEnvio()) {
                 var datos = new FormData();
@@ -50,7 +119,9 @@ $(document).ready(function () {
                 datos.append("password", $("#password").val());
                 enviaAjax(datos);
             }
-        } else if ($(this).text() == "modificar") {
+        }
+        // BOTÓN MODIFICAR
+        else if ($(this).text() == "modificar") {
             if (validarEnvio()) {
                 var datos = new FormData();
                 datos.append("accion", "modificar");
@@ -64,32 +135,13 @@ $(document).ready(function () {
         }
     });
 
-    function ejecutarBusqueda() {
-        var valor = $("#valorBusqueda").val();
-        if (valor.trim().length > 0) {
-            var datos = new FormData();
-            datos.append("accion", "buscar");
-            datos.append("valorBusqueda", valor);
-            enviaAjax(datos);
-        } else {
-            consultar();
-        }
-    }
-
+    // BÚSQUEDA (filtra directamente en DataTables)
     $("#valorBusqueda").on("keyup", function () {
-        ejecutarBusqueda();
+        table.search(this.value).draw();
     });
 
     $("#btnBuscar").on("click", function () {
-        ejecutarBusqueda();
-    });
-
-    $("#btnEliminar").on("click", function () {
-        var idUsuarioEliminado = $("#eliminar").val();
-        var datos = new FormData();
-        datos.append("accion", "eliminar");
-        datos.append("idUsuario", idUsuarioEliminado);
-        enviaAjax(datos);
+        table.search($("#valorBusqueda").val()).draw();
     });
 
     $("#incluir").on("click", function () {
@@ -103,12 +155,13 @@ $(document).ready(function () {
     });
 });
 
+// Validación de los datos antes de enviarlos
 function validarEnvio() {
     if ($("#idPersonal").val() == "") {
-        mostrarMensaje("Debe seleccionar el personal.");
+        mostrarAlerta("Atención", "Debe seleccionar el personal.", "warning");
         return false;
     } else if ($("#idRol").val() == "") {
-        mostrarMensaje("Debe seleccionar un rol.");
+        mostrarAlerta("Atención", "Debe seleccionar un rol.", "warning");
         return false;
     } else if (
         validarkeyup(
@@ -118,27 +171,40 @@ function validarEnvio() {
             "Usuario inválido - Debe tener entre 3 y 30 caracteres.",
         ) == 0
     ) {
-        mostrarMensaje("Nombre de usuario inválido.");
+        mostrarAlerta("Atención", "Nombre de usuario inválido <br/>(Entre 3 y 30 caracteres)", "warning");
         return false;
     } else if (
         $("#btnGuardar").text() == "incluir" &&
         $("#password").val().trim() == ""
     ) {
-        mostrarMensaje("Debe ingresar una contraseña.");
+        mostrarAlerta("Atención", "Debe ingresar una contraseña.", "warning");
         return false;
     }
 
     return true;
 }
 
+function mostrarAlerta(titulo, mensaje, icono) {
+    Swal.fire({
+        title: titulo,
+        html: mensaje,
+        icon: icono,
+        confirmButtonText: 'Aceptar',
+        confirmButtonColor: '#FF8C00',
+        customClass: {
+            popup: 'rounded-4 shadow'
+        }
+    });
+}
+
+// Función para mostrar del modal del mensaje
 function mostrarMensaje(mensaje) {
     $("#contenidoModal").html(mensaje);
     $("#mostrarModal").modal("show");
-    setTimeout(function () {
-        $("#mostrarModal").modal("hide");
-    }, 5000);
+    setTimeout(function () { $("#mostrarModal").modal("hide") }, 5000);
 }
 
+// Función para validar por keypress
 function validarkeypress(er, e) {
     var key = e.keyCode;
     var tecla = String.fromCharCode(key);
@@ -149,6 +215,7 @@ function validarkeypress(er, e) {
     }
 }
 
+// Función para validar por keyup
 function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
     var a = er.test(etiqueta.val());
 
@@ -161,13 +228,19 @@ function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
     }
 }
 
+// Función para llenar el formulario con los datos del usuario
 function pone(pos) {
-    var linea = $(pos).closest("tr");
-    $("#idUsuario").val($(linea).find("td:eq(5)").text());
-    $("#idPersonal").val($(linea).find("td:eq(6)").text());
-    $("#idRol").val($(linea).find("td:eq(7)").text());
-    $("#username").val($(linea).find("td:eq(2)").text());
+    var btn = $(pos);
+
+    // Extraer los datos exactos desde los atributos data-*
+    $("#idUsuario").val(btn.attr("data-idusuario"));
+    $("#idPersonal").val(btn.attr("data-idpersonal"));
+    $("#idRol").val(btn.attr("data-idrol"));
+    $("#username").val(btn.attr("data-username"));
     $("#password").val("");
+    $("#susername").text("");
+    $("#spassword").text("");
+
     $("#btnGuardar").text("modificar");
     $("#mensajePassword").text(
         "Deja la contraseña vacía para conservar la actual.",
@@ -176,10 +249,27 @@ function pone(pos) {
 }
 
 function eliminar(pos) {
-    var linea = $(pos).closest("tr");
-    var idUsuario = $(linea).find("td:eq(5)").text();
-    $("#eliminar").val(idUsuario);
-    $("#modal_eliminar").modal("show");
+    var idUsuario = $(pos).data('idusuario');
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¿Deseas eliminar este usuario del sistema?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: 'red',
+        cancelButtonColor: 'darkgray',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        customClass: {
+            popup: 'rounded-4 shadow'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            var datos = new FormData();
+            datos.append('accion', 'eliminar');
+            datos.append('idUsuario', idUsuario);
+            enviaAjax(datos);
+        }
+    });
 }
 
 function enviaAjax(datos) {
@@ -197,37 +287,41 @@ function enviaAjax(datos) {
             console.log(respuesta);
             try {
                 var lee = JSON.parse(respuesta);
-                if (lee.resultado == "consultar") {
-                    $("#listaUsuarios").html(lee.mensaje);
-                } else if (lee.resultado == "consultarPersonal") {
+
+                if (lee.resultado === 'consultarPersonal') {
                     $("#idPersonal").html(lee.mensaje);
-                } else if (lee.resultado == "consultarRoles") {
+                }
+                else if (lee.resultado === 'consultarRoles') {
                     $("#idRol").html(lee.mensaje);
-                } else if (lee.resultado == "incluir") {
-                    mostrarMensaje(lee.mensaje);
-                    if (lee.mensaje == "Usuario incluido.") {
+                }
+                else if (lee.resultado === 'incluir') {
+                    if (lee.mensaje === 'Usuario incluido.') {
+                        mostrarAlerta("¡Éxito!", lee.mensaje, "success");
                         $("#modal_usuarios").modal("hide");
                         consultar();
+                    } else {
+                        mostrarAlerta("Información", lee.mensaje, "info");
                     }
-                } else if (lee.resultado == "modificar") {
-                    mostrarMensaje(lee.mensaje);
-                    if (lee.mensaje == "Usuario modificado.") {
+                }
+                else if (lee.resultado === 'modificar') {
+                    if (lee.mensaje === 'Usuario modificado.') {
+                        mostrarAlerta("¡Éxito!", lee.mensaje, "success");
                         $("#modal_usuarios").modal("hide");
                         consultar();
+                    } else {
+                        mostrarAlerta("Información", lee.mensaje, "info");
                     }
-                } else if (lee.resultado == "eliminar") {
-                    mostrarMensaje(lee.mensaje);
-                    if (lee.mensaje == "Usuario eliminado.") {
-                        $("#modal_eliminar").modal("hide");
-                        consultar();
-                    }
-                } else if (lee.resultado == "buscar") {
-                    $("#listaUsuarios").html(lee.mensaje);
-                } else if (lee.resultado == "error") {
+                }
+                else if (lee.resultado === 'eliminar') {
+                    mostrarAlerta("Atención", lee.mensaje, "success");
+                    consultar();
+                    $("#modal_eliminar").modal("hide");
+                }
+                else if (lee.resultado == "error") {
                     mostrarMensaje(lee.mensaje);
                 }
             } catch (e) {
-                alert("Error en JSON " + e.name);
+                alert("Error en JSON" + e.name);
             }
         },
         error: function (request, status, err) {

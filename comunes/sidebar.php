@@ -28,7 +28,7 @@
                     Gestión
                 </span>
                 <a class="nav-link py-1 <?= $pagina == 'ventas' ? 'active' : '' ?>" href="?pagina=ventas">
-                    <i class="bi bi-graph-up-arrow"></i> Ventas
+                    <i class="bi bi-receipt"></i> Ventas
                 </a>
                 <a class="nav-link py-1 <?= $pagina == 'reporte' ? 'active' : '' ?>" href="?pagina=reporte">
                     <i class="bi bi-file-earmark-bar-graph"></i> Reporte

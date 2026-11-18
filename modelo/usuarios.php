@@ -25,7 +25,7 @@ class usuarios extends datos
     function get_username() { return $this->username; }
     function get_password() { return $this->password; }
 
-    // Función Existe
+    // Función Existe Usuario
     function existe($idUsuario)
     {
         $co = $this->conecta();
@@ -104,7 +104,7 @@ class usuarios extends datos
         return $r;
     }
 
-    // Función Consultar
+    // Función Consultar Usuarios
     function consultar()
     {
         $r = array();
@@ -113,59 +113,20 @@ class usuarios extends datos
 
         try {
             $resultado = $co->query("
-                SELECT usuarios.*, personal.cedulaPer, personal.nombrePer,
+                SELECT usuarios.idUsuario, usuarios.idPersonal, usuarios.idRol,
+                       usuarios.username, personal.cedulaPer, personal.nombrePer,
                        personal.apellidoPer, roles.rol
                 FROM usuarios
                 INNER JOIN personal ON usuarios.idPersonal = personal.idPersonal
                 INNER JOIN roles ON usuarios.idRol = roles.idRol
             ");
-
-            if ($resultado) {
-                $respuesta = '';
-
-                foreach ($resultado as $fila) {
-                    $respuesta .= "<tr>";
-                    $respuesta .= "<td>" . $fila['cedulaPer'] . "</td>";
-                    $respuesta .= "<td>" . $fila['nombrePer'] . " " . $fila['apellidoPer'] . "</td>";
-                    $respuesta .= "<td>" . $fila['username'] . "</td>";
-                    $respuesta .= "<td>" . $fila['rol'] . "</td>";
-
-                    $respuesta .= "<td>";
-                    $respuesta .= "<button type='button' class='btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1 my-1' onclick='pone(this)'><i class='bi bi-pencil-square'></i> <span class='d-none d-sm-inline'> Modificar</span></button>";
-                    $respuesta .= "<button type='button' class='btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1 m-1' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i> <span class='d-none d-sm-inline'> Eliminar</span></button>";
-                    $respuesta .= "</td>";
-
-                    // Datos ocultos para identificar el usuario
-                    $respuesta .= "<td class='d-none'>" . $fila['idUsuario'] . "</td>";
-                    $respuesta .= "<td class='d-none'>" . $fila['idPersonal'] . "</td>";
-                    $respuesta .= "<td class='d-none'>" . $fila['idRol'] . "</td>";
-
-                    $respuesta .= "</tr>";
-                }
-
-                if ($respuesta == "") {
-                    $respuesta .= "<tr>";
-                    $respuesta .= "<td colspan='5' class='text-center text-muted py-4'>";
-                    $respuesta .= "<span><i class='bi bi-person-fill fs-1' style='color: #FF8C00'></i></span>";
-                    $respuesta .= "<h5 class='text-dashboard'>No hay usuarios registrados.</h5>";
-                    $respuesta .= "</td>";
-                    $respuesta .= "</tr>";
-                }
-
-                $r['resultado'] = 'consultar';
-                $r['mensaje'] = $respuesta;
-            } else {
-                $r['resultado'] = 'consultar';
-                $r['mensaje'] = '';
-            }
+            return $resultado->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            $r['resultado'] = 'error';
-            $r['mensaje'] = $e->getMessage();
+            return $r;
         }
-
-        return $r;
     }
 
+    // Función Consultar Personal
     function consultarPersonal()
     {
         $r = array();
@@ -193,6 +154,7 @@ class usuarios extends datos
         return $r;
     }
 
+    // Función Consultar Roles
     function consultarRoles()
     {
         $r = array();
@@ -282,81 +244,6 @@ class usuarios extends datos
         } else {
             $r['resultado'] = 'eliminar';
             $r['mensaje'] = 'El usuario no existe.';
-        }
-
-        return $r;
-    }
-
-    // Función Buscar
-    function buscar($valor)
-    {
-        $r = array();
-        $valor = trim($valor);
-        $busqueda = "%" . $valor . "%";
-        $co = $this->conecta();
-        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-        try {
-            if ($busqueda) {
-                $bus = $co->prepare("
-                    SELECT usuarios.*, personal.cedulaPer, personal.nombrePer,
-                           personal.apellidoPer, roles.rol
-                    FROM usuarios
-                    INNER JOIN personal ON usuarios.idPersonal = personal.idPersonal
-                    INNER JOIN roles ON usuarios.idRol = roles.idRol
-                    WHERE (
-                        personal.cedulaPer LIKE :busqueda
-                        OR personal.nombrePer LIKE :busqueda
-                        OR personal.apellidoPer LIKE :busqueda
-                        OR usuarios.username LIKE :busqueda
-                        OR roles.rol LIKE :busqueda
-                    )
-                ");
-
-                $bus->bindParam(':busqueda', $busqueda);
-                $bus->execute();
-                $resultado = $bus->fetchAll();
-
-                $respuesta = "";
-
-                foreach ($resultado as $fila) {
-                    $respuesta .= "<tr>";
-                    $respuesta .= "<td>" . $fila['cedulaPer'] . "</td>";
-                    $respuesta .= "<td>" . $fila['nombrePer'] . " " . $fila['apellidoPer'] . "</td>";
-                    $respuesta .= "<td>" . $fila['username'] . "</td>";
-                    $respuesta .= "<td>" . $fila['rol'] . "</td>";
-
-                    $respuesta .= "<td>";
-                    $respuesta .= "<button type='button' class='btn btn-outline-primary btn-sm d-inline-flex align-items-center gap-1 my-1' onclick='pone(this)'><i class='bi bi-pencil-square'></i> <span class='d-none d-sm-inline'> Modificar</span></button>";
-                    $respuesta .= "<button type='button' class='btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1 m-1' onclick='eliminar(this)'><i class='bi bi-trash-fill'></i> <span class='d-none d-sm-inline'> Eliminar</span></button>";
-                    $respuesta .= "</td>";
-
-                    $respuesta .= "<td class='d-none'>" . $fila['idUsuario'] . "</td>";
-                    $respuesta .= "<td class='d-none'>" . $fila['idPersonal'] . "</td>";
-                    $respuesta .= "<td class='d-none'>" . $fila['idRol'] . "</td>";
-
-                    $respuesta .= "</tr>";
-                }
-
-                if ($respuesta == "") {
-                    $respuesta .= "<tr>";
-                    $respuesta .= "<td colspan='5' class='text-center text-muted py-4'>";
-                    $respuesta .= "<span><i class='bi bi-person-fill-slash fs-1' style='color: #FF8C00'></i></span>";
-                    $respuesta .= "<h5 class='text-dashboard'>No se encuentran usuarios</h5>";
-                    $respuesta .= "<h6 class='text-secondary'>Intenta con otra búsqueda.</h6>";
-                    $respuesta .= "</td>";
-                    $respuesta .= "</tr>";
-                }
-
-                $r['resultado'] = 'buscar';
-                $r['mensaje'] = $respuesta;
-            } else {
-                $r['resultado'] = 'consultar';
-                $r['mensaje'] = '';
-            }
-        } catch (Exception $e) {
-            $r['resultado'] = 'error';
-            $r['mensaje'] = $e->getMessage();
         }
 
         return $r;

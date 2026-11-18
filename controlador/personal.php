@@ -9,6 +9,7 @@ require_once("modelo/" . $pagina . ".php");
 
 if (is_file("vista/" . $pagina . ".php")) {
     $o = new personal();
+
     if (!empty($_POST)) {
         $accion = $_POST['accion'];
 
@@ -34,11 +35,6 @@ if (is_file("vista/" . $pagina . ".php")) {
             case 'eliminar':
                 $o->set_cedulaPer($_POST['cedulaPer']);
                 echo json_encode($o->eliminar());
-                break;
-
-            case 'buscar':
-                $valor = trim($_POST['valorBusqueda'] ?? '');
-                echo json_encode($o->buscar($valor));
                 break;
         }
 

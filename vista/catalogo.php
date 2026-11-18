@@ -311,7 +311,7 @@
                                         <select class="form-select" id="cuentaDestino" name="cuentaDestino">
                                             <option value="">Seleccione...</option>
                                         </select>
-                                        <button type="button" class="btn" style="color: #ff8c00; border: 1px solid #ff8c00;" id="btnCopiarDatos" title="Copiar datos" disabled>
+                                        <button type="button" class="btn" style="color: #ff8c00; border: 1px solid #ff8c00;" id="btnAbrirModal" title="Datos de Pago Móvil" disabled>
                                             <i class="bi bi-copy"></i>
                                         </button>
                                     </div>
@@ -342,8 +342,18 @@
         </div>
     </form>
 
-    <?php require_once("comunes/modal_eliminar.php"); ?>
-    <?php require_once("comunes/modal.php"); ?>
+    <div class="modal fade" id="modalCuentaCli" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md">
+            <div class="modal-content border-0 rounded-4 shadow text-center p-3">
+                <div class="d-flex justify-content-end w-100">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <i class="bi bi-bank fs-1" style="color: #ff8c00;"></i>
+                <h6 class="fw-bold text-dashboard mt-2">Datos de la Cuenta</h6>
+                <div class="modal-body text-start" id="modalCuentaCliCont"> </div>
+            </div>
+        </div>
+    </div>
 
     <script src="js/scriptTasa.js"></script>
     <script src="js/catalogo.js"></script>

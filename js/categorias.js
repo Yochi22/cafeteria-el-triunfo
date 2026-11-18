@@ -14,7 +14,7 @@ $(document).ready(function () {
         validarkeypress(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]*$/, e);
     });
     $("#codigoCat").on("keyup", function () {
-        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{5,50}$/, $(this), $("#scodigoCat"), "Código Inválido - Entre 5 y 50 caracteres");
+        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{5,50}$/, $(this), $("#scodigoCat"), "Código Inválido - Entre 5 y 50 caracteres.");
     });
 
     // -- Validación de nombre --
@@ -22,7 +22,7 @@ $(document).ready(function () {
         validarkeypress(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]*$/, e);
     });
     $("#nombreCat").on("keyup", function () {
-        validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{5,50}$/, $(this), $("#snombreCat"), "Nombre Inválido - Solo letras (entre 5 y 50 caracteres)");
+        validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{5,50}$/, $(this), $("#snombreCat"), "Nombre Inválido - Solo letras entre 5 y 50 caracteres.");
     });
 
     // -- Validación de descripción --
@@ -30,7 +30,7 @@ $(document).ready(function () {
         validarkeypress(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]*$/, e);
     });
     $("#descCat").on("keyup", function () {
-        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{5,150}$/, $(this), $("#sdescCat"), "Descripción Inválida - Entre 5 y 150 caracteres");
+        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{5,150}$/, $(this), $("#sdescCat"), "Descripción Inválida - Entre 5 y 150 caracteres.");
     });
     // Fin de Validaciones de datos
 
@@ -102,15 +102,15 @@ $(document).ready(function () {
 // Validación de los datos antes de enviarlos
 function validarEnvio() {
     if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{5,50}$/, $("#codigoCat"), $("#scodigoCat"), "Código Inválido") === 0) {
-        mostrarAlerta("Atención", "Código Inválido <br/>(Entre 5 y 50 caracteres)", "warning");
+        mostrarAlerta("Atención", "Código Inválido <br/>(Entre 5 y 50 caracteres).", "warning");
         return false;
     }
     else if (validarkeyup(/^[A-Za-z\b\s\u00f1\u00d1\u00E0-\u00FC]{5,50}$/, $("#nombreCat"), $("#snombreCat"), "Nombre Inválido") === 0) {
-        mostrarAlerta("Atención", "Nombre Inválido <br/>(Solo letras entre 5 y 50 caracteres)", "warning");
+        mostrarAlerta("Atención", "Nombre Inválido <br/>(Solo letras entre 5 y 50 caracteres).", "warning");
         return false;
     }
     else if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{5,150}$/, $("#descCat"), $("#sdescCat"), "Descripción Inválida") === 0) {
-        mostrarAlerta("Atención", "Descripción Inválida <br/>(Entre 5 y 150 caracteres)", "warning");
+        mostrarAlerta("Atención", "Descripción Inválida <br/>(Entre 5 y 150 caracteres).", "warning");
         return false;
     }
 

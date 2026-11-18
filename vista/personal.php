@@ -33,9 +33,7 @@
 
             <hr class="text-secondary mb-4">
 
-
             <div class="col-12 d-flex justify-content mb-3">
-                <!-- Botón de búsqueda -->
                 <div class="col-md-4 ms-3">
                     <div class="input-group bg-white border rounded-3 align-items-center shadow-sm h-100 px-2 py-1">
                         <button class="btn p-0 border-0 link-secondary" type="button" id="btnBuscar">
@@ -46,16 +44,17 @@
                 </div>
             </div>
 
-            <div class="table-responsive rounded-3 shadow-sm">
-                <table class="table table-hover align-items-center text-center">
+            <div class="table-responsive rounded-3 shadow-sm bg-white p-3">
+                <table id="tblPersonal" class="table table-hover align-middle text-center w-100">
                     <thead class="text-dashboard border-bottom">
                         <tr>
-                            <th>Cédula</th>
-                            <th>Nombre y Apellido</th>
-                            <th>Acciones</th>
+                            <th class="text-center">Cédula</th>
+                            <th class="text-center">Nombre y Apellido</th>
+                            <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="listaPersonal" class="text-center">
+                    <tbody>
+
                     </tbody>
                 </table>
             </div>
@@ -100,9 +99,9 @@
             </div>
         </main>
 
-        <?php require_once("comunes/modal_eliminar.php"); ?>
-        <?php require_once("comunes/modal.php"); ?>
+        <script src="js/sweetalert.js"></script>
         <script src="js/personal.js"></script>
+        <script src="js/datatables.js"></script>
     </div>
 </body>
 

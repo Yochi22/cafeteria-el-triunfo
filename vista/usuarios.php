@@ -53,18 +53,19 @@
                     </div>
                 </div>
             </div>
-            <div class="table-responsive rounded-3 shadow-sm">
-                <table class="table table-hover align-items-center text-center">
+            <div class="table-responsive rounded-3 shadow-sm bg-white p-3">
+                <table id="tblUsuarios" class="table table-hover align-middle text-center w-100">
                     <thead class="text-dashboard border-bottom">
                         <tr>
-                            <th>Cédula</th>
-                            <th>Nombre y Apellido</th>
-                            <th>Usuario</th>
-                            <th>Rol</th>
-                            <th>Acciones</th>
+                            <th class="text-center">Cédula</th>
+                            <th class="text-center">Nombre y Apellido</th>
+                            <th class="text-center">Usuario</th>
+                            <th class="text-center">Rol</th>
+                            <th class="text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="listaUsuarios" class="text-center">
+                    <tbody>
+
                     </tbody>
                 </table>
             </div>
@@ -160,7 +161,9 @@
 
         <?php require_once("comunes/modal_eliminar.php"); ?>
         <?php require_once("comunes/modal.php"); ?>
+        <script src="js/sweetalert.js"></script>
         <script src="js/usuarios.js"></script>
+        <script src="js/datatables.js"></script>
     </div>
 </body>
 
