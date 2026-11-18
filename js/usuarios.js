@@ -315,7 +315,6 @@ function enviaAjax(datos) {
                 else if (lee.resultado === 'eliminar') {
                     mostrarAlerta("Atención", lee.mensaje, "success");
                     consultar();
-                    $("#modal_eliminar").modal("hide");
                 }
                 else if (lee.resultado == "error") {
                     mostrarMensaje(lee.mensaje);

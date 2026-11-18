@@ -654,7 +654,6 @@ function enviaAjax(datos) {
                 }
                 else if (lee.resultado == "incluir" || lee.resultado == "modificar" || lee.resultado == "eliminar") {
                     mostrarAlerta("¡Éxito!", lee.mensaje, "success");
-                    $("#modal_detallesdepago").modal("hide");
                     consultar();
                 }
                 else if (lee.resultado == "consultar_detalle") {
