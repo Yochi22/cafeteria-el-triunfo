@@ -28,7 +28,9 @@ if (is_file("vista/" . $pagina . ".php")) {
                 $calleDelivery   = $_POST['calleDelivery'] ?? '';
                 $numCasaDelivery = $_POST['numCasaDelivery'] ?? '';
 
-                echo json_encode($o->incluir($idPersonal, $idCliente, $tipoPago, $cedulaPago, $tlfPago, $referencia, $idCuenta, $productos, $cantidades, $precios, $zonaDelivery, $calleDelivery, $numCasaDelivery));
+                echo json_encode($o->incluir($idPersonal, $idCliente, $tipoPago, $cedulaPago, $tlfPago, $referencia, 
+                                            $idCuenta, $productos, $cantidades, $precios, $zonaDelivery, $calleDelivery, 
+                                            $numCasaDelivery));
                 break;
 
             case 'consultar':
@@ -61,7 +63,9 @@ if (is_file("vista/" . $pagina . ".php")) {
                 $calleDelivery   = $_POST['calleDelivery'] ?? '';
                 $numCasaDelivery = $_POST['numCasaDelivery'] ?? '';
 
-                echo json_encode($o->modificar($idVenta, $idPersonal, $idCliente, $tipoPago, $idDetalle, $idPedido, $cedulaPago, $tlfPago, $referencia, $idCuenta, $productos, $cantidades, $precios, $zonaDelivery, $calleDelivery, $numCasaDelivery));
+                echo json_encode($o->modificar($idVenta, $idPersonal, $idCliente, $tipoPago, $idDetalle, $idPedido, 
+                                                $cedulaPago, $tlfPago, $referencia, $idCuenta, $productos, $cantidades, 
+                                                $precios, $zonaDelivery, $calleDelivery, $numCasaDelivery));
                 break;
 
             case 'eliminar':

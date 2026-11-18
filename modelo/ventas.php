@@ -252,7 +252,7 @@ class Ventas extends datos
                 $v = $resultados[0];
                 $idVentaStr = str_pad($v['idVenta'], 3, "0", STR_PAD_LEFT);
                 $totalFormateado = number_format($v['totalVenta'], 2);
-                $costoDelivery = isset($v['precioDeliveryCosto']) ? floatval($v['precioDeliveryCosto']) : 0.00;
+                $costoDelivery = !empty($v['precioDeliveryCosto']) ? floatval($v['precioDeliveryCosto']) : 0.00;
 
                 // Busca la tasa exacta del día de la venta
                 $stmtTasa = $co->prepare("SELECT precioTasa FROM tasadiaria WHERE fechaTasa = :fechaVenta");
