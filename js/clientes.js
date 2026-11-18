@@ -49,7 +49,11 @@ $(document).ready(function () {
         dom: 'rt<"row mt-3 align-items-center"<"col-md-6 text-muted small"i><"col-md-6 d-flex justify-content-end"p>>',
         language: {
             "decimal": "",
-            "emptyTable": "No hay clientes registrados.",
+            "emptyTable": `<div class='text-center text-muted py-4'>
+                                <span><i class='bi bi-person-add fs-1' style='color: #FF8C00'></i></span>
+                                <h5 class='text-dashboard'>No Hay Clientes Registrados.</h5>
+                                <h6 class='text-secondary'>Registra un Cliente.</h6>
+                            </div>`,
             "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
             "infoEmpty": "Mostrando 0 a 0 de 0 registros",
             "infoFiltered": "(filtrado de _MAX_ registros totales)",

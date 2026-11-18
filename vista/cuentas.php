@@ -128,9 +128,6 @@
             </div>
             <!-- Fin de sección modal -->
 
-            <!-- Llamada del modal de confirmación de eliminación -->
-            <?php require_once("comunes/modal_eliminar.php"); ?>
-
             <!-- Llamada a archivo modal.php, dentro de él hay una sección modal -->
             <?php require_once("comunes/modal.php"); ?>
         </main>

@@ -216,7 +216,7 @@ class pedidos extends datos
             }
 
             if ($html == '') {
-                $html = '<div class="col-12 text-center text-muted py-5"><i class="bi bi-journal-x fs-1 text-warning"></i><h5 class="mt-2 text-dashboard">No hay pedidos registrados con este estado.</h5></div>';
+                $html = '<div class="col-12 text-center text-muted py-5"><i class="bi bi-journal-x fs-1 text-warning"></i><h5 class="mt-2 text-dashboard">No hay pedidos registrados.</h5></div>';
             }
 
             $r['resultado'] = 'consultar';
