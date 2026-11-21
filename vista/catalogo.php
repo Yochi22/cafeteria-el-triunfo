@@ -175,23 +175,23 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="nombreCli" class="form-label text-muted small fw-bold">Nombre</label>
-                                <input type="text" class="form-control rounded-3" id="nombreCli" name="nombreCli" required>
-                                <span id="snombreCli" class="text-danger small"></span>
+                                <label for="cedulaCli" class="form-label text-muted small fw-bold">Cédula</label>
+                                <input type="text" class="form-control rounded-3" id="cedulaCli" name="cedulaCli" required>
+                                <span id="scedulaCli" class="text-danger small"></span>
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label for="apellidoCli" class="form-label text-muted small fw-bold">Apellido</label>
-                                <input type="text" class="form-control rounded-3" id="apellidoCli" name="apellidoCli" required>
-                                <span id="sapellidoCli" class="text-danger small"></span>
+                                <label for="nombreCli" class="form-label text-muted small fw-bold">Nombre</label>
+                                <input type="text" class="form-control rounded-3" id="nombreCli" name="nombreCli" required>
+                                <span id="snombreCli" class="text-danger small"></span>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="cedulaCli" class="form-label text-muted small fw-bold">Cédula</label>
-                                <input type="text" class="form-control rounded-3" id="cedulaCli" name="cedulaCli" required>
-                                <span id="scedulaCli" class="text-danger small"></span>
+                                <label for="apellidoCli" class="form-label text-muted small fw-bold">Apellido</label>
+                                <input type="text" class="form-control rounded-3" id="apellidoCli" name="apellidoCli" required>
+                                <span id="sapellidoCli" class="text-danger small"></span>
                             </div>
 
                             <div class="col-md-6 mb-3">

@@ -149,7 +149,6 @@
         </div>
     </div>
 
-    <?php require_once("comunes/modal_eliminar.php"); ?>
     <?php require_once("comunes/modal.php"); ?>
     <script src="js/principal.js"></script>
     <script src="js/sweetalert.js"></script>

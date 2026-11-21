@@ -314,6 +314,37 @@ class catalogo extends datos
         return $r;
     }
 
+    public function autocompletarCliente($cedula)
+{
+    $r = array();
+    $co = $this->conecta();
+    $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    try {
+        $cedulaBuscar = trim($cedula);
+
+        $stmt = $co->prepare("SELECT * FROM clientes WHERE cedulaCli = :cedula LIMIT 1");
+        $stmt->bindParam(":cedula", $cedulaBuscar);
+        $stmt->execute();
+
+        $cliente = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($cliente) {
+            $r["cliente"] = $cliente;
+        } else {
+            $r["cliente"] = null;
+        }
+
+        $r["resultado"] = "clienteEncontrado";
+        $r["mensaje"] = '¡Cliente ya registrado!';
+    } catch (Exception $e) {
+        $r["resultado"] = "error";
+        $r["mensaje"] = $e->getMessage();
+    }
+
+    return $r;
+}
+
     public function cargarCuentas()
     {
         $co = $this->conecta();

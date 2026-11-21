@@ -248,6 +248,28 @@ function actualizarTotalConDelivery(precioDelivery) {
     }
 }
 
+//AUTOCOMPLETADO DE FORMULARIO
+function autocompletarCliente(cedula) {
+    let datos = new FormData();
+    datos.append("accion", "autocompletarCliente");
+    datos.append("cedulaCli", cedula);
+    enviaAjax(datos);
+}
+
+$("#cedulaCli").on("keyup blur", function () {
+    const cedula = $(this).val().trim();
+    if (validarkeyup(/^[0-9]{7,8}$/, $("#cedulaCli"), $("#scedulaCli"), "Cédula Inválida") === 1) {
+        autocompletarCliente(cedula) }
+});
+
+// elimina el autocompletado al modificar la cedula
+$("#cedulaCli").on("keydown", function () {
+    $("#nombreCli").val("");
+    $("#apellidoCli").val("");
+    $("#tlfCli").val("");
+});
+
+
 $("#cuentaDestino").on("change", function () {
     let idCuenta = $(this).val();
 
@@ -382,7 +404,7 @@ function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
         etiquetamensaje.text("");
         return 1;
     } else {
-        etiquetamensaje.text(mensaje);
+        etiquetamensaje.removeClass("text-success").addClass("text-danger").text(mensaje);
         return 0;
     }
 }
@@ -581,7 +603,14 @@ function enviaAjax(datos) {
                     let precioDelivery = parseFloat(lee.precio) || 0;
                     $("#zonaDelivery").data("precioDelivery", precioDelivery);
                     actualizarPreciosEnBs();
-
+                
+                } else if (lee.resultado == "clienteEncontrado") {
+                    if (lee.cliente) {
+                        $("#nombreCli").val(lee.cliente.nombreCli);
+                        $("#apellidoCli").val(lee.cliente.apellidoCli);
+                        $("#tlfCli").val(lee.cliente.tlfCli); 
+                        $("#scedulaCli").removeClass("text-danger").addClass("text-success").text(lee.mensaje); }
+                
                 } else if (lee.resultado == "cuentasCargadas") {
                     $("#cuentaDestino").html(lee.mensaje);
 
