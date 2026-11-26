@@ -31,11 +31,11 @@
 
                 <!-- Botón Agregar / Botones dinámicos de navegación -->
                 <div class="d-flex align-items-center gap-2">
-                    <button class="btn btn-crear d-flex align-items-center gap-2 shadow-sm py-2 px-3 rounded-3" id="incluir" data-bs-toggle="modal" data-bs-target="#modal_producto">
+                    <button class="btn btn-crear d-flex align-items-center justify-content-center gap-2 shadow-sm py-2 px-3 rounded-3 flex-grow-1 flex-md-grow-0" id="incluir" data-bs-toggle="modal" data-bs-target="#modal_producto">
                         <i class="bi bi-plus-circle fs-5"></i>
-                        <span class="d-none d-sm-inline"> Nuevo Producto</span>
+                        <span class="d-none d-md-inline">Nuevo Producto</span>
                     </button>
-                    <div id="contenedor_botones_header" class="d-flex"></div>
+                    <div id="contenedor_botones_header" class="d-flex align-items-center gap-2 flex-shrink-0"></div>
                 </div>
             </div>
 

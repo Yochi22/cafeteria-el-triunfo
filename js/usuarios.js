@@ -1,15 +1,18 @@
+// Función para recargar la tabla de usuarios
 function consultar() {
     if ($.fn.DataTable.isDataTable('#tblUsuarios')) {
         $("#tblUsuarios").DataTable().ajax.reload(null, false);
     }
 }
 
+// Función para consultar el listado de personal
 function consultarPersonal() {
     var datos = new FormData();
     datos.append("accion", "consultarPersonal");
     enviaAjax(datos);
 }
 
+// Función para consultar el listado de roles
 function consultarRoles() {
     var datos = new FormData();
     datos.append("accion", "consultarRoles");
@@ -62,7 +65,11 @@ $(document).ready(function () {
         dom: 'rt<"row mt-3 align-items-center"<"col-md-6 text-muted small"i><"col-md-6 d-flex justify-content-end"p>>',
         language: {
             "decimal": "",
-            "emptyTable": "No hay usuarios registrados.",
+            "emptyTable": `<div class='text-center text-muted py-4'>
+                                <span><i class='bi bi-person-fill-slash fs-1' style='color: #FF8C00'></i></span>
+                                <h5 class='text-dashboard'>No hay usuarios registrados.</h5>
+                                <h6 class='text-secondary'>Registra un usuario.</h6>
+                            </div>`,
             "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
             "infoEmpty": "Mostrando 0 a 0 de 0 registros",
             "infoFiltered": "(filtrado de _MAX_ registros totales)",
@@ -72,7 +79,7 @@ $(document).ready(function () {
             "search": "Buscar:",
             "zeroRecords": `<div class='text-center text-muted py-4'>
                                 <span><i class='bi bi-person-fill-slash fs-1' style='color: #FF8C00'></i></span>
-                                <h5 class='text-dashboard'>No se encontraron registros</h5>
+                                <h5 class='text-dashboard'>No se encontraron registros.</h5>
                                 <h6 class='text-secondary'>Intenta de nuevo.</h6>
                             </div>`,
             "paginate": {
@@ -88,27 +95,35 @@ $(document).ready(function () {
     consultarRoles();
 
     // VALIDACIÓN DE DATOS
+    // -- Validación de usuario --
     $("#username").on("keypress", function (e) {
         validarkeypress(/^[A-Za-z0-9_.-]*$/, e);
     });
-
     $("#username").on("keyup", function () {
         validarkeyup(
             /^[A-Za-z0-9_.-]{3,30}$/,
             $(this),
             $("#susername"),
-            "Usuario inválido - Debe tener entre 3 y 30 caracteres.",
+            "Usuario inválido - Debe tener entre 3 y 30 caracteres."
         );
     });
 
+    // -- Validación de contraseña --
     $("#password").on("keyup", function () {
         if ($(this).val() != "") {
             $("#spassword").text("");
         }
     });
+    // Fin de Validaciones de datos
 
+    // Evitar que el formulario se envíe con Enter
+    $("#f").on("submit", function (e) {
+        e.preventDefault();
+    });
+
+    // Control de Botones
     $("#btnGuardar").on("click", function () {
-        // BOTÓN INCLUIR
+        // Botón de Incluir
         if ($(this).text() == "incluir") {
             if (validarEnvio()) {
                 var datos = new FormData();
@@ -120,7 +135,7 @@ $(document).ready(function () {
                 enviaAjax(datos);
             }
         }
-        // BOTÓN MODIFICAR
+        // Botón de Modificar
         else if ($(this).text() == "modificar") {
             if (validarEnvio()) {
                 var datos = new FormData();
@@ -135,21 +150,24 @@ $(document).ready(function () {
         }
     });
 
-    // BÚSQUEDA (filtra directamente en DataTables)
+    // BOTÓN BUSCAR
+    function ejecutarBusqueda() {
+        table.search($("#valorBusqueda").val()).draw();
+    }
+
     $("#valorBusqueda").on("keyup", function () {
-        table.search(this.value).draw();
+        ejecutarBusqueda();
     });
 
     $("#btnBuscar").on("click", function () {
-        table.search($("#valorBusqueda").val()).draw();
+        ejecutarBusqueda();
     });
 
     $("#incluir").on("click", function () {
         limpia();
         $("#btnGuardar").text("incluir");
-
         $("#mensajePassword").text(
-            "La contraseña es obligatoria al incluir un usuario. Al modificar, déjala vacía para conservar la actual.",
+            "La contraseña es obligatoria al incluir un usuario. Al modificar, déjala vacía para conservar la actual."
         );
         $("#modal_usuarios").modal("show");
     });
@@ -168,10 +186,10 @@ function validarEnvio() {
             /^[A-Za-z0-9_.-]{3,30}$/,
             $("#username"),
             $("#susername"),
-            "Usuario inválido - Debe tener entre 3 y 30 caracteres.",
+            "Usuario inválido - Debe tener entre 3 y 30 caracteres."
         ) == 0
     ) {
-        mostrarAlerta("Atención", "Nombre de usuario inválido <br/>(Entre 3 y 30 caracteres)", "warning");
+        mostrarAlerta("Atención", "Nombre de usuario inválido <br/>(Entre 3 y 30 caracteres).", "warning");
         return false;
     } else if (
         $("#btnGuardar").text() == "incluir" &&
@@ -184,6 +202,7 @@ function validarEnvio() {
     return true;
 }
 
+// Función para mostrar alertas
 function mostrarAlerta(titulo, mensaje, icono) {
     Swal.fire({
         title: titulo,
@@ -197,11 +216,11 @@ function mostrarAlerta(titulo, mensaje, icono) {
     });
 }
 
-// Función para mostrar del modal del mensaje
+// Función para mostrar el modal del mensaje
 function mostrarMensaje(mensaje) {
     $("#contenidoModal").html(mensaje);
     $("#mostrarModal").modal("show");
-    setTimeout(function () { $("#mostrarModal").modal("hide") }, 5000);
+    setTimeout(function () { $("#mostrarModal").modal("hide"); }, 5000);
 }
 
 // Función para validar por keypress
@@ -243,13 +262,15 @@ function pone(pos) {
 
     $("#btnGuardar").text("modificar");
     $("#mensajePassword").text(
-        "Deja la contraseña vacía para conservar la actual.",
+        "Deja la contraseña vacía para conservar la actual."
     );
     $("#modal_usuarios").modal("show");
 }
 
+// Función Eliminar
 function eliminar(pos) {
     var idUsuario = $(pos).data('idusuario');
+
     Swal.fire({
         title: '¿Estás seguro?',
         text: "¿Deseas eliminar este usuario del sistema?",
@@ -272,6 +293,7 @@ function eliminar(pos) {
     });
 }
 
+// Función AJAX
 function enviaAjax(datos) {
     $.ajax({
         async: true,
@@ -315,7 +337,6 @@ function enviaAjax(datos) {
                 else if (lee.resultado === 'eliminar') {
                     mostrarAlerta("Atención", lee.mensaje, "success");
                     consultar();
-                    $("#modal_eliminar").modal("hide");
                 }
                 else if (lee.resultado == "error") {
                     mostrarMensaje(lee.mensaje);
@@ -335,12 +356,16 @@ function enviaAjax(datos) {
     });
 }
 
+// Función para limpiar
 function limpia() {
+    // Vaciar los inputs
     $("#idUsuario").val("");
     $("#idPersonal").val("");
     $("#idRol").val("");
     $("#username").val("");
     $("#password").val("");
+
+    // Limpiar los mensajes de validación
     $("#susername").text("");
     $("#spassword").text("");
 }

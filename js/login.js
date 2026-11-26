@@ -49,17 +49,23 @@ function validarEnvio() {
 }
 
 // Función para mostrar alertas
-function mostrarAlerta(titulo, mensaje, icono) {
-    Swal.fire({
+function mostrarAlerta(titulo, mensaje, icono, timer = null) {
+    let config = {
         title: titulo,
         html: mensaje,
         icon: icono,
-        confirmButtonText: 'Aceptar',
-        confirmButtonColor: '#FF8C00',
+        showConfirmButton: false,
         customClass: {
             popup: 'rounded-4 shadow'
         }
-    });
+    };
+
+    if (timer) {
+        config.timer = timer;
+        config.timerProgressBar = true;
+    }
+
+    Swal.fire(config);
 }
 
 // Función para validar por keypress
@@ -110,7 +116,6 @@ function enviaAjax(datos) {
                             window.location.href = lee.url || "index.php?pagina=principal";
                         }, 1500);
                     } else {
-                        // Aquí se muestran los errores de credenciales (contraseña incorrecta o usuario no existe) en el SweetAlert
                         mostrarAlerta("Atención", lee.mensaje, "warning");
                     }
                 }

@@ -248,6 +248,27 @@ function actualizarTotalConDelivery(precioDelivery) {
     }
 }
 
+function autocompletarCliente(cedula) {
+    let datos = new FormData();
+    datos.append("accion", "autocompletarCliente");
+    datos.append("cedulaCli", cedula);
+    enviaAjax(datos);
+}
+
+$("#cedulaCli").on("keyup blur", function () {
+    const cedula = $(this).val().trim();
+    if (validarkeyup(/^[0-9]{7,8}$/, $("#cedulaCli"), $("#scedulaCli"), "Cédula Inválida") === 1) {
+        autocompletarCliente(cedula)
+    }
+});
+
+$("#cedulaCli").on("keydown", function () {
+    $("#nombreCli").val("");
+    $("#apellidoCli").val("");
+    $("#tlfCli").val("");
+});
+
+
 $("#cuentaDestino").on("change", function () {
     let idCuenta = $(this).val();
 
@@ -382,7 +403,7 @@ function validarkeyup(er, etiqueta, etiquetamensaje, mensaje) {
         etiquetamensaje.text("");
         return 1;
     } else {
-        etiquetamensaje.text(mensaje);
+        etiquetamensaje.removeClass("text-success").addClass("text-danger").text(mensaje);
         return 0;
     }
 }
@@ -469,32 +490,6 @@ $("#btnGuardar").on("click", function () {
     }
 });
 
-function limpia() {
-    $("#nombreCli").val("");
-    $("#apellidoCli").val("");
-    $("#cedulaCli").val("");
-    $("#tlfCli").val("");
-    $("#zonaDelivery").val("");
-    $("#numCasaDelivery").val("");
-    $("#calleDelivery").val("");
-    $("#tipoPago").val("");
-    $("#cuentaDestino").val("");
-    $("#refPago").val("");
-    $("#cedulaPago").val("");
-    $("#tlfPago").val("");
-    $("#datosPagoMovil").hide();
-
-    $("#snombreCli").text("");
-    $("#sapellidoCli").text("");
-    $("#scedulaCli").text("");
-    $("#stlfCli").text("");
-    $("#srefPago").text("");
-    $("#scedulaPago").text("");
-    $("#stlfPago").text("");
-    $("#scalleDelivery").text("");
-    $("#snumCasaDelivery").text("");
-}
-
 function mostrarAlerta(titulo, mensaje, icono) {
     if ($('#swal-anim-style').length === 0) {
         $('<style>', {
@@ -537,6 +532,26 @@ function mostrarAlerta(titulo, mensaje, icono) {
     }
 
     Swal.fire(config);
+}
+
+$(function () {
+    $('#contenedor_categorias').on('click', '.list-group-item', function (e) {
+        e.preventDefault();
+        $('#contenedor_categorias .list-group-item').removeClass('active-category');
+        $(this).addClass('active-category');
+    });
+});
+
+function actualizarContadorCarrito() {
+    let carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+    let totalUnidades = 0;
+
+    for (let i = 0; i < carrito.length; i++) {
+        totalUnidades += parseInt(carrito[i].cantidad) || 0;
+    }
+
+    $("#contador-carrito").text(totalUnidades);
+    $("#contadorCarrito").text(totalUnidades);
 }
 
 function enviaAjax(datos) {
@@ -582,6 +597,14 @@ function enviaAjax(datos) {
                     $("#zonaDelivery").data("precioDelivery", precioDelivery);
                     actualizarPreciosEnBs();
 
+                } else if (lee.resultado == "clienteEncontrado") {
+                    if (lee.cliente) {
+                        $("#nombreCli").val(lee.cliente.nombreCli);
+                        $("#apellidoCli").val(lee.cliente.apellidoCli);
+                        $("#tlfCli").val(lee.cliente.tlfCli);
+                        $("#scedulaCli").removeClass("text-danger").addClass("text-success").text(lee.mensaje);
+                    }
+
                 } else if (lee.resultado == "cuentasCargadas") {
                     $("#cuentaDestino").html(lee.mensaje);
 
@@ -615,4 +638,30 @@ function enviaAjax(datos) {
         },
         complete: function () { },
     });
+}
+
+function limpia() {
+    $("#nombreCli").val("");
+    $("#apellidoCli").val("");
+    $("#cedulaCli").val("");
+    $("#tlfCli").val("");
+    $("#zonaDelivery").val("");
+    $("#numCasaDelivery").val("");
+    $("#calleDelivery").val("");
+    $("#tipoPago").val("");
+    $("#cuentaDestino").val("");
+    $("#refPago").val("");
+    $("#cedulaPago").val("");
+    $("#tlfPago").val("");
+    $("#datosPagoMovil").hide();
+
+    $("#snombreCli").text("");
+    $("#sapellidoCli").text("");
+    $("#scedulaCli").text("");
+    $("#stlfCli").text("");
+    $("#srefPago").text("");
+    $("#scedulaPago").text("");
+    $("#stlfPago").text("");
+    $("#scalleDelivery").text("");
+    $("#snumCasaDelivery").text("");
 }

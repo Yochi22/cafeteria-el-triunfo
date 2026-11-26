@@ -25,10 +25,10 @@
                     </div>
                 </div>
 
-                <div>
-                    <button type="button" id="btnGenerarPDF" class="btn btn-primary d-flex align-items-center gap-2 shadow-sm py-2 px-3 rounded-3">
-                        <i class="bi bi-file-earmark-pdf-fill"></i>
-                        <span>Exportar Reporte PDF</span>
+                <div class="d-grid d-md-block">
+                    <button type="button" id="btnGenerarPDF" class="btn btn-primary d-flex align-items-center justify-content-center gap-2 shadow-sm py-2 px-3 rounded-3">
+                        <i class="bi bi-file-earmark-pdf-fill fs-5"></i>
+                        <span class="d-none d-md-inline">Exportar Reporte PDF</span>
                     </button>
                 </div>
             </div>

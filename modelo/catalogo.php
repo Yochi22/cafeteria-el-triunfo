@@ -4,6 +4,65 @@ require_once("modelo/datos.php");
 
 class catalogo extends datos
 {
+    private function renderizarListaProductos($prods, $emptyIcon, $emptyTitle, $emptySubtitle = '')
+    {
+        if (!$prods) {
+            $subtitleHtml = $emptySubtitle !== ''
+                ? '<h6 class="text-dashboard text-secondary small mb-0">' . htmlspecialchars($emptySubtitle, ENT_QUOTES, 'UTF-8') . '</h6>'
+                : '';
+
+            return '
+            <div class="col-12 text-start text-muted py-5">
+                <div class="d-flex align-items-center gap-3">
+                    <span><i class="bi ' . htmlspecialchars($emptyIcon, ENT_QUOTES, 'UTF-8') . ' fs-1" style="color: #FF8C00;"></i></span>
+                    <div class="text-start">
+                        <h5 class="text-dashboard mb-1">' . htmlspecialchars($emptyTitle, ENT_QUOTES, 'UTF-8') . '</h5>
+                        ' . $subtitleHtml . '
+                    </div>
+                </div>
+            </div>';
+        }
+
+        $html = '';
+
+        foreach ($prods as $p) {
+            $fotoProd = !empty($p['fotoProd']) ? $p['fotoProd'] : 'img/principal.jpg';
+            $nombreProd = (string)$p['nombreProd'];
+            $descProd = (string)$p['descProd'];
+            $precioProd = (float)$p['precioProd'];
+            $codigoProd = (string)$p['codigoProd'];
+
+            $fotoAttr = htmlspecialchars($fotoProd, ENT_QUOTES, 'UTF-8');
+            $nombreHtml = htmlspecialchars($nombreProd, ENT_QUOTES, 'UTF-8');
+            $descHtml = htmlspecialchars($descProd, ENT_QUOTES, 'UTF-8');
+            $codigoJs = htmlspecialchars(addslashes($codigoProd), ENT_QUOTES, 'UTF-8');
+            $nombreJs = htmlspecialchars(addslashes($nombreProd), ENT_QUOTES, 'UTF-8');
+            $descJs = htmlspecialchars(addslashes($descProd), ENT_QUOTES, 'UTF-8');
+            $fotoJs = htmlspecialchars(addslashes($fotoProd), ENT_QUOTES, 'UTF-8');
+
+            $html .= '
+            <div class="card border-0 rounded-4 shadow-sm mb-3 p-3 bg-white dynamic-card text-start">
+                <div class="d-flex flex-row align-items-center justify-content-between gap-2 gap-sm-3">
+                    <div class="d-flex align-items-center gap-2 gap-sm-3 flex-grow-1 text-start" style="min-width: 0;">
+                        <img src="' . $fotoAttr . '" alt="' . $nombreHtml . '" class="img-fluid rounded-3 flex-shrink-0" style="height: 76px; width: 76px; object-fit: cover;">
+                        <div class="flex-grow-1 text-start" style="min-width: 0;">
+                            <h5 class="text-dashboard fw-bold mb-1 text-truncate">' . $nombreHtml . '</h5>
+                            <p class="text-muted small mb-1 text-truncate">' . $descHtml . '</p>
+                            <p class="text-success fw-bold mb-0">$' . number_format($precioProd, 2) . '</p>
+                        </div>
+                    </div>
+                    <div class="flex-shrink-0">
+                        <button type="button" class="btn btn-sm rounded-pill px-3 py-2 fw-bold shadow-sm text-nowrap" style="color: #FF8C00; border: 1px solid #FF8C00;" onclick="abrirModalDetalle(\'' . $codigoJs . '\', \'' . $nombreJs . '\', \'' . $descJs . '\', ' . $precioProd . ', \'' . $fotoJs . '\')">
+                            <i class="bi bi-cart2"></i> <span class="d-none d-sm-inline ms-1">Agregar al Carrito</span><span class="d-inline d-sm-none ms-1">Agregar</span>
+                        </button>
+                    </div>
+                </div>
+            </div>';
+        }
+
+        return $html;
+    }
+
     function obtenerCategorias()
     {
         $r = array();
@@ -16,22 +75,24 @@ class catalogo extends datos
 
             $html = '';
             $html .= '
-            <a href="#" class="list-group-item list-group-item-action rounded-3 border-0 fw-semibold text-dark mb-1 active-category" onclick="cargarProductos(); return false;">
+            <a href="#" class="list-group-item list-group-item-action rounded-3 border-0 fw-semibold text-dark text-start mb-1 active-category" onclick="cargarProductos(); return false;">
                 <i class="bi bi-grid me-2"></i> Todos los productos
             </a>';
 
             if ($cats) {
                 foreach ($cats as $c) {
-                    $idCat = $c['idCategoria'];
-                    $nombreCat = $c['nombreCat'];
+                    $idCat = (int)$c['idCategoria'];
+                    $nombreCat = (string)$c['nombreCat'];
+                    $nombreCatHtml = htmlspecialchars($nombreCat, ENT_QUOTES, 'UTF-8');
+                    $nombreCatJs = htmlspecialchars(addslashes($nombreCat), ENT_QUOTES, 'UTF-8');
 
                     $html .= '
-                    <a href="#" class="list-group-item list-group-item-action rounded-3 border-0 text-secondary mb-1" onclick="listarProductos(' . $idCat . ', \'' . $nombreCat . '\'); return false;">
-                        <i class="bi bi-tag me-2"></i> ' . $nombreCat . '
+                    <a href="#" class="list-group-item list-group-item-action rounded-3 border-0 text-secondary text-start mb-1" onclick="listarProductos(' . $idCat . ', \'' . $nombreCatJs . '\'); return false;">
+                        <i class="bi bi-tag me-2"></i> ' . $nombreCatHtml . '
                     </a>';
                 }
             } else {
-                $html .= '<div class="text-center text-muted py-3 small">No hay categorías</div>';
+                $html .= '<div class="text-start text-muted py-3 small">No hay categorías</div>';
             }
 
             $r['resultado'] = 'categorias_cargadas';
@@ -54,44 +115,11 @@ class catalogo extends datos
             $stmt = $co->query("SELECT * FROM productos");
             $prods = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            $html = '';
-
-            if ($prods) {
-                foreach ($prods as $p) {
-                    $fotoProd = !empty($p['fotoProd']) ? $p['fotoProd'] : 'img/principal.jpg';
-                    $nombreProd = $p['nombreProd'];
-                    $descProd = $p['descProd'];
-                    $precioProd = $p['precioProd'];
-                    $codigoProd = $p['codigoProd'];
-
-                    $html .= '
-                    <div class="card border-0 rounded-4 shadow-sm mb-3 p-3 bg-white dynamic-card">
-                        <div class="row align-items-center">
-                            <div class="col-4 col-md-2 text-center">
-                                <img src="' . $fotoProd . '" class="img-fluid rounded-3" style="height:90px; width:90px; object-fit:cover;">
-                            </div>
-                            <div class="col-8 col-md-7">
-                                <div class="card-body p-0">
-                                    <h5 class="text-dashboard fw-bold mb-1">' . $nombreProd . '</h5>
-                                    <p class="text-muted small mb-2 text-truncate">' . $descProd . '</p>
-                                    <p class="text-success fw-bold mb-0">$' . number_format($precioProd, 2) . '</p>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-3 text-end mt-3 mt-md-0">
-                                <button class="btn btn-sm rounded-pill px-3 py-2 fw-bold w-100 shadow-sm" style="color: #FF8C00; border: 1px solid #FF8C00;" onclick="abrirModalDetalle(\'' . $codigoProd . '\', \'' . $nombreProd . '\', \'' . $descProd . '\', ' . $precioProd . ', \'' . $fotoProd . '\')">
-                                    <i class="bi bi-cart2"></i> Agregar al carrito
-                                </button>
-                            </div>
-                        </div>
-                    </div>';
-                }
-            } else {
-                $html = '
-                <div class="col-12 text-center text-muted py-5">
-                    <span><i class="bi bi-box-seam fs-1" style="color: #FF8C00"></i></span>
-                    <h5 class="text-dashboard mt-2">No hay productos registrados.</h5>
-                </div>';
-            }
+            $html = $this->renderizarListaProductos(
+                $prods,
+                'bi-box-seam',
+                'No hay productos registrados.'
+            );
 
             $r['resultado'] = 'cargarProductos';
             $r['mensaje'] = $html;
@@ -114,44 +142,11 @@ class catalogo extends datos
             $stmt->execute([$idCategoria]);
             $prods = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            $html = '';
-
-            if ($prods) {
-                foreach ($prods as $p) {
-                    $fotoProd = !empty($p['fotoProd']) ? $p['fotoProd'] : 'img/principal.jpg';
-                    $nombreProd = $p['nombreProd'];
-                    $descProd = $p['descProd'];
-                    $precioProd = $p['precioProd'];
-                    $codigoProd = $p['codigoProd'];
-
-                    $html .= '
-                    <div class="card border-0 rounded-4 shadow-sm mb-3 p-3 bg-white dynamic-card">
-                        <div class="row align-items-center">
-                            <div class="col-4 col-md-2 text-center">
-                                <img src="' . $fotoProd . '" class="img-fluid rounded-3" style="height:90px; width:90px; object-fit:cover;">
-                            </div>
-                            <div class="col-8 col-md-7">
-                                <div class="card-body p-0">
-                                    <h5 class="text-dashboard fw-bold mb-1">' . $nombreProd . '</h5>
-                                    <p class="text-muted small mb-2 text-truncate">' . $descProd . '</p>
-                                    <p class="text-success fw-bold mb-0">$' . number_format($precioProd, 2) . '</p>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-3 text-end mt-3 mt-md-0">
-                                <button class="btn btn-sm rounded-pill px-3 py-2 fw-bold w-100 shadow-sm" style="color: #FF8C00; border: 1px solid #FF8C00;" onclick="abrirModalDetalle(\'' . $codigoProd . '\', \'' . $nombreProd . '\', \'' . $descProd . '\', ' . $precioProd . ', \'' . $fotoProd . '\')">
-                                    <i class="bi bi-eye me-1"></i> Ver / Comprar
-                                </button>
-                            </div>
-                        </div>
-                    </div>';
-                }
-            } else {
-                $html = '
-                <div class="col-12 text-center text-muted py-5">
-                    <span><i class="bi bi-folder2-open fs-1" style="color: #FF8C00"></i></span>
-                    <h5 class="text-dashboard mt-2">No hay productos en esta categoría.</h5>
-                </div>';
-            }
+            $html = $this->renderizarListaProductos(
+                $prods,
+                'bi-folder2-open',
+                'No hay productos en esta categoría.'
+            );
 
             $r['resultado'] = 'listarProductos';
             $r['mensaje'] = $html;
@@ -176,45 +171,12 @@ class catalogo extends datos
             $b->execute();
             $prods = $b->fetchAll(PDO::FETCH_ASSOC);
 
-            $html = '';
-
-            if ($prods) {
-                foreach ($prods as $p) {
-                    $fotoProd = !empty($p['fotoProd']) ? $p['fotoProd'] : 'img/principal.jpg';
-                    $nombreProd = $p['nombreProd'];
-                    $descProd = $p['descProd'];
-                    $precioProd = $p['precioProd'];
-                    $codigoProd = $p['codigoProd'];
-
-                    $html .= '
-                    <div class="card border-0 rounded-4 shadow-sm mb-3 p-3 bg-white dynamic-card">
-                        <div class="row align-items-center">
-                            <div class="col-4 col-md-2 text-center">
-                                <img src="' . $fotoProd . '" class="img-fluid rounded-3" style="height:90px; width:90px; object-fit:cover;">
-                            </div>
-                            <div class="col-8 col-md-7">
-                                <div class="card-body p-0">
-                                    <h5 class="text-dashboard fw-bold mb-1">' . $nombreProd . '</h5>
-                                    <p class="text-muted small mb-2 text-truncate">' . $descProd . '</p>
-                                    <p class="text-success fw-bold mb-0">$' . number_format($precioProd, 2) . '</p>
-                                </div>
-                            </div>
-                            <div class="col-12 col-md-3 text-end mt-3 mt-md-0">
-                                <button class="btn btn-sm rounded-pill px-3 py-2 fw-bold w-100 shadow-sm" style="color: #FF8C00; border: 1px solid #FF8C00;" onclick="abrirModalDetalle(\'' . $codigoProd . '\', \'' . $nombreProd . '\', \'' . $descProd . '\', ' . $precioProd . ', \'' . $fotoProd . '\')">
-                                    <i class="bi bi-eye me-1"></i> Ver / Comprar
-                                </button>
-                            </div>
-                        </div>
-                    </div>';
-                }
-            } else {
-                $html = '
-                <div class="col-12 text-center text-muted py-5">
-                    <span><i class="bi bi-search fs-1" style="color: #FF8C00"></i></span>
-                    <h5 class="text-dashboard mt-2">No se encuentran productos</h5>
-                    <h6 class="text-dashboard text-secondary small">Intenta con otra búsqueda.</h6>
-                </div>';
-            }
+            $html = $this->renderizarListaProductos(
+                $prods,
+                'bi-search',
+                'No se encuentran productos',
+                'Intenta con otra búsqueda.'
+            );
 
             $r['resultado'] = 'buscar';
             $r['mensaje'] = $html;
@@ -267,36 +229,42 @@ class catalogo extends datos
 
         if (!empty($carrito)) {
             foreach ($carrito as $index => $p) {
-                $subtotalProd = $p['precioProd'] * $p['cantidad'];
+                $precioProd = (float)$p['precioProd'];
+                $cantidadProd = (int)$p['cantidad'];
+                $fotoProd = !empty($p['fotoProd']) ? (string)$p['fotoProd'] : 'img/principal.jpg';
+                $nombreProd = (string)$p['nombreProd'];
+
+                $subtotalProd = $precioProd * $cantidadProd;
                 $subtotalGeneral += $subtotalProd;
 
+                $fotoAttr = htmlspecialchars($fotoProd, ENT_QUOTES, 'UTF-8');
+                $nombreHtml = htmlspecialchars($nombreProd, ENT_QUOTES, 'UTF-8');
+
                 $html .= '
-                    <div class="col-12 col-md-6 carritoContenido" data-precio="' . $p['precioProd'] . '" data-cantidad="1">
-                        <div class="card border-0 rounded-4 shadow-sm h-100">
-                            <div class="card-body d-flex align-items-center p-3">
-                            <div class="me-3">
-                                <img src="' . $p['fotoProd'] . '" alt="' . $p['nombreProd'] . '" class="img-fluid rounded-3 shadow-sm" style="height: 90px; width: 90px; object-fit: cover;">
-                            </div>
-                            <div class="flex-grow-1">
-                                <h6 class="fw-bold mb-1">' . $p['nombreProd'] . '</h6>
-                                <div class="small fw-bold mb-2 text-success">
-                                    <i class="bi bi-star-fill text-warning"></i> <span class="precioProdBs">Bs. 0,00</span> 
-                                    <span class="text-muted ms-2 fw-bold" style="font-size: 0.8rem;">(' . '$' . number_format($p['precioProd'], 2) . ')</span>
+                    <div class="col-12 col-md-6 carritoContenido" data-precio="' . $precioProd . '" data-cantidad="' . $cantidadProd . '">
+                        <div class="card border-0 rounded-4 shadow-sm h-100 text-start">
+                            <div class="card-body d-flex flex-row align-items-center justify-content-between gap-2 p-3">
+                                <div class="d-flex align-items-center gap-2 gap-sm-3 flex-grow-1 text-start" style="min-width: 0;">
+                                    <img src="' . $fotoAttr . '" alt="' . $nombreHtml . '" class="img-fluid rounded-3 shadow-sm flex-shrink-0" style="height: 76px; width: 76px; object-fit: cover;">
+                                    <div class="flex-grow-1 text-start" style="min-width: 0;">
+                                        <h6 class="fw-bold mb-1 text-truncate">' . $nombreHtml . '</h6>
+                                        <div class="small fw-bold mb-2 text-success text-start">
+                                            <i class="bi bi-star-fill text-warning"></i> <span class="precioProdBs">Bs. 0,00</span>
+                                            <span class="text-muted ms-2 fw-bold" style="font-size: 0.8rem;">($' . number_format($precioProd, 2) . ')</span>
+                                        </div>
+                                        <button type="button" class="btn btn-sm btn-light text-danger border px-2 py-1 shadow-sm btn-eliminar" data-index="' . (int)$index . '">
+                                            <i class="bi bi-trash me-1"></i>Eliminar
+                                        </button>
+                                    </div>
                                 </div>
-                                <button class="btn btn-sm btn-light text-danger border px-2 py-1 shadow-sm btn-eliminar" data-index="' . $index . '">
-                                    <i class="bi bi-trash me-1"></i>Eliminar
-                                </button>
-                            </div>
-                            <div class="d-flex flex-column align-items-end ms-2 h-100 justify-content-center">
-                                <div class="d-flex flex-column align-items-center qty-controls p-1">
-                                    <button class="btn btn-sm text-orange p-0 px-2" onclick="cambiarCantidadLocal(' . $index . ', 1)"><i class="bi bi-plus"></i></button>
-                                    <span class="fw-bold small my-1">' . $p['cantidad'] . '</span>
-                                    <button class="btn btn-sm text-secondary p-0 px-2" onclick="cambiarCantidadLocal(' . $index . ', -1)"><i class="bi bi-dash"></i></button>
+                                <div class="d-flex flex-column align-items-center qty-controls p-1 flex-shrink-0">
+                                    <button type="button" class="btn btn-sm text-orange p-0 px-2" onclick="cambiarCantidadLocal(' . (int)$index . ', 1)"><i class="bi bi-plus"></i></button>
+                                    <span class="fw-bold small my-1">' . $cantidadProd . '</span>
+                                    <button type="button" class="btn btn-sm text-secondary p-0 px-2" onclick="cambiarCantidadLocal(' . (int)$index . ', -1)"><i class="bi bi-dash"></i></button>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>';
+                    </div>';
             }
 
             $r['resultado'] = 'cargarCarrito';
@@ -304,11 +272,44 @@ class catalogo extends datos
             $r['subtotal'] = number_format($subtotalGeneral, 2, '.', '');
         } else {
             $r['resultado'] = 'cargarCarrito';
-            $r['mensaje']  = '<div class="col-12 text-center py-4 text-dashboard">
-                                <i class="bi bi-cart-x fs-1 mb-2" style="color: #FF8C00;"></i>
-                                <p class="mb-0 fw-semibold">Tu carrito está vacío.</p>
+            $r['mensaje']  = '<div class="col-12 text-start py-4 text-dashboard">
+                                <div class="d-flex align-items-center gap-3">
+                                    <i class="bi bi-cart-x fs-1" style="color: #FF8C00;"></i>
+                                    <p class="mb-0 fw-semibold">Tu carrito está vacío.</p>
+                                </div>
                             </div>';
             $r['subtotal'] = '0.00';
+        }
+
+        return $r;
+    }
+
+    public function autocompletarCliente($cedula)
+    {
+        $r = array();
+        $co = $this->conecta();
+        $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        try {
+            $cedulaBuscar = trim($cedula);
+
+            $stmt = $co->prepare("SELECT * FROM clientes WHERE cedulaCli = :cedula LIMIT 1");
+            $stmt->bindParam(":cedula", $cedulaBuscar);
+            $stmt->execute();
+
+            $cliente = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($cliente) {
+                $r["cliente"] = $cliente;
+            } else {
+                $r["cliente"] = null;
+            }
+
+            $r["resultado"] = "clienteEncontrado";
+            $r["mensaje"] = '¡Bienvenido de nuevo!';
+        } catch (Exception $e) {
+            $r["resultado"] = "error";
+            $r["mensaje"] = $e->getMessage();
         }
 
         return $r;
@@ -327,7 +328,7 @@ class catalogo extends datos
 
             $html = '<option value="">Seleccione...</option>';
             foreach ($cuentas as $c) {
-                $html .= '<option value="' . $c['idCuenta'] . '">' . $c['nombreBanco'] . '</option>';
+                $html .= '<option value="' . htmlspecialchars((string)$c['idCuenta'], ENT_QUOTES, 'UTF-8') . '">' . htmlspecialchars((string)$c['nombreBanco'], ENT_QUOTES, 'UTF-8') . '</option>';
             }
 
             $r['resultado'] = 'cuentasCargadas';
@@ -386,18 +387,25 @@ class catalogo extends datos
             $cuenta = $cc->fetch(PDO::FETCH_ASSOC);
 
             if ($cuenta) {
+                $bancoHtml = htmlspecialchars((string)$cuenta['nombreBanco'], ENT_QUOTES, 'UTF-8');
+                $cedulaHtml = htmlspecialchars((string)$cuenta['cedulaTitular'], ENT_QUOTES, 'UTF-8');
+                $tlfHtml = htmlspecialchars((string)$cuenta['tlfCuenta'], ENT_QUOTES, 'UTF-8');
+                $numHtml = htmlspecialchars((string)$cuenta['numCuenta'], ENT_QUOTES, 'UTF-8');
+                $montoHtml = htmlspecialchars((string)$montoTotal, ENT_QUOTES, 'UTF-8');
+
                 $html = '
-                <div class="alert alert-light border p-3 rounded-3 mb-3">
-                    <button type="button" class="btn btn-secondary-sm position-absolute top-0 end-0 m-2" id="btnCopiarDatos" title="Copiar datos">
-                        <i class="bi bi-copy"></i>
-                    </button>
-                    <p class="mb-1" id="copiarBanco"><strong>Banco:</strong> ' . $cuenta['nombreBanco'] . '</p>
-                    <p class="mb-1" id="copiarCedula"><strong>Cédula:</strong> ' . $cuenta['cedulaTitular'] . '</p>
-                    <p class="mb-0" id="copiarTlfn"><strong>Teléfono:</strong> ' . $cuenta['tlfCuenta'] . '</p>
-                    <p class="mb-1" id="copiarNum"><strong>Nro. de Cuenta:</strong> <span class="text-dark fw-bold">' . $cuenta['numCuenta'] . '</span></p>
-                </div>
+                <div class="text-start">
+                    <div class="alert alert-light border p-3 rounded-3 mb-3 position-relative">
+                        <button type="button" class="btn btn-secondary-sm position-absolute top-0 end-0 m-2" id="btnCopiarDatos" title="Copiar datos">
+                            <i class="bi bi-copy"></i>
+                        </button>
+                        <p class="mb-1" id="copiarBanco"><strong>Banco:</strong> ' . $bancoHtml . '</p>
+                        <p class="mb-1" id="copiarCedula"><strong>Cédula:</strong> ' . $cedulaHtml . '</p>
+                        <p class="mb-0" id="copiarTlfn"><strong>Teléfono:</strong> ' . $tlfHtml . '</p>
+                        <p class="mb-1" id="copiarNum"><strong>Nro. de Cuenta:</strong> <span class="text-dark fw-bold">' . $numHtml . '</span></p>
+                    </div>
                     <span class="text-muted small d-block">Monto a pagar:</span>
-                    <h4 class="text-success fw-bold mb-0">' . $montoTotal . '</h4>
+                    <h4 class="text-success fw-bold mb-0">' . $montoHtml . '</h4>
                 </div>';
 
                 $r['resultado'] = 'mostrarDetalleCuenta';

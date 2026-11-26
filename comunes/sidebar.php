@@ -6,20 +6,20 @@
             <img src="img/principal.jpg" alt="Logo El Triunfo" class="sidebar-logo img-fluid">
         </div>
         <nav class="nav flex-column pb-5">
-            <a class="nav-link py-1 <?= $pagina == 'principal' ? 'active' : '' ?>" href="?pagina=principal">
+            <a class="nav-link py-1 <?= $pagina == 'principal' ? 'active text-dark' : '' ?>" href="?pagina=principal">
                 <i class="bi bi-house-door"></i> Inicio
             </a>
-            <a class="nav-link py-1 <?= $pagina == 'pedidos' ? 'active' : '' ?>" href="?pagina=pedidos">
+            <a class="nav-link py-1 <?= $pagina == 'pedidos' ? 'active text-dark' : '' ?>" href="?pagina=pedidos">
                 <i class="bi bi-journal-check"></i> Pedidos
             </a>
             <?php if ($nivel == 'Administrador' || $nivel == 'Mesero') { ?>
                 <span class="text-uppercase text-white-50 fw-bold small mt-2 mb-2 px-3" style="letter-spacing: 1px; font-size: 0.75rem;">
                     Inventario
                 </span>
-                <a class="nav-link py-1 <?= $pagina == 'categorias' ? 'active' : '' ?>" href="?pagina=categorias">
+                <a class="nav-link py-1 <?= $pagina == 'categorias' ? 'active text-dark' : '' ?>" href="?pagina=categorias">
                     <i class="bi bi-tags"></i> Categorías
                 </a>
-                <a class="nav-link py-1 <?= $pagina == 'productos' ? 'active' : '' ?>" href="?pagina=productos">
+                <a class="nav-link py-1 <?= $pagina == 'productos' ? 'active text-dark' : '' ?>" href="?pagina=productos">
                     <i class="bi bi-egg-fried"></i> Productos
                 </a>
             <?php } ?>
@@ -27,10 +27,10 @@
                 <span class="text-uppercase text-white-50 fw-bold small mt-2 mb-2 px-3" style="letter-spacing: 1px; font-size: 0.75rem;">
                     Gestión
                 </span>
-                <a class="nav-link py-1 <?= $pagina == 'ventas' ? 'active' : '' ?>" href="?pagina=ventas">
+                <a class="nav-link py-1 <?= $pagina == 'ventas' ? 'active text-dark' : '' ?>" href="?pagina=ventas">
                     <i class="bi bi-receipt"></i> Ventas
                 </a>
-                <a class="nav-link py-1 <?= $pagina == 'reporte' ? 'active' : '' ?>" href="?pagina=reporte">
+                <a class="nav-link py-1 <?= $pagina == 'reporte' ? 'active text-dark' : '' ?>" href="?pagina=reporte">
                     <i class="bi bi-file-earmark-bar-graph"></i> Reporte
                 </a>
             <?php } ?>
@@ -38,7 +38,7 @@
                 <span class="text-uppercase text-white-50 fw-bold small mt-2 mb-2 px-3" style="letter-spacing: 1px; font-size: 0.75rem;">
                     Finanzas
                 </span>
-                <a class="nav-link py-1 <?= $pagina == 'cuentas' ? 'active' : '' ?>" href="?pagina=cuentas">
+                <a class="nav-link py-1 <?= $pagina == 'cuentas' ? 'active text-dark' : '' ?>" href="?pagina=cuentas">
                     <i class="bi bi-bank"></i> Cuentas
                 </a>
             <?php } ?>
@@ -46,15 +46,15 @@
                 <span class="text-uppercase text-white-50 fw-bold small mt-2 mb-2 px-3" style="letter-spacing: 1px; font-size: 0.75rem;">
                     Perfiles
                 </span>
-                <a class="nav-link py-1 <?= $pagina == 'clientes' ? 'active' : '' ?>" href="?pagina=clientes">
+                <a class="nav-link py-1 <?= $pagina == 'clientes' ? 'active text-dark' : '' ?>" href="?pagina=clientes">
                     <i class="bi bi-people"></i> Clientes
                 </a>
             <?php } ?>
             <?php if ($nivel == 'Administrador') { ?>
-                <a class="nav-link py-1 <?= $pagina == 'personal' ? 'active' : '' ?>" href="?pagina=personal">
+                <a class="nav-link py-1 <?= $pagina == 'personal' ? 'active text-dark' : '' ?>" href="?pagina=personal">
                     <i class="bi bi-person-badge"></i> Personal
                 </a>
-                <a class="nav-link py-1 <?= $pagina == 'usuarios' ? 'active' : '' ?>" href="?pagina=usuarios">
+                <a class="nav-link py-1 <?= $pagina == 'usuarios' ? 'active text-dark' : '' ?>" href="?pagina=usuarios">
                     <i class="bi-person-lines-fill"></i> Usuarios
                 </a>
             <?php } ?>

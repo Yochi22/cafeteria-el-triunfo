@@ -41,6 +41,11 @@ if (is_file("vista/" . $pagina . ".php")) {
                 echo json_encode($o->cargarCarrito($productos));
                 break;
 
+            case 'autocompletarCliente':
+                $cedula = $_POST['cedulaCli'];
+                echo json_encode($o->autocompletarCliente($cedula));
+                break;
+
             case 'cargarCuentas':
                 echo json_encode($o->cargarCuentas());
                 break;

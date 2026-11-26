@@ -1,5 +1,5 @@
 // Función para la lista de pedidos
-function consultar(estado = "Todos") {
+function consultar(estado = "En Proceso") {
     var datos = new FormData();
     datos.append("accion", "consultar");
     datos.append("estadoFiltro", estado);
@@ -7,7 +7,7 @@ function consultar(estado = "Todos") {
 }
 
 $(document).ready(function () {
-    consultar("Todos");
+    consultar("En Proceso");
 
     // Filtrar pedidos por estado
     $("#filtroEstado").on("change", function () {

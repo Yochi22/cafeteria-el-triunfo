@@ -5,7 +5,6 @@ $(document).ready(function () {
 
     setInterval(function () {
         cargarHorarios();
-        verificarEstadoLocal();
     }, 15000);
 });
 
@@ -15,23 +14,37 @@ function cargarHorarios() {
     enviaAjax(datos);
 }
 
+function normalizarDia(texto) {
+    return (texto || "")
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .trim();
+}
+
 function verificarEstadoLocal() {
     if (horariosGlobal.length === 0) return;
+
     var dias = ["domingo", "lunes", "martes", "miercoles", "jueves", "viernes", "sabado"];
     var ahora = new Date();
     var diaActual = dias[ahora.getDay()];
     var horaActual = ahora.getHours() * 60 + ahora.getMinutes();
 
-    var horarioHoy = horariosGlobal.find(h => h.dia.toLowerCase() === diaActual);
-    if (!horarioHoy) return;
+    var horarioHoy = horariosGlobal.find(h => normalizarDia(h.dia) === normalizarDia(diaActual));
+    if (!horarioHoy) {
+        $("#lblHorarioHoy").text("No disponible");
+        return;
+    }
 
-    $("#lblHorarioHoy").text(formatearHora12(horarioHoy.horaApertura) + " - " + formatearHora12(horarioHoy.horaCierre));
+    $("#lblHorarioHoy").text(
+        formatearHora12(horarioHoy.horaApertura) + " - " + formatearHora12(horarioHoy.horaCierre)
+    );
 
     var partesApertura = horarioHoy.horaApertura.split(":");
-    var minutosApertura = parseInt(partesApertura[0]) * 60 + parseInt(partesApertura[1]);
+    var minutosApertura = parseInt(partesApertura[0], 10) * 60 + parseInt(partesApertura[1], 10);
 
     var partesCierre = horarioHoy.horaCierre.split(":");
-    var minutosCierre = parseInt(partesCierre[0]) * 60 + parseInt(partesCierre[1]);
+    var minutosCierre = parseInt(partesCierre[0], 10) * 60 + parseInt(partesCierre[1], 10);
 
     var abierto = false;
     if (minutosApertura <= minutosCierre) {
@@ -52,7 +65,7 @@ function verificarEstadoLocal() {
 function formatearHora12(hora24) {
     if (!hora24) return "";
     var partes = hora24.split(":");
-    var h = parseInt(partes[0]);
+    var h = parseInt(partes[0], 10);
     var m = partes[1];
     var ampm = h >= 12 ? "PM" : "AM";
     h = h % 12;
@@ -71,18 +84,18 @@ function enviaAjax(datos) {
         cache: false,
         success: function (respuesta) {
             try {
-                var lee = JSON.parse(respuesta);
+                var lee = typeof respuesta === "string" ? JSON.parse(respuesta) : respuesta;
 
                 if (Array.isArray(lee)) {
                     horariosGlobal = lee;
                     verificarEstadoLocal();
                 }
             } catch (e) {
-                console.error("Error al procesar JSON: ", e);
+                console.error("Error al procesar JSON:", e, respuesta);
             }
         },
         error: function (request, status, error) {
-            console.error("Error de conexión: " + error);
+            console.error("Error de conexión:", status, error);
         }
     });
 }

@@ -15,6 +15,7 @@ if (is_file("vista/" . $pagina . ".php")) {
 
         switch ($accion) {
             case 'consultarHorarios':
+                header('Content-Type: application/json; charset=utf-8');
                 echo json_encode($o->consultarHorarios());
                 break;
         }

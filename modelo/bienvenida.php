@@ -10,10 +10,10 @@ class bienvenida extends datos
         $co->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         try {
-            $stmt = $co->query("SELECT * FROM horarios");
+            $stmt = $co->query("SELECT idHorario, dia, horaApertura, horaCierre FROM horarios");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e) {
-            return array();
+            return [];
         }
     }
 }

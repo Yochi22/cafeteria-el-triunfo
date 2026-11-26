@@ -20,16 +20,16 @@
 
                 <!-- Filtros y Botón de Creación -->
                 <div class="d-flex align-items-center gap-2">
-                    <label class="form-label mb-0 text-muted small fw-bold">Filtrar:</label>
-                    <select class="form-select form-select-sm w-auto bg-light border-secondary-subtle" id="filtroEstado">
-                        <option value="Todos">Todos</option>
+                    <label class="form-label mb-0 text-muted small fw-bold d-none d-md-inline">Filtrar:</label>
+                    <select class="form-select form-select-sm w-auto bg-light border-secondary-subtle py-2" id="filtroEstado">
                         <option value="En Proceso">En Proceso</option>
                         <option value="Finalizado">Finalizado</option>
                         <option value="Cancelado">Cancelado</option>
+                        <option value="Todos">Todos</option>
                     </select>
-                    <button type="button" id="incluir" class="btn btn-crear d-flex align-items-center gap-2 shadow-sm">
+                    <button type="button" id="incluir" class="btn btn-crear d-flex align-items-center justify-content-center gap-2 shadow-sm py-2 px-3 rounded-3 flex-grow-1 flex-md-grow-0">
                         <i class="bi bi-plus-circle fs-5"></i>
-                        <span>Crear Pedido</span>
+                        <span class="d-none d-md-inline">Crear Pedido</span>
                     </button>
                 </div>
             </div>

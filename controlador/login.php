@@ -18,14 +18,14 @@ if (is_file("vista/" . $pagina . ".php")) {
             $o->set_password($_POST['password']);
             $resultado = $o->existe();
 
-            if ($resultado['resultado'] === 'login' && isset($resultado['estatus']) && $resultado['estatus'] === 'exito') {
+            if (($resultado['resultado'] ?? null) === 'login' && ($resultado['estatus'] ?? null) === 'exito') {
                 if (session_status() == PHP_SESSION_NONE) {
                     session_start();
                 }
 
-                $_SESSION['nivel'] = $resultado['datos']['rol'];
-                $_SESSION['idUsuario'] = $resultado['datos']['idUsuario'];
-                $_SESSION['username'] = $resultado['datos']['username'];
+                $_SESSION['nivel'] = $resultado['datos']['rol'] ?? '';
+                $_SESSION['idUsuario'] = $resultado['datos']['idUsuario'] ?? '';
+                $_SESSION['username'] = $resultado['datos']['username'] ?? '';
             }
 
             echo json_encode($resultado);

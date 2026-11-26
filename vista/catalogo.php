@@ -4,7 +4,7 @@
 <?php require_once("comunes/menu_usuario.php"); ?>
 
 <body>
-    <main class="bg-light">
+    <main class="bg-light pb-5">
         <div class="container-fluid p-0 px-md-5 mb-5">
             <div class="row g-0 mb-4">
                 <div class="col-12">
@@ -35,27 +35,26 @@
 
                     </div>
                 </div>
-                <div class="col-12 col-lg-9">
+                <div class="col-12 col-lg-9 text-center text-md-start">
 
                     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3 bg-white p-3 rounded-4 shadow-sm">
                         <div>
-                            <h3 id="titulo_categoria_activo" class="fw-bold text-dark mb-1">Todos los productos</h3>
+                            <h3 id="titulo_categoria_activo" class="fw-bold text-dashboard mb-1">Todos los productos</h3>
                         </div>
 
-                        <div class="input-group bg-light border rounded-3 px-2 py-1 align-items-center w-auto shadow-none" style="max-width: 280px;">
-                            <button class="btn p-0 border-0 link-secondary me-2" type="button" id="btnBuscar">
-                                <i class="bi bi-search"></i>
-                            </button>
-                            <input type="text" id="valorBusqueda" name="valorBusqueda" class="form-control border-0 shadow-none bg-transparent form-control-sm" placeholder="Buscar platillo...">
+                        <div class="col-12 col-md-4">
+                            <div class="input-group bg-light border rounded-3 px-1 py-1 align-items-center shadow-none">
+                                <button class="btn p-0 border-0 link-secondary me-2" type="button" id="btnBuscar">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                                <input type="text" id="valorBusqueda" name="valorBusqueda" class="form-control border-0 shadow-none bg-transparent form-control-sm" placeholder="Buscar platillo...">
+                            </div>
                         </div>
                     </div>
                     <div id="cuadricula_items" class="d-flex flex-column gap-3">
                     </div>
-
                 </div>
-
             </div>
-
         </div>
     </main>
 
@@ -93,10 +92,11 @@
                                     </button>
                                 </div>
                             </div>
-
-                            <button type="button" class="btn w-100 rounded-pill py-2 fw-bold shadow-sm text-white" style="background-color: #FF8C00 !important; border-color: #FF8C00 !important;" id="modal-btn-agregar">
-                                <i class="bi bi-cart-plus me-2"></i> Agregar al carrito
-                            </button>
+                            <div class="text-center text-md-center">
+                                <button type="button" class="btn rounded-pill py-2 fw-bold shadow-sm text-white" style="background-color: #FF8C00 !important; border-color: #FF8C00 !important;" id="modal-btn-agregar">
+                                    <i class="bi bi-cart-plus me-2"></i> Agregar al carrito
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -141,7 +141,7 @@
                                 </div>
 
                                 <button class="btn btn-warning text-white btn-lg w-100 rounded-3 fw-bold shadow-sm" style="background-color: #ff8c00; border: none;" data-bs-toggle="modal" data-bs-target="#infoClienteModal">
-                                    Pedir!
+                                    Pedir
                                 </button>
                             </div>
                         </div>
@@ -175,23 +175,23 @@
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="nombreCli" class="form-label text-muted small fw-bold">Nombre</label>
-                                <input type="text" class="form-control rounded-3" id="nombreCli" name="nombreCli" required>
-                                <span id="snombreCli" class="text-danger small"></span>
+                                <label for="cedulaCli" class="form-label text-muted small fw-bold">Cédula</label>
+                                <input type="text" class="form-control rounded-3" id="cedulaCli" name="cedulaCli" required>
+                                <span id="scedulaCli" class="text-danger small"></span>
                             </div>
 
                             <div class="col-md-6 mb-3">
-                                <label for="apellidoCli" class="form-label text-muted small fw-bold">Apellido</label>
-                                <input type="text" class="form-control rounded-3" id="apellidoCli" name="apellidoCli" required>
-                                <span id="sapellidoCli" class="text-danger small"></span>
+                                <label for="nombreCli" class="form-label text-muted small fw-bold">Nombre</label>
+                                <input type="text" class="form-control rounded-3" id="nombreCli" name="nombreCli" required>
+                                <span id="snombreCli" class="text-danger small"></span>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="cedulaCli" class="form-label text-muted small fw-bold">Cédula</label>
-                                <input type="text" class="form-control rounded-3" id="cedulaCli" name="cedulaCli" required>
-                                <span id="scedulaCli" class="text-danger small"></span>
+                                <label for="apellidoCli" class="form-label text-muted small fw-bold">Apellido</label>
+                                <input type="text" class="form-control rounded-3" id="apellidoCli" name="apellidoCli" required>
+                                <span id="sapellidoCli" class="text-danger small"></span>
                             </div>
 
                             <div class="col-md-6 mb-3">
@@ -354,6 +354,13 @@
             </div>
         </div>
     </div>
+
+    <button type="button" id="btnCarritoFlotante" data-bs-toggle="modal" data-bs-target="#carritoModal"
+        class="btn btn-crear rounded-pill px-3 px-md-4 py-3 shadow-lg position-fixed bottom-0 end-0 m-3 m-md-4 z-3">
+        <i class="bi bi-cart3 me-0 me-md-2"></i>
+        <span class="d-none d-md-inline">Carrito</span>
+        <span id="contadorCarrito" class="badge rounded-pill bg-white text-dark ms-1">0</span>
+    </button>
 
     <script src="js/scriptTasa.js"></script>
     <script src="js/catalogo.js"></script>

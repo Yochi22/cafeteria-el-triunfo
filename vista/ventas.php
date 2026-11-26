@@ -26,10 +26,12 @@
                     </div>
                 </div>
 
-                <button type="button" id="incluir" class="btn btn-crear" data-bs-toggle="modal" data-bs-target="#modal_venta">
-                    <i class="bi bi-plus-circle fs-5"></i>
-                    <span class="d-none d-sm-inline"> Agregar Nueva Venta</span>
-                </button>
+                <div class="d-grid d-md-block">
+                    <button type="button" id="incluir" class="btn btn-crear d-flex align-items-center justify-content-center gap-2 shadow-sm py-2 px-3 rounded-3" data-bs-toggle="modal" data-bs-target="#modal_venta">
+                        <i class="bi bi-plus-circle fs-5"></i>
+                        <span class="d-none d-md-inline">Agregar Nueva Venta</span>
+                    </button>
+                </div>
             </div>
 
             <hr class="text-secondary mb-4">

@@ -125,6 +125,7 @@ class categorias extends datos
                     <div class="col-12 text-center text-muted py-5">
                         <span><i class="bi bi-tags-fill fs-1" style="color: #FF8C00"></i></span>
                         <h5 class="text-dashboard mt-2">No hay categorías registradas.</h5>
+                        <h6 class="text-secondary">Registra una categoría.</h6>
                     </div>';
                 }
 
@@ -260,7 +261,7 @@ class categorias extends datos
                     $html = '
                     <div class="col-12 text-center text-muted py-5">
                         <span><i class="bi bi-person-fill-slash fs-1" style="color: #FF8C00"></i></span>
-                        <h5 class="text-dashboard mt-2">No se encontraron registros</h5>
+                        <h5 class="text-dashboard mt-2">No se encontraron registros.</h5>
                         <h6 class="text-secondary">Intenta de nuevo.</h6>
                     </div>';
                 }

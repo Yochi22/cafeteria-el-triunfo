@@ -52,10 +52,10 @@ $(document).ready(function () {
 
     // -- Validación de nombre --
     $("#nombreProd").on("keypress", function (e) {
-        validarkeypress(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC\s]*$/, e);
+        validarkeypress(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC\s.-]*$/, e);
     });
     $("#nombreProd").on("keyup", function () {
-        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC\s]{3,50}$/, $(this), $("#snombreProd"), "Nombre Inválido - Entre 3 y 50 caracteres.");
+        validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC\s.-]{3,50}$/, $(this), $("#snombreProd"), "Nombre Inválido - Entre 3 y 50 caracteres.");
     });
 
     // -- Validación de precio --
@@ -162,24 +162,24 @@ function validarEnvio() {
         mostrarAlerta("Atención", "Debe seleccionar una categoría", "warning");
         return false;
     }
-    else if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{5,50}$/, $("#codigoProd"), $("#scodigoProd"), "Código Inválido") === 0) {
-        mostrarAlerta("Atención", "Código Inválido <br/>(Entre 5 y 50 caracteres.)", "warning");
+    else if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC]{5,50}$/, $("#codigoProd"), $("#scodigoProd"), "Código Inválido.") === 0) {
+        mostrarAlerta("Atención", "Código Inválido <br/>(Entre 5 y 50 caracteres).", "warning");
         return false;
     }
-    else if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC\s]{3,50}$/, $("#nombreProd"), $("#snombreProd"), "Nombre Inválido") === 0) {
-        mostrarAlerta("Atención", "Nombre Inválido <br/>(Entre 3 y 50 caracteres.)", "warning");
+    else if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC\s.-]{3,50}$/, $("#nombreProd"), $("#snombreProd"), "Nombre Inválido.") === 0) {
+        mostrarAlerta("Atención", "Nombre Inválido <br/>(Entre 3 y 50 caracteres).", "warning");
         return false;
     }
-    else if (validarkeyup(/^[0-9]{1,8}(\.[0-9]{1,2})?$/, $("#precioProd"), $("#sprecioProd"), "Precio Inválido") === 0) {
-        mostrarAlerta("Atención", "Precio Inválido <br/>(Ingrese un monto válido.)", "warning");
+    else if (validarkeyup(/^[0-9]{1,8}(\.[0-9]{1,2})?$/, $("#precioProd"), $("#sprecioProd"), "Precio Inválido.") === 0) {
+        mostrarAlerta("Atención", "Precio Inválido <br/>(Ingrese un monto válido).", "warning");
         return false;
     }
     else if (parseFloat($("#precioProd").val()) <= 0 || isNaN(parseFloat($("#precioProd").val()))) {
         mostrarAlerta("Atención", "El precio debe ser mayor a 0.", "warning");
         return false;
     }
-    else if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{5,150}$/, $("#descProd"), $("#sdescProd"), "Descripción Inválida") === 0) {
-        mostrarAlerta("Atención", "Descripción Inválida <br/>(Entre 5 y 150 caracteres.)", "warning");
+    else if (validarkeyup(/^[A-Za-z0-9\b\s\u00f1\u00d1\u00E0-\u00FC.,-]{5,150}$/, $("#descProd"), $("#sdescProd"), "Descripción Inválida.") === 0) {
+        mostrarAlerta("Atención", "Descripción Inválida <br/>(Entre 5 y 150 caracteres).", "warning");
         return false;
     }
 

@@ -176,7 +176,7 @@ class Ventas extends datos
                                    per.cedulaPer, per.nombrePer, per.apellidoPer,
                                    ped.idPedido, ped.idCuenta, 
                                    dir.zona AS zonaDelivery, dir.calle AS calleDelivery, dir.numCasa AS numCasaDelivery,
-                                   cli.idCliente, cli.cedulaCli, cli.nombreCli,
+                                   cli.idCliente, cli.cedulaCli, cli.nombreCli, cli.apellidoCli,
                                    c.nombreBanco, c.numCuenta 
                             FROM ventas v 
                             JOIN detallesventa d ON v.idDetalle = d.idDetalle 
@@ -225,7 +225,7 @@ class Ventas extends datos
             // MEGA CONSULTA PARA OBTENER TODOS LOS DATOS DE LA VENTA
             $stmt = $co->prepare("SELECT v.*, d.cedulaPago, d.tlfPago, d.referencia, 
                                    per.nombrePer, per.apellidoPer, per.cedulaPer,
-                                   cli.nombreCli, cli.cedulaCli, cli.tlfCli,
+                                   cli.nombreCli, cli.apellidoCli, cli.cedulaCli, cli.tlfCli,
                                    pp.cantidadProd AS cantidad, pp.subTotal,
                                    prod.codigoProd, prod.nombreProd, prod.precioProd AS precioUnitario,
                                    c.nombreBanco, c.numCuenta,
@@ -252,7 +252,8 @@ class Ventas extends datos
                 $v = $resultados[0];
                 $idVentaStr = str_pad($v['idVenta'], 3, "0", STR_PAD_LEFT);
                 $totalFormateado = number_format($v['totalVenta'], 2);
-                $costoDelivery = isset($v['precioDeliveryCosto']) ? floatval($v['precioDeliveryCosto']) : 0.00;
+                $costoDelivery = !empty($v['precioDeliveryCosto']) ? floatval($v['precioDeliveryCosto']) : 0.00;
+                $nombreCompletoCli = trim(($v['nombreCli'] ?? '') . ' ' . ($v['apellidoCli'] ?? ''));
 
                 // Busca la tasa exacta del día de la venta
                 $stmtTasa = $co->prepare("SELECT precioTasa FROM tasadiaria WHERE fechaTasa = :fechaVenta");
@@ -295,7 +296,7 @@ class Ventas extends datos
                         <div class="row g-2 small mb-3">
                             <div class="col-6"><strong>Fecha:</strong> ' . $v['fechaVenta'] . '</div>
                             <div class="col-6"><strong>Personal:</strong> ' . $v['nombrePer'] . ' ' . $v['apellidoPer'] . '</div>
-                            <div class="col-6"><strong>Cliente:</strong> ' . (!empty($v['nombreCli']) ? $v['nombreCli'] . ', ' . ($v['cedulaCli'] ?? '') : 'Sin cliente') . '</div>
+                            <div class="col-6"><strong>Cliente:</strong> ' . (!empty($nombreCompletoCli) ? $nombreCompletoCli . (!empty($v['cedulaCli']) ? ', ' . $v['cedulaCli'] : '') : 'Sin cliente') . '</div>
                             <div class="col-6"><strong>Telefono:</strong> ' . (!empty($v['tlfCli']) ? $v['tlfCli'] : 'N/A') . '</div>
                         </div>
 
@@ -614,11 +615,12 @@ class Ventas extends datos
                 $respuesta = '';
 
                 foreach ($resultado as $fila) {
+                    $nombreCompleto = trim(($fila['nombreCli'] ?? '') . ' ' . ($fila['apellidoCli'] ?? ''));
                     $respuesta .= "
                         <tr style='cursor:pointer' onclick='colocacliente(this);'>
                             <td style='display:none'>{$fila['idCliente']}</td>
                             <td>{$fila['cedulaCli']}</td>
-                            <td>{$fila['nombreCli']}</td>
+                            <td>{$nombreCompleto}</td>
                             <td>{$fila['tlfCli']}</td>
                         </tr>
                     ";

@@ -195,18 +195,18 @@ class pedidos extends datos
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-lg-4 d-flex flex-column flex-sm-row flex-lg-column justify-content-between align-items-lg-end border-start-lg ps-lg-4 gap-3">
+                            <div class="col-12 col-lg-4 d-flex flex-column justify-content-between align-items-stretch align-items-lg-end border-start-lg ps-lg-4 gap-3">
                                 <div class="text-start text-lg-end">
                                     <span class="text-muted small text-uppercase fw-bold d-block mb-1">Total a Pagar</span>
                                     <h3 class="text-success fw-bold mb-0">$' . number_format($fila['precioTotal'], 2) . '</h3>
                                     <h4 class="text-secondary fw-bold d-block">Bs. ' . number_format($fila['precioTotal'] * $tasa, 2, ',', '.') . '</h4>
                                 </div>
-                                <div class="d-flex flex-row flex-lg-column gap-2 w-100" style="max-width: 160px;">
-                                    <button type="button" class="btn btn-outline-primary btn-sm rounded-pill d-flex align-items-center justify-content-center gap-2 w-100 py-1 px-3" onclick="pone(' . $fila['idPedido'] . ')" title="Editar">
+                                <div class="d-flex justify-content-end gap-2 mt-lg-auto">
+                                    <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="pone(' . $fila['idPedido'] . ')" title="Editar">
                                         <i class="bi bi-pencil-square"></i> Editar
                                     </button>
-                                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill d-flex align-items-center justify-content-center gap-2 w-100 py-1 px-3" onclick="eliminar(' . $fila['idPedido'] . ')" title="Eliminar">
-                                        <i class="bi bi-trash-fill"></i> Eliminar
+                                    <button type="button" class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="eliminar(' . $fila['idPedido'] . ')" title="Eliminar">
+                                        <i class="bi bi-trash"></i> Eliminar
                                     </button>
                                 </div>
                             </div>
@@ -216,7 +216,7 @@ class pedidos extends datos
             }
 
             if ($html == '') {
-                $html = '<div class="col-12 text-center text-muted py-5"><i class="bi bi-journal-x fs-1 text-warning"></i><h5 class="mt-2 text-dashboard">No hay pedidos registrados con este estado.</h5></div>';
+                $html = '<div class="col-12 text-center text-muted py-5"><i class="bi bi-journal-x fs-1 text-warning"></i><h5 class="mt-2 text-dashboard">No hay pedidos registrados.</h5></div>';
             }
 
             $r['resultado'] = 'consultar';

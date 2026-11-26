@@ -30,10 +30,10 @@
                 </div>
 
                 <!-- Botón Agregar -->
-                <div>
-                    <button class="btn btn-crear d-flex align-items-center gap-2 shadow-sm py-2 px-3 rounded-3" id="incluir" data-bs-toggle="modal" data-bs-target="#modal_categoria">
+                <div class="d-grid d-md-block">
+                    <button class="btn btn-crear d-flex align-items-center justify-content-center gap-2 shadow-sm py-2 px-3 rounded-3" id="incluir" data-bs-toggle="modal" data-bs-target="#modal_categoria">
                         <i class="bi bi-plus-circle fs-5"></i>
-                        <span class="d-none d-sm-inline"> Nueva Categoría</span>
+                        <span class="d-none d-md-inline">Nueva Categoría</span>
                     </button>
                 </div>
             </div>

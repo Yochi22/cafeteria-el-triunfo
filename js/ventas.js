@@ -67,7 +67,11 @@ $(document).ready(function () {
         dom: 'rt<"row mt-3 align-items-center"<"col-md-6 text-muted small"i><"col-md-6 d-flex justify-content-end"p>>',
         language: {
             "decimal": "",
-            "emptyTable": "No hay ventas registradas.",
+            "emptyTable": `<div class='text-center text-muted py-4'>
+                                <span><i class='bi bi-receipt fs-1' style='color: #FF8C00'></i></span>
+                                <h5 class='text-dashboard'>No hay ventas registradas.</h5>
+                                <h6 class='text-secondary'>Registra una venta.</h6>
+                            </div>`,
             "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
             "infoEmpty": "Mostrando 0 a 0 de 0 registros",
             "infoFiltered": "(filtrado de _MAX_ registros totales)",
@@ -77,7 +81,7 @@ $(document).ready(function () {
             "search": "Buscar:",
             "zeroRecords": `<div class='text-center text-muted py-4'>
                                 <span><i class='bi bi-receipt fs-1' style='color: #FF8C00'></i></span>
-                                <h5 class='text-dashboard'>No se encontraron registros</h5>
+                                <h5 class='text-dashboard'>No se encontraron registros.</h5>
                                 <h6 class='text-secondary'>Intenta de nuevo.</h6>
                             </div>`,
             "paginate": {
@@ -652,9 +656,16 @@ function enviaAjax(datos) {
                 else if (lee.resultado == "listarCuentas") {
                     $("#listaCuentasModal").html(lee.mensaje);
                 }
-                else if (lee.resultado == "incluir" || lee.resultado == "modificar" || lee.resultado == "eliminar") {
-                    mostrarAlerta("¡Éxito!", lee.mensaje, "success");
+                else if (lee.resultado == "incluir" || lee.resultado == "modificar") {
                     $("#modal_detallesdepago").modal("hide");
+                    $("#modal_detallesdepedido").modal("hide");
+                    $("#modal_venta").modal("hide");
+                    limpia();
+                    mostrarAlerta("¡Éxito!", lee.mensaje, "success");
+                    consultar();
+                }
+                else if (lee.resultado == "eliminar") {
+                    mostrarAlerta("¡Éxito!", lee.mensaje, "success");
                     consultar();
                 }
                 else if (lee.resultado == "consultar_detalle") {

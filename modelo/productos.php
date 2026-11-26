@@ -144,13 +144,14 @@ class productos extends datos
                 <div class="col-12 text-center text-muted py-5">
                     <span><i class="bi bi-tags-fill fs-1" style="color: #FF8C00"></i></span>
                     <h5 class="text-dashboard mt-2">No hay categorías registradas.</h5>
+                    <h6 class="text-secondary">Registra una categoría.</h6>
                 </div>';
             }
 
             $btnGestionar = '
-            <a href="?pagina=categorias" class="btn btn-success fw-bold d-flex align-items-center gap-2 shadow-sm py-2 px-3 rounded-3">
+            <a href="?pagina=categorias" class="btn btn-success fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm py-2 px-3 rounded-3">
                 <i class="bi bi-tags fs-5"></i>
-                <span class="d-none d-sm-inline">GESTIONAR CATEGORÍAS</span>
+                <span class="d-none d-md-inline">GESTIONAR CATEGORÍAS</span>
             </a>';
 
             $r['resultado'] = 'consultarCategorias';
@@ -219,13 +220,14 @@ class productos extends datos
                 <div class="col-12 text-center text-muted py-5">
                     <span><i class="bi bi-box-seam fs-1" style="color: #FF8C00"></i></span>
                     <h5 class="text-dashboard mt-2">No hay productos en esta categoría.</h5>
+                    <h6 class="text-secondary">Registra un producto.</h6>
                 </div>';
             }
 
             $btnRegresar = '
-            <button class="btn btn-primary fw-bold d-flex align-items-center gap-2 shadow-sm py-2 px-3 rounded-3" onclick="consultar()">
+            <button class="btn btn-primary fw-bold d-flex align-items-center justify-content-center gap-2 shadow-sm py-2 px-3 rounded-3" onclick="consultar()">
                 <i class="bi bi-arrow-left-circle fs-5"></i>
-                <span class="d-none d-sm-inline">REGRESAR</span>
+                <span class="d-none d-md-inline">REGRESAR</span>
             </button>';
 
             $r['resultado'] = 'consultarProductos';
@@ -367,7 +369,7 @@ class productos extends datos
                     $html = '
                     <div class="col-12 text-center text-muted py-5">
                         <span><i class="bi bi-box-seam fs-1" style="color: #FF8C00"></i></span>
-                        <h5 class="text-dashboard mt-2">No se encontraron registros</h5>
+                        <h5 class="text-dashboard mt-2">No se encontraron registros.</h5>
                         <h6 class="text-secondary">Intenta de nuevo.</h6>
                     </div>';
                 }
